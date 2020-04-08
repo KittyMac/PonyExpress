@@ -1,0 +1,34 @@
+{
+  "title": "FontAtlas",
+  "type": "object",
+  "properties": {
+    "ascender": { "type": "number" },
+    "bitmap_height": { "type": "number" },
+    "bitmap_width": { "type": "number" },
+    "height": { "type": "number" },
+    "max_advance": { "type": "number" },
+    "name": { "type": "string" },
+    "size": { "type": "number" },
+    "space_advance": { "type": "number" },
+    
+    "glyph_data": {
+      "type": "array",
+      "items": {
+    		"title": "GlyphData",
+    		"type": "object",
+    		"properties": {
+          "advance_x": { "type": "number" },
+          "bbox_height": { "type": "number" },
+          "bbox_width": { "type": "number" },
+          "bearing_x": { "type": "number" },
+          "bearing_y": { "type": "number" },
+          "charcode": { "type": "string" },
+          "s0": { "type": "number" },
+          "s1": { "type": "number" },
+          "t0": { "type": "number" },
+          "t1": { "type": "number" },
+    		}
+      }
+    }
+  }
+}

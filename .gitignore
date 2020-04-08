@@ -1,0 +1,17 @@
+node_modules
+.DS_Store
+*.zip
+*.env
+xcuserdata
+*.xcworkspace
+
+*.o
+*.d
+
+build/*
+TAGS
+tags
+.deps/*
+
+_corral
+_repos

@@ -1,0 +1,5 @@
+module ponyexpress {
+    header "Shared/ShaderTypes.h"
+    export *
+}
+
