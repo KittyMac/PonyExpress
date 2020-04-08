@@ -10,7 +10,7 @@ import MetalKit
 import GLKit
 import simd
 
-import ponyexpress
+import PonyExpressiOS_Private
 
 struct SceneMatrices {
     var projectionMatrix: GLKMatrix4 = GLKMatrix4Identity
@@ -65,7 +65,13 @@ class Renderer: NSObject, PonyExpressViewDelegate {
         metalDevice = MTLCreateSystemDefaultDevice()
         metalCommandQueue = metalDevice.makeCommandQueue()
 
-        let defaultLibrary = metalDevice.makeDefaultLibrary()!
+        //let defaultLibrary = metalDevice.makeDefaultLibrary()!
+        
+        //Get the framework bundle by using `Bundle(for: type(of: self))` from inside any framework class.
+        //Then use the bundle to define an MTLLibrary.
+        let frameworkBundle = Bundle(for: type(of: self))
+        
+        let defaultLibrary = (try? metalDevice.makeDefaultLibrary(bundle: frameworkBundle))!
         
         self.aaplView = aaplView
 

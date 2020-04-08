@@ -7,8 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		464FBAC2243D8C4300425A9E /* PonyExpress_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 464FBAC1243D8C4300425A9E /* PonyExpress_iOS.framework */; };
-		464FBAC3243D8C4300425A9E /* PonyExpress_iOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 464FBAC1243D8C4300425A9E /* PonyExpress_iOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		462036A1243E44E9006F1FA2 /* PonyExpressiOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 462036A0243E44E9006F1FA2 /* PonyExpressiOS.framework */; };
+		462036A2243E44E9006F1FA2 /* PonyExpressiOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 462036A0243E44E9006F1FA2 /* PonyExpressiOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		462036A5243E482E006F1FA2 /* Assets in Resources */ = {isa = PBXBuildFile; fileRef = 462036A4243E482E006F1FA2 /* Assets */; };
 		46F3A6C7243D031F0030287A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46F3A6C6243D031F0030287A /* ViewController.swift */; };
 		46F3A6CA243D031F0030287A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 46F3A6C8243D031F0030287A /* Main.storyboard */; };
 		46F3A6CC243D03200030287A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 46F3A6CB243D03200030287A /* Assets.xcassets */; };
@@ -16,13 +17,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		464FBAC4243D8C4300425A9E /* Embed Frameworks */ = {
+		462036A3243E44E9006F1FA2 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				464FBAC3243D8C4300425A9E /* PonyExpress_iOS.framework in Embed Frameworks */,
+				462036A2243E44E9006F1FA2 /* PonyExpressiOS.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -30,6 +31,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		462036A0243E44E9006F1FA2 /* PonyExpressiOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PonyExpressiOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		462036A4243E482E006F1FA2 /* Assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Assets; sourceTree = "<group>"; };
 		464FBAC1243D8C4300425A9E /* PonyExpress_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PonyExpress_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		46F3A6BF243D031F0030287A /* PonyExpressDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PonyExpressDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		46F3A6C6243D031F0030287A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -44,7 +47,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				464FBAC2243D8C4300425A9E /* PonyExpress_iOS.framework in Frameworks */,
+				462036A1243E44E9006F1FA2 /* PonyExpressiOS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,6 +74,7 @@
 		46F3A6C1243D031F0030287A /* PonyExpressDemo */ = {
 			isa = PBXGroup;
 			children = (
+				462036A4243E482E006F1FA2 /* Assets */,
 				46F3A6C6243D031F0030287A /* ViewController.swift */,
 				46F3A6C8243D031F0030287A /* Main.storyboard */,
 				46F3A6CB243D03200030287A /* Assets.xcassets */,
@@ -83,6 +87,7 @@
 		46F3A6D6243D03EC0030287A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				462036A0243E44E9006F1FA2 /* PonyExpressiOS.framework */,
 				464FBAC1243D8C4300425A9E /* PonyExpress_iOS.framework */,
 			);
 			name = Frameworks;
@@ -98,7 +103,7 @@
 				46F3A6BB243D031F0030287A /* Sources */,
 				46F3A6BC243D031F0030287A /* Frameworks */,
 				46F3A6BD243D031F0030287A /* Resources */,
-				464FBAC4243D8C4300425A9E /* Embed Frameworks */,
+				462036A3243E44E9006F1FA2 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -148,6 +153,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				46F3A6CF243D03200030287A /* LaunchScreen.storyboard in Resources */,
+				462036A5243E482E006F1FA2 /* Assets in Resources */,
 				46F3A6CC243D03200030287A /* Assets.xcassets in Resources */,
 				46F3A6CA243D031F0030287A /* Main.storyboard in Resources */,
 			);

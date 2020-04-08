@@ -3,7 +3,6 @@
 
 #include "pony.h"
 #include "app.h"
-//#include "ui.h"
 #include "avl_tree.h"
 
 #include <stdio.h>

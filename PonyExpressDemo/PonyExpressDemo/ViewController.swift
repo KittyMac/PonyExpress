@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import PonyExpressiOS
 
-class ViewController: UIViewController {
+class ViewController: PonyExpressViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
