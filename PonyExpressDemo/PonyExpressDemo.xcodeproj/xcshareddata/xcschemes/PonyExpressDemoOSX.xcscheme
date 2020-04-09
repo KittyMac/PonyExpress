@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "46F3A6BE243D031F0030287A"
-               BuildableName = "PonyExpressDemoiOS.app"
-               BlueprintName = "PonyExpressDemoiOS"
+               BlueprintIdentifier = "462036E2243EDDE0006F1FA2"
+               BuildableName = "PonyExpressDemoOSX.app"
+               BlueprintName = "PonyExpressDemoOSX"
                ReferencedContainer = "container:PonyExpressDemo.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -31,7 +31,7 @@
       </Testables>
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
@@ -44,9 +44,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "46F3A6BE243D031F0030287A"
-            BuildableName = "PonyExpressDemoiOS.app"
-            BlueprintName = "PonyExpressDemoiOS"
+            BlueprintIdentifier = "462036E2243EDDE0006F1FA2"
+            BuildableName = "PonyExpressDemoOSX.app"
+            BlueprintName = "PonyExpressDemoOSX"
             ReferencedContainer = "container:PonyExpressDemo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -61,9 +61,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "46F3A6BE243D031F0030287A"
-            BuildableName = "PonyExpressDemoiOS.app"
-            BlueprintName = "PonyExpressDemoiOS"
+            BlueprintIdentifier = "462036E2243EDDE0006F1FA2"
+            BuildableName = "PonyExpressDemoOSX.app"
+            BlueprintName = "PonyExpressDemoOSX"
             ReferencedContainer = "container:PonyExpressDemo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
