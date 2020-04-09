@@ -1,21 +1,13 @@
 use "ui"
 use "utility"
+use "ponyapp"
 
-actor Main
-  let renderEngine:RenderEngine
-  
-  fun _tag():U32 => 2001
-  
+actor Main    
 	new create(env:Env) =>
     PlatformIOS(env)
     PlatformOSX(env)
     
-    env.out.print("Hello from Main!")
-    
-    renderEngine = RenderEngine
-    
-    //FontTest.load(renderEngine, "Root")
-    Catalog.load(renderEngine, "Root")
+    PonyApp(env, RenderEngine)
     
         
 

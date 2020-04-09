@@ -291,6 +291,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 46F3A663243D00180030287A /* Build configuration list for PBXNativeTarget "PonyExpressiOS" */;
 			buildPhases = (
+				462036A7243EC0E0006F1FA2 /* ShellScript */,
 				46F3A656243D00180030287A /* Headers */,
 				46F3A657243D00180030287A /* Sources */,
 				46F3A658243D00180030287A /* Frameworks */,
@@ -346,6 +347,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		462036A7243EC0E0006F1FA2 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd ./Pony/app\ntime make ios\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		46F3A657243D00180030287A /* Sources */ = {
