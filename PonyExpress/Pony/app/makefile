@@ -42,7 +42,7 @@ endef
 
 
 
-all: framework ios 
+all: framework ios osx
 
 clean:
 	rm -rf $(builddir)
@@ -53,9 +53,18 @@ build_ios:
 	$(ponyc) -o $(builddir) --extfun -b "$(product_name)_arm64" -p $(deps_packagesdir) -p ../../../PonyExpressDemo/ -p ../../../ --triple aarch64-apple-ios --pic --features +neon $(debug) -robj
 
 build_library_ios:
-	@$(iphonesdk_libtool) -static $(builddir)/*.o -o $(deps_libdir_ios)/lib$(product_name).a
+	@$(iphonesdk_libtool) -static $(builddir)/*.o -o $(deps_libdir_ios)/lib$(product_name)-ios.a
 	cp $(builddir)/$(product_name).h $(deps_includedir_ios)/$(product_name).h
 
+
+osx: confirm build_osx build_library_osx
+
+build_osx:
+	$(ponyc) -o $(builddir) --extfun -b "$(product_name)_x86_64"  -p $(deps_packagesdir) -p ../../../PonyExpressDemo/ -p ../../../  --pic $(debug) -robj
+
+build_library_osx:
+	@$(iphonesdk_libtool) -static $(builddir)/*.o -o $(deps_libdir_osx)/lib$(product_name)-osx.a
+	cp $(builddir)/$(product_name).h $(deps_includedir_osx)/$(product_name).h
 
 confirm:
 	@mkdir -p $(builddir)

@@ -1,6 +1,5 @@
-module PonyExpressiOS_Private {
+module PonyExpress_Private {
     private header "Shared/ShaderTypes.h"
     export *
 }
-
 

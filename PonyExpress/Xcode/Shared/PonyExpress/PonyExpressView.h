@@ -5,6 +5,9 @@ Abstract:
 Custom view base class
 */
 
+#ifndef _PONYEXPRESSVIEW_H_
+#define _PONYEXPRESSVIEW_H_
+
 #import <QuartzCore/CAMetalLayer.h>
 #import <Metal/Metal.h>
 #import "PonyExpressConfig.h"
@@ -51,3 +54,5 @@ Custom view base class
 - (void)render;
 
 @end
+
+#endif

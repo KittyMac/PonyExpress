@@ -10,7 +10,7 @@ import MetalKit
 import GLKit
 import simd
 
-import PonyExpressiOS_Private
+import PonyExpress_Private
 
 struct SceneMatrices {
     var projectionMatrix: GLKMatrix4 = GLKMatrix4Identity
@@ -35,7 +35,7 @@ func bridge(_ ptr : UnsafeMutableRawPointer) -> Renderer? {
 }
 
 // Minimal Metal Renderer
-class Renderer: NSObject, PonyExpressViewDelegate {
+public class Renderer: NSObject, PonyExpressViewDelegate {
     private var metalDevice: MTLDevice!
     private var metalCommandQueue: MTLCommandQueue!
     private var flatPipelineState: MTLRenderPipelineState!
@@ -61,7 +61,7 @@ class Renderer: NSObject, PonyExpressViewDelegate {
     
     private var aaplView: PonyExpressView
         
-    @objc init(aaplView: PonyExpressView) {
+    @objc public init(aaplView: PonyExpressView) {
         metalDevice = MTLCreateSystemDefaultDevice()
         metalCommandQueue = metalDevice.makeCommandQueue()
 
@@ -172,7 +172,7 @@ class Renderer: NSObject, PonyExpressViewDelegate {
     
     var renderAheadCount:Int = 0
 
-    func drawableResize(_ size: CGSize, withScale scale: CGFloat) {
+    public func drawableResize(_ size: CGSize, withScale scale: CGFloat) {
         var local_size = size
                 
         if (scale != 0.0) {
@@ -205,7 +205,7 @@ class Renderer: NSObject, PonyExpressViewDelegate {
         }
     }
     
-    func render(to metalLayer: CAMetalLayer) {
+    public func render(to metalLayer: CAMetalLayer) {
         if let drawable = metalLayer.nextDrawable() {
             #if !RENDER_ON_MAIN_THREAD
             pony_register_thread()

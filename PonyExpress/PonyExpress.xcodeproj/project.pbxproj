@@ -7,6 +7,37 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		462036A9243EC492006F1FA2 /* libapp-ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 462036A8243EC492006F1FA2 /* libapp-ios.a */; };
+		462036B9243EC5B3006F1FA2 /* PonyExpressAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 46F3A69E243D01D50030287A /* PonyExpressAppDelegate.m */; };
+		462036BA243EC5B3006F1FA2 /* PonyExpressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 46F3A6A1243D01D50030287A /* PonyExpressView.m */; };
+		462036BB243EC5B3006F1FA2 /* PonyExpressViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 46F3A6A3243D01D50030287A /* PonyExpressViewController.m */; };
+		462036BC243EC5B3006F1FA2 /* PonyPlatform.m in Sources */ = {isa = PBXBuildFile; fileRef = 46F3A6B3243D02750030287A /* PonyPlatform.m */; };
+		462036BD243EC5B3006F1FA2 /* avl_tree.c in Sources */ = {isa = PBXBuildFile; fileRef = 46F3A679243D01440030287A /* avl_tree.c */; };
+		462036BE243EC5B3006F1FA2 /* HALRenderEngine.c in Sources */ = {isa = PBXBuildFile; fileRef = 46F3A67B243D01440030287A /* HALRenderEngine.c */; };
+		462036BF243EC5B4006F1FA2 /* Flat.metal in Sources */ = {isa = PBXBuildFile; fileRef = 46F3A67F243D01440030287A /* Flat.metal */; };
+		462036C0243EC5B4006F1FA2 /* SDF.metal in Sources */ = {isa = PBXBuildFile; fileRef = 46F3A680243D01440030287A /* SDF.metal */; };
+		462036C1243EC5B4006F1FA2 /* Textured.metal in Sources */ = {isa = PBXBuildFile; fileRef = 46F3A681243D01440030287A /* Textured.metal */; };
+		462036C2243EC5B4006F1FA2 /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46F3A67D243D01440030287A /* Renderer.swift */; };
+		462036C3243EC603006F1FA2 /* PonyExpressConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 46F3A69F243D01D50030287A /* PonyExpressConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		462036C4243EC603006F1FA2 /* PonyExpressView.h in Headers */ = {isa = PBXBuildFile; fileRef = 46F3A6A0243D01D50030287A /* PonyExpressView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		462036C5243EC603006F1FA2 /* PonyExpressViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 46F3A6A2243D01D50030287A /* PonyExpressViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		462036C8243EC657006F1FA2 /* HALRenderEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 46F3A67C243D01440030287A /* HALRenderEngine.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		462036C9243EC671006F1FA2 /* app.h in Headers */ = {isa = PBXBuildFile; fileRef = 462036AA243EC4F9006F1FA2 /* app.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		462036CA243EC671006F1FA2 /* atomics.h in Headers */ = {isa = PBXBuildFile; fileRef = 46F3A6F6243D5BFB0030287A /* atomics.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		462036CB243EC671006F1FA2 /* pony.h in Headers */ = {isa = PBXBuildFile; fileRef = 46F3A6F7243D5BFB0030287A /* pony.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		462036CC243EC671006F1FA2 /* PonyExpressNSView.h in Headers */ = {isa = PBXBuildFile; fileRef = 46F3A6E5243D202B0030287A /* PonyExpressNSView.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		462036CD243EC671006F1FA2 /* PonyExpressAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 46F3A69D243D01D50030287A /* PonyExpressAppDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		462036CE243EC671006F1FA2 /* PonyPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 46F3A6B2243D02750030287A /* PonyPlatform.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		462036CF243EC671006F1FA2 /* avl_tree.h in Headers */ = {isa = PBXBuildFile; fileRef = 46F3A67A243D01440030287A /* avl_tree.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		462036D0243EC671006F1FA2 /* ShaderTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 46F3A682243D01440030287A /* ShaderTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		462036D1243EC69B006F1FA2 /* libyoga-osx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46F3A6F4243D5BFB0030287A /* libyoga-osx.a */; };
+		462036D2243EC69D006F1FA2 /* libponyrt-osx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46F3A6F3243D5BFB0030287A /* libponyrt-osx.a */; };
+		462036D3243EC6A3006F1FA2 /* libponybitmap-osx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46F3A6F2243D5BFB0030287A /* libponybitmap-osx.a */; };
+		462036D5243EC6AC006F1FA2 /* libapp-osx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 462036D4243EC6AC006F1FA2 /* libapp-osx.a */; };
+		462036D7243EC6B5006F1FA2 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 462036D6243EC6B5006F1FA2 /* libc++.tbd */; };
+		462036DC243EC874006F1FA2 /* PonyExpressNSView.m in Sources */ = {isa = PBXBuildFile; fileRef = 46F3A6E6243D202B0030287A /* PonyExpressNSView.m */; };
+		462036DD243EC8D4006F1FA2 /* PonyExpress-Swift.h in Headers */ = {isa = PBXBuildFile; fileRef = 46F3A70B243D5F330030287A /* PonyExpress-Swift.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		462036DE243EC8E9006F1FA2 /* PonyExpressOSX.h in Headers */ = {isa = PBXBuildFile; fileRef = 462036C6243EC625006F1FA2 /* PonyExpressOSX.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		46F3A660243D00180030287A /* PonyExpressiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 46F3A65E243D00180030287A /* PonyExpressiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		46F3A690243D01440030287A /* avl_tree.c in Sources */ = {isa = PBXBuildFile; fileRef = 46F3A679243D01440030287A /* avl_tree.c */; };
 		46F3A691243D01440030287A /* avl_tree.h in Headers */ = {isa = PBXBuildFile; fileRef = 46F3A67A243D01440030287A /* avl_tree.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -35,15 +66,21 @@
 		46F3A703243D5C040030287A /* libyoga-ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46F3A6FE243D5C040030287A /* libyoga-ios.a */; };
 		46F3A70A243D5E160030287A /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 46F3A709243D5E0C0030287A /* libc++.tbd */; };
 		46F3A70C243D5F330030287A /* PonyExpress-Swift.h in Headers */ = {isa = PBXBuildFile; fileRef = 46F3A70B243D5F330030287A /* PonyExpress-Swift.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		46F3A70E243D60570030287A /* libapp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46F3A70D243D60570030287A /* libapp.a */; };
 		46F3A710243D605A0030287A /* app.h in Headers */ = {isa = PBXBuildFile; fileRef = 46F3A70F243D605A0030287A /* app.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		462036A8243EC492006F1FA2 /* libapp-ios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libapp-ios.a"; sourceTree = "<group>"; };
+		462036AA243EC4F9006F1FA2 /* app.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = app.h; sourceTree = "<group>"; };
+		462036B0243EC533006F1FA2 /* PonyExpressOSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PonyExpressOSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		462036C6243EC625006F1FA2 /* PonyExpressOSX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PonyExpressOSX.h; path = Xcode/PonyExpressOSX.h; sourceTree = SOURCE_ROOT; };
+		462036D4243EC6AC006F1FA2 /* libapp-osx.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libapp-osx.a"; sourceTree = "<group>"; };
+		462036D6243EC6B5006F1FA2 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
+		462036D8243EC744006F1FA2 /* Info-osx.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-osx.plist"; sourceTree = "<group>"; };
+		462036DA243EC749006F1FA2 /* Info-ios.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-ios.plist"; sourceTree = "<group>"; };
 		463CC7EB243D95270055B22A /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; name = module.modulemap; path = Xcode/module.modulemap; sourceTree = "<group>"; };
 		46F3A65B243D00180030287A /* PonyExpressiOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PonyExpressiOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		46F3A65E243D00180030287A /* PonyExpressiOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PonyExpressiOS.h; sourceTree = "<group>"; };
-		46F3A65F243D00180030287A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		46F3A679243D01440030287A /* avl_tree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = avl_tree.c; sourceTree = "<group>"; };
 		46F3A67A243D01440030287A /* avl_tree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = avl_tree.h; sourceTree = "<group>"; };
 		46F3A67B243D01440030287A /* HALRenderEngine.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = HALRenderEngine.c; sourceTree = "<group>"; };
@@ -78,20 +115,31 @@
 		46F3A6FE243D5C040030287A /* libyoga-ios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libyoga-ios.a"; sourceTree = "<group>"; };
 		46F3A709243D5E0C0030287A /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS13.2.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
 		46F3A70B243D5F330030287A /* PonyExpress-Swift.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PonyExpress-Swift.h"; sourceTree = "<group>"; };
-		46F3A70D243D60570030287A /* libapp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libapp.a; sourceTree = "<group>"; };
 		46F3A70F243D605A0030287A /* app.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = app.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		462036AD243EC533006F1FA2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				462036D7243EC6B5006F1FA2 /* libc++.tbd in Frameworks */,
+				462036D1243EC69B006F1FA2 /* libyoga-osx.a in Frameworks */,
+				462036D2243EC69D006F1FA2 /* libponyrt-osx.a in Frameworks */,
+				462036D5243EC6AC006F1FA2 /* libapp-osx.a in Frameworks */,
+				462036D3243EC6A3006F1FA2 /* libponybitmap-osx.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		46F3A658243D00180030287A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				46F3A703243D5C040030287A /* libyoga-ios.a in Frameworks */,
+				462036A9243EC492006F1FA2 /* libapp-ios.a in Frameworks */,
 				46F3A70A243D5E160030287A /* libc++.tbd in Frameworks */,
 				46F3A701243D5C040030287A /* libponybitmap-ios.a in Frameworks */,
 				46F3A702243D5C040030287A /* libponyrt-ios.a in Frameworks */,
-				46F3A70E243D60570030287A /* libapp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +160,7 @@
 			isa = PBXGroup;
 			children = (
 				46F3A65B243D00180030287A /* PonyExpressiOS.framework */,
+				462036B0243EC533006F1FA2 /* PonyExpressOSX.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -123,7 +172,9 @@
 				46F3A6DF243D20280030287A /* iOS */,
 				46F3A666243D01440030287A /* Shared */,
 				46F3A65E243D00180030287A /* PonyExpressiOS.h */,
-				46F3A65F243D00180030287A /* Info.plist */,
+				462036DA243EC749006F1FA2 /* Info-ios.plist */,
+				462036C6243EC625006F1FA2 /* PonyExpressOSX.h */,
+				462036D8243EC744006F1FA2 /* Info-osx.plist */,
 			);
 			path = Xcode;
 			sourceTree = "<group>";
@@ -211,6 +262,7 @@
 		46F3A6F1243D5BFB0030287A /* libs */ = {
 			isa = PBXGroup;
 			children = (
+				462036D4243EC6AC006F1FA2 /* libapp-osx.a */,
 				46F3A6F2243D5BFB0030287A /* libponybitmap-osx.a */,
 				46F3A6F3243D5BFB0030287A /* libponyrt-osx.a */,
 				46F3A6F4243D5BFB0030287A /* libyoga-osx.a */,
@@ -222,6 +274,7 @@
 		46F3A6F5243D5BFB0030287A /* include */ = {
 			isa = PBXGroup;
 			children = (
+				462036AA243EC4F9006F1FA2 /* app.h */,
 				46F3A6F6243D5BFB0030287A /* atomics.h */,
 				46F3A6F7243D5BFB0030287A /* pony.h */,
 			);
@@ -243,7 +296,7 @@
 		46F3A6FB243D5C040030287A /* libs */ = {
 			isa = PBXGroup;
 			children = (
-				46F3A70D243D60570030287A /* libapp.a */,
+				462036A8243EC492006F1FA2 /* libapp-ios.a */,
 				46F3A6FC243D5C040030287A /* libponybitmap-ios.a */,
 				46F3A6FD243D5C040030287A /* libponyrt-ios.a */,
 				46F3A6FE243D5C040030287A /* libyoga-ios.a */,
@@ -255,6 +308,7 @@
 		46F3A708243D5E0C0030287A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				462036D6243EC6B5006F1FA2 /* libc++.tbd */,
 				46F3A709243D5E0C0030287A /* libc++.tbd */,
 			);
 			name = Frameworks;
@@ -263,6 +317,27 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		462036AB243EC533006F1FA2 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				462036C3243EC603006F1FA2 /* PonyExpressConfig.h in Headers */,
+				462036C4243EC603006F1FA2 /* PonyExpressView.h in Headers */,
+				462036C5243EC603006F1FA2 /* PonyExpressViewController.h in Headers */,
+				462036DE243EC8E9006F1FA2 /* PonyExpressOSX.h in Headers */,
+				462036C8243EC657006F1FA2 /* HALRenderEngine.h in Headers */,
+				462036CE243EC671006F1FA2 /* PonyPlatform.h in Headers */,
+				462036C9243EC671006F1FA2 /* app.h in Headers */,
+				462036CF243EC671006F1FA2 /* avl_tree.h in Headers */,
+				462036CB243EC671006F1FA2 /* pony.h in Headers */,
+				462036CA243EC671006F1FA2 /* atomics.h in Headers */,
+				462036D0243EC671006F1FA2 /* ShaderTypes.h in Headers */,
+				462036CD243EC671006F1FA2 /* PonyExpressAppDelegate.h in Headers */,
+				462036CC243EC671006F1FA2 /* PonyExpressNSView.h in Headers */,
+				462036DD243EC8D4006F1FA2 /* PonyExpress-Swift.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		46F3A656243D00180030287A /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -287,11 +362,30 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		462036AF243EC533006F1FA2 /* PonyExpressOSX */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 462036B5243EC533006F1FA2 /* Build configuration list for PBXNativeTarget "PonyExpressOSX" */;
+			buildPhases = (
+				462036B8243EC562006F1FA2 /* Pony */,
+				462036AB243EC533006F1FA2 /* Headers */,
+				462036AC243EC533006F1FA2 /* Sources */,
+				462036AD243EC533006F1FA2 /* Frameworks */,
+				462036AE243EC533006F1FA2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PonyExpressOSX;
+			productName = PonyExpressOSX;
+			productReference = 462036B0243EC533006F1FA2 /* PonyExpressOSX.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		46F3A65A243D00180030287A /* PonyExpressiOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 46F3A663243D00180030287A /* Build configuration list for PBXNativeTarget "PonyExpressiOS" */;
 			buildPhases = (
-				462036A7243EC0E0006F1FA2 /* ShellScript */,
+				462036A7243EC0E0006F1FA2 /* Pony */,
 				46F3A656243D00180030287A /* Headers */,
 				46F3A657243D00180030287A /* Sources */,
 				46F3A658243D00180030287A /* Frameworks */,
@@ -315,6 +409,9 @@
 				LastUpgradeCheck = 1120;
 				ORGANIZATIONNAME = "Rocco Bowling";
 				TargetAttributes = {
+					462036AF243EC533006F1FA2 = {
+						CreatedOnToolsVersion = 11.2.1;
+					};
 					46F3A65A243D00180030287A = {
 						CreatedOnToolsVersion = 11.2.1;
 					};
@@ -334,11 +431,19 @@
 			projectRoot = "";
 			targets = (
 				46F3A65A243D00180030287A /* PonyExpressiOS */,
+				462036AF243EC533006F1FA2 /* PonyExpressOSX */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		462036AE243EC533006F1FA2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		46F3A659243D00180030287A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -349,7 +454,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		462036A7243EC0E0006F1FA2 /* ShellScript */ = {
+		462036A7243EC0E0006F1FA2 /* Pony */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -358,17 +463,54 @@
 			);
 			inputPaths = (
 			);
+			name = Pony;
 			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd ./Pony/app\ntime make ios\n";
+			shellScript = "cd ./Pony/app\ntime make framework ios\n";
+		};
+		462036B8243EC562006F1FA2 /* Pony */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = Pony;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd ./Pony/app\ntime make framework osx\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		462036AC243EC533006F1FA2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				462036C1243EC5B4006F1FA2 /* Textured.metal in Sources */,
+				462036BA243EC5B3006F1FA2 /* PonyExpressView.m in Sources */,
+				462036BF243EC5B4006F1FA2 /* Flat.metal in Sources */,
+				462036C0243EC5B4006F1FA2 /* SDF.metal in Sources */,
+				462036DC243EC874006F1FA2 /* PonyExpressNSView.m in Sources */,
+				462036BE243EC5B3006F1FA2 /* HALRenderEngine.c in Sources */,
+				462036BC243EC5B3006F1FA2 /* PonyPlatform.m in Sources */,
+				462036B9243EC5B3006F1FA2 /* PonyExpressAppDelegate.m in Sources */,
+				462036BB243EC5B3006F1FA2 /* PonyExpressViewController.m in Sources */,
+				462036BD243EC5B3006F1FA2 /* avl_tree.c in Sources */,
+				462036C2243EC5B4006F1FA2 /* Renderer.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		46F3A657243D00180030287A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -390,6 +532,73 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		462036B6243EC533006F1FA2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = A3LA43YQN5;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"PONYEXPRESS_FRAMEWORK_ONLY=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "Xcode/Info-osx.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Pony/deps/osx/libs",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				PRODUCT_BUNDLE_IDENTIFIER = com.chimerasw.PonyExpressOSX;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Xcode/**";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		462036B7243EC533006F1FA2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = A3LA43YQN5;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREPROCESSOR_DEFINITIONS = "PONYEXPRESS_FRAMEWORK_ONLY=1";
+				INFOPLIST_FILE = "Xcode/Info-osx.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Pony/deps/osx/libs",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				PRODUCT_BUNDLE_IDENTIFIER = com.chimerasw.PonyExpressOSX;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Xcode/**";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 		46F3A661243D00180030287A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -446,6 +655,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -523,7 +733,7 @@
 					"PONYEXPRESS_FRAMEWORK_ONLY=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = Xcode/Info.plist;
+				INFOPLIST_FILE = "Xcode/Info-ios.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -558,7 +768,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = "PONYEXPRESS_FRAMEWORK_ONLY=1";
-				INFOPLIST_FILE = Xcode/Info.plist;
+				INFOPLIST_FILE = "Xcode/Info-ios.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -584,6 +794,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		462036B5243EC533006F1FA2 /* Build configuration list for PBXNativeTarget "PonyExpressOSX" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				462036B6243EC533006F1FA2 /* Debug */,
+				462036B7243EC533006F1FA2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		46F3A655243D00180030287A /* Build configuration list for PBXProject "PonyExpress" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
