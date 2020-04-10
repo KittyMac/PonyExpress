@@ -38,7 +38,12 @@ func bridge(_ ptr : UnsafeMutableRawPointer) -> Renderer? {
 public class Renderer: NSObject, PonyExpressViewDelegate {
     private var metalDevice: MTLDevice!
     private var metalCommandQueue: MTLCommandQueue!
-    private var depthStencilState: MTLDepthStencilState!
+    
+    private var ignoreStencilState: MTLDepthStencilState!
+    private var drawStencilState: MTLDepthStencilState!
+    private var testStencilState: MTLDepthStencilState!
+    
+    private var stencilPipelineState: MTLRenderPipelineState!
     private var flatPipelineState: MTLRenderPipelineState!
     private var texturePipelineState: MTLRenderPipelineState!
     private var sdfPipelineState: MTLRenderPipelineState!
@@ -62,6 +67,9 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
     
     private var projectedSize:CGSize = CGSize(width:128, height:128)
     
+    private var stencilValueCount:Int = 0
+    private var stencilValueMax:Int = 255
+    
     private var aaplView: PonyExpressView
         
     @objc public init(aaplView: PonyExpressView) {
@@ -76,85 +84,131 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
         
         self.aaplView = aaplView
         
-        
-        // stencil texture
-        
-        
-        // depth and stencil buffer
-        let depthStencilDescriptor = MTLDepthStencilDescriptor()
-        depthStencilDescriptor.depthCompareFunction = .always
-        depthStencilDescriptor.isDepthWriteEnabled = true
+        // render as normal testing against the stencil buffer for masking
+        if true {
+            let stencilDescriptor = MTLStencilDescriptor()
+            stencilDescriptor.stencilCompareFunction = .equal
+            stencilDescriptor.depthStencilPassOperation = .keep
+            stencilDescriptor.stencilFailureOperation = .keep
+            stencilDescriptor.depthFailureOperation = .keep
+            stencilDescriptor.readMask = 0xFF
+            stencilDescriptor.writeMask = 0x00
+            
+            let depthStencilDescriptor = MTLDepthStencilDescriptor()
+            depthStencilDescriptor.depthCompareFunction = .lessEqual
+            depthStencilDescriptor.isDepthWriteEnabled = false
+            depthStencilDescriptor.frontFaceStencil = stencilDescriptor
+            depthStencilDescriptor.backFaceStencil = stencilDescriptor
 
-        let stencilDescriptor = MTLStencilDescriptor()
-        stencilDescriptor.stencilCompareFunction = .always
-        stencilDescriptor.depthStencilPassOperation = .replace
-        stencilDescriptor.stencilFailureOperation = .keep
-        stencilDescriptor.depthFailureOperation = .keep
-        stencilDescriptor.readMask = 0x0
-        stencilDescriptor.writeMask = 0xFF
-        depthStencilDescriptor.frontFaceStencil = stencilDescriptor
-        depthStencilDescriptor.backFaceStencil = stencilDescriptor
+            testStencilState = metalDevice.makeDepthStencilState(descriptor: depthStencilDescriptor)
+        }
+        
+        // render to the stencil buffer, don't render to the color attachment
+        if true {
+            let stencilDescriptor = MTLStencilDescriptor()
+            stencilDescriptor.stencilCompareFunction = .always
+            stencilDescriptor.stencilFailureOperation = .replace
+            stencilDescriptor.depthFailureOperation = .replace
+            stencilDescriptor.depthStencilPassOperation = .replace
+            stencilDescriptor.readMask = 0x00
+            stencilDescriptor.writeMask = 0xFF
+            
+            let depthStencilDescriptor = MTLDepthStencilDescriptor()
+            depthStencilDescriptor.depthCompareFunction = .lessEqual
+            depthStencilDescriptor.isDepthWriteEnabled = false
+            depthStencilDescriptor.frontFaceStencil = stencilDescriptor
+            depthStencilDescriptor.backFaceStencil = stencilDescriptor
 
-        depthStencilState = metalDevice.makeDepthStencilState(descriptor: depthStencilDescriptor)
+            drawStencilState = metalDevice.makeDepthStencilState(descriptor: depthStencilDescriptor)
+        }
+        
+        // ignore stencil state: normal rendering while ignoring the stencil buffer
+        if true {
+            let depthStencilDescriptor = MTLDepthStencilDescriptor()
+            depthStencilDescriptor.depthCompareFunction = .lessEqual
+            depthStencilDescriptor.isDepthWriteEnabled = false
+            depthStencilDescriptor.frontFaceStencil = nil
+            depthStencilDescriptor.backFaceStencil = nil
+
+            ignoreStencilState = metalDevice.makeDepthStencilState(descriptor: depthStencilDescriptor)
+        }
         
         
+        // A shader pipeline for rendering to the stencil buffer only
+        if true {
+            let pipelineStateDescriptor = MTLRenderPipelineDescriptor()
+            pipelineStateDescriptor.vertexFunction = defaultLibrary.makeFunction(name: "flat_vertex")
+            pipelineStateDescriptor.fragmentFunction = nil
+            pipelineStateDescriptor.colorAttachments[0].pixelFormat = aaplView.metalLayer.pixelFormat
+            
+            pipelineStateDescriptor.depthAttachmentPixelFormat = .depth32Float_stencil8
+            pipelineStateDescriptor.stencilAttachmentPixelFormat = .depth32Float_stencil8
+            
+            stencilPipelineState = try! metalDevice.makeRenderPipelineState(descriptor: pipelineStateDescriptor)
+        }
 
         // A "flat" shader pipeline (no texture, just geometric colors)
-        let flatPipelineStateDescriptor = MTLRenderPipelineDescriptor()
-        flatPipelineStateDescriptor.vertexFunction = defaultLibrary.makeFunction(name: "flat_vertex")
-        flatPipelineStateDescriptor.fragmentFunction = defaultLibrary.makeFunction(name: "flat_fragment")
-        flatPipelineStateDescriptor.colorAttachments[0].pixelFormat = aaplView.metalLayer.pixelFormat
+        if true {
+            let pipelineStateDescriptor = MTLRenderPipelineDescriptor()
+            pipelineStateDescriptor.vertexFunction = defaultLibrary.makeFunction(name: "flat_vertex")
+            pipelineStateDescriptor.fragmentFunction = defaultLibrary.makeFunction(name: "flat_fragment")
+            pipelineStateDescriptor.colorAttachments[0].pixelFormat = aaplView.metalLayer.pixelFormat
 
-        flatPipelineStateDescriptor.colorAttachments[0].isBlendingEnabled = true
-        flatPipelineStateDescriptor.colorAttachments[0].rgbBlendOperation = .add
-        flatPipelineStateDescriptor.colorAttachments[0].alphaBlendOperation = .add
-        flatPipelineStateDescriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
-        flatPipelineStateDescriptor.colorAttachments[0].sourceAlphaBlendFactor = .sourceAlpha
-        flatPipelineStateDescriptor.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
-        flatPipelineStateDescriptor.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
-        
-        flatPipelineStateDescriptor.depthAttachmentPixelFormat = .depth32Float_stencil8
-        flatPipelineStateDescriptor.stencilAttachmentPixelFormat = .depth32Float_stencil8
-        
-        flatPipelineState = try! metalDevice.makeRenderPipelineState(descriptor: flatPipelineStateDescriptor)
+            pipelineStateDescriptor.colorAttachments[0].isBlendingEnabled = true
+            pipelineStateDescriptor.colorAttachments[0].rgbBlendOperation = .add
+            pipelineStateDescriptor.colorAttachments[0].alphaBlendOperation = .add
+            pipelineStateDescriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
+            pipelineStateDescriptor.colorAttachments[0].sourceAlphaBlendFactor = .sourceAlpha
+            pipelineStateDescriptor.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
+            pipelineStateDescriptor.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
+            
+            pipelineStateDescriptor.depthAttachmentPixelFormat = .depth32Float_stencil8
+            pipelineStateDescriptor.stencilAttachmentPixelFormat = .depth32Float_stencil8
+            
+            flatPipelineState = try! metalDevice.makeRenderPipelineState(descriptor: pipelineStateDescriptor)
+        }
         
         // A textured shader pipeline
-        let texturePipelineStateDescriptor = MTLRenderPipelineDescriptor()
-        texturePipelineStateDescriptor.vertexFunction = defaultLibrary.makeFunction(name: "textured_vertex")
-        texturePipelineStateDescriptor.fragmentFunction = defaultLibrary.makeFunction(name: "textured_fragment")
-        texturePipelineStateDescriptor.colorAttachments[0].pixelFormat = aaplView.metalLayer.pixelFormat
-        
-        texturePipelineStateDescriptor.colorAttachments[0].isBlendingEnabled = true
-        texturePipelineStateDescriptor.colorAttachments[0].rgbBlendOperation = .add
-        texturePipelineStateDescriptor.colorAttachments[0].alphaBlendOperation = .add
-        texturePipelineStateDescriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
-        texturePipelineStateDescriptor.colorAttachments[0].sourceAlphaBlendFactor = .sourceAlpha
-        texturePipelineStateDescriptor.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
-        texturePipelineStateDescriptor.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
-        
-        texturePipelineStateDescriptor.depthAttachmentPixelFormat = .depth32Float_stencil8
-        texturePipelineStateDescriptor.stencilAttachmentPixelFormat = .depth32Float_stencil8
-        
-        texturePipelineState = try! metalDevice.makeRenderPipelineState(descriptor: texturePipelineStateDescriptor)
+        if true {
+            let pipelineStateDescriptor = MTLRenderPipelineDescriptor()
+            pipelineStateDescriptor.vertexFunction = defaultLibrary.makeFunction(name: "textured_vertex")
+            pipelineStateDescriptor.fragmentFunction = defaultLibrary.makeFunction(name: "textured_fragment")
+            pipelineStateDescriptor.colorAttachments[0].pixelFormat = aaplView.metalLayer.pixelFormat
+            
+            pipelineStateDescriptor.colorAttachments[0].isBlendingEnabled = true
+            pipelineStateDescriptor.colorAttachments[0].rgbBlendOperation = .add
+            pipelineStateDescriptor.colorAttachments[0].alphaBlendOperation = .add
+            pipelineStateDescriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
+            pipelineStateDescriptor.colorAttachments[0].sourceAlphaBlendFactor = .sourceAlpha
+            pipelineStateDescriptor.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
+            pipelineStateDescriptor.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
+            
+            pipelineStateDescriptor.depthAttachmentPixelFormat = .depth32Float_stencil8
+            pipelineStateDescriptor.stencilAttachmentPixelFormat = .depth32Float_stencil8
+            
+            texturePipelineState = try! metalDevice.makeRenderPipelineState(descriptor: pipelineStateDescriptor)
+        }
         
         // A sdf shader pipeline
-        let sdfPipelineStateDescriptor = MTLRenderPipelineDescriptor()
-        sdfPipelineStateDescriptor.vertexFunction = defaultLibrary.makeFunction(name: "sdf_vertex")
-        sdfPipelineStateDescriptor.fragmentFunction = defaultLibrary.makeFunction(name: "sdf_fragment")
-        sdfPipelineStateDescriptor.colorAttachments[0].pixelFormat = aaplView.metalLayer.pixelFormat
-        
-        sdfPipelineStateDescriptor.colorAttachments[0].isBlendingEnabled = true
-        sdfPipelineStateDescriptor.colorAttachments[0].rgbBlendOperation = .add
-        sdfPipelineStateDescriptor.colorAttachments[0].alphaBlendOperation = .add
-        sdfPipelineStateDescriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
-        sdfPipelineStateDescriptor.colorAttachments[0].sourceAlphaBlendFactor = .sourceAlpha
-        sdfPipelineStateDescriptor.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
-        sdfPipelineStateDescriptor.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
-        
-        sdfPipelineStateDescriptor.depthAttachmentPixelFormat = .depth32Float_stencil8
-        sdfPipelineStateDescriptor.stencilAttachmentPixelFormat = .depth32Float_stencil8
-        
-        sdfPipelineState = try! metalDevice.makeRenderPipelineState(descriptor: sdfPipelineStateDescriptor)
+        if true {
+            let pipelineStateDescriptor = MTLRenderPipelineDescriptor()
+            pipelineStateDescriptor.vertexFunction = defaultLibrary.makeFunction(name: "sdf_vertex")
+            pipelineStateDescriptor.fragmentFunction = defaultLibrary.makeFunction(name: "sdf_fragment")
+            pipelineStateDescriptor.colorAttachments[0].pixelFormat = aaplView.metalLayer.pixelFormat
+            
+            pipelineStateDescriptor.colorAttachments[0].isBlendingEnabled = true
+            pipelineStateDescriptor.colorAttachments[0].rgbBlendOperation = .add
+            pipelineStateDescriptor.colorAttachments[0].alphaBlendOperation = .add
+            pipelineStateDescriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
+            pipelineStateDescriptor.colorAttachments[0].sourceAlphaBlendFactor = .sourceAlpha
+            pipelineStateDescriptor.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
+            pipelineStateDescriptor.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
+            
+            pipelineStateDescriptor.depthAttachmentPixelFormat = .depth32Float_stencil8
+            pipelineStateDescriptor.stencilAttachmentPixelFormat = .depth32Float_stencil8
+            
+            sdfPipelineState = try! metalDevice.makeRenderPipelineState(descriptor: pipelineStateDescriptor)
+        }
         
         
         // do not interpolate between mipmaps
@@ -256,7 +310,7 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             renderAheadCount += 1
             
             // uncomment to do performance testing on layout->render sequence
-            RenderEngineInternal_updateBounds(nil, Float(projectedSize.width) + Float(arc4random() % 20), Float(projectedSize.height) + Float(arc4random() % 20))
+            //RenderEngineInternal_updateBounds(nil, Float(projectedSize.width) + Float(arc4random() % 20), Float(projectedSize.height) + Float(arc4random() % 20))
             
             RenderEngineInternal_renderAll(nil)
                     
@@ -301,7 +355,6 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             modelViewMatrix = GLKMatrix4RotateX(modelViewMatrix, Float.pi)
             sceneMatrices.modelviewMatrix = modelViewMatrix
             
-            renderEncoder.setDepthStencilState(depthStencilState)
             renderEncoder.setVertexBytes(&sceneMatrices, length: MemoryLayout<SceneMatrices>.stride, index: 1)
             renderEncoder.setFragmentBytes(&sdfUniforms, length: MemoryLayout<SDFUniforms>.stride, index: 0)
             
@@ -310,16 +363,21 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             globalUniforms.globalColor.b = -9999
             globalUniforms.globalColor.a = -99999
             
+            stencilValueCount = stencilValueMax
+            renderEncoder.setDepthStencilState(ignoreStencilState)
+            
             var lastShaderType:UInt32 = 0
             while let unitPtr = RenderEngineInternal_nextRenderUnit(nil) {
                 let unit = unitPtr.pointee
                 
-                if unit.vertices == nil || unit.bytes_vertices == 0 || unit.num_vertices == 0 {
-                    continue
-                }
-                
                 if unit.textureName != nil {
                     renderEncoder.setFragmentTexture(getTexture(namePtr: unit.textureName), index: 0)
+                }
+                
+                if stencilValueCount == stencilValueMax {
+                    renderEncoder.setDepthStencilState(ignoreStencilState)
+                } else {
+                    renderEncoder.setDepthStencilState(testStencilState)
                 }
                                 
                 if lastShaderType != unit.shaderType {
@@ -334,7 +392,21 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
                     } else if lastShaderType == ShaderType_SDF {
                         renderEncoder.setRenderPipelineState(sdfPipelineState)
                         renderEncoder.setFragmentSamplerState(mipmapSamplerState, index:0)
-                   }
+                    } else if lastShaderType == ShaderType_Stencil_Begin {
+                        renderEncoder.setDepthStencilState(drawStencilState)
+                        renderEncoder.setRenderPipelineState(stencilPipelineState)
+                        renderEncoder.setFragmentSamplerState(normalSamplerState, index:0)
+                        stencilValueCount = stencilValueCount - 1
+                        renderEncoder.setStencilReferenceValue(UInt32(stencilValueCount))
+                        
+                    } else if lastShaderType == ShaderType_Stencil_End {
+                        stencilValueCount = max(stencilValueCount + 1, stencilValueMax)
+                        renderEncoder.setStencilReferenceValue(UInt32(stencilValueCount))
+                    }
+                }
+                
+                if unit.vertices == nil || unit.bytes_vertices == 0 || unit.num_vertices == 0 {
+                    continue
                 }
                 
                 drawRenderUnit(renderEncoder, unit)

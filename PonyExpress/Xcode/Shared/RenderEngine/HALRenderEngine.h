@@ -109,6 +109,17 @@ void RenderEngine_destroy(HALRenderContext * ctx);
 
 void RenderEngine_textureInfo(HALRenderContext * ctx, const char * textureName, float * width, float * height);
 
+void RenderEngine_pushClips(HALRenderContext * ctx,
+                            uint64_t frameNumber,
+                            uint64_t renderNumber,
+                            uint32_t num_vertices,
+                            void * vertices,
+                            uint32_t size_vertices_array);
+
+void RenderEngine_popClips(HALRenderContext * ctx,
+                           uint64_t frameNumber,
+                           uint64_t renderNumber);
+
 void RenderEngine_render(HALRenderContext * ctx,
                          uint64_t frameNumber,
                          uint64_t renderNumber,

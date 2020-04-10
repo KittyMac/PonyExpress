@@ -15,6 +15,8 @@ class YogaNode
   var last_bounds:R4 = R4fun.zero()
   var last_matrix:M4 = M4fun.id()
   
+  var _clips:Bool = false
+  
   fun _final() =>
     //@printf("_final called on yoga node [%d]\n".cstring(), node)
     @YGNodeFree(node)
@@ -86,9 +88,10 @@ class YogaNode
     frameContext.renderNumber = n
     frameContext.nodeID = id()
     
-    match _view
-    | let v:Viewable => v.viewable_start( frameContext.clone() )
-    | None => frameContext.engine.startFinished()
+    if _view as Viewable then
+      _view.viewable_start( frameContext.clone() )
+    else
+      frameContext.engine.startFinished()
     end
     
     for child in children.values() do
@@ -105,8 +108,8 @@ class YogaNode
     frameContext.matrix = last_matrix
     frameContext.nodeID = id()
     
-    match _view
-    | let v:Viewable => v.viewable_event( frameContext.clone(), anyEvent, last_bounds )
+    if _view as Viewable then
+      _view.viewable_event( frameContext.clone(), anyEvent, last_bounds )
     end
   
     for child in children.values() do
@@ -150,9 +153,18 @@ class YogaNode
     last_bounds = R4fun( -local_width/2, -local_height/2, local_width, local_height)
     last_matrix = local_matrix
     
-    match _view
-    | let v:Viewable => v.viewable_render( frameContext.clone(), last_bounds )
-    | None => frameContext.engine.renderFinished()
+    if _clips then
+      if _view as Viewable then
+        _view.viewable_pushClips( frameContext.clone(), last_bounds )
+        n = n + 1
+        frameContext.renderNumber = n
+      end
+    end
+    
+    if _view as Viewable then
+      _view.viewable_render( frameContext.clone(), last_bounds )
+    else
+      frameContext.engine.renderFinished()
     end
     
     local_matrix = M4fun.mul_m4(
@@ -164,6 +176,15 @@ class YogaNode
       n = child._renderRecursive(frameContext, local_matrix)
       frameContext.renderNumber = n
     end
+    
+    if _clips then
+      if _view as Viewable then
+        n = n + 1
+        frameContext.renderNumber = n
+        _view.viewable_popClips( frameContext.clone(), last_bounds )
+      end
+    end
+    
     n
   
   
@@ -172,6 +193,9 @@ class YogaNode
   
   fun ref name(name':String val) =>
     _name = name'
+  
+  fun ref clips(_clips':Bool) =>
+    _clips = _clips'
   
   fun ref fill() =>
     widthPercent(100)

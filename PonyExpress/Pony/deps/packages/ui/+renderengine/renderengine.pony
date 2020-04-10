@@ -31,6 +31,12 @@ class FrameContext
     matrix = matrix'
     nodeID = nodeID'
   
+  fun calcRenderNumber(frameContext:FrameContext val, partNum:U64, internalOffset:U64):U64 =>
+    // Each view receives 100 "render slots" for submitting geometry. The first 10 and the last 10
+    // of those render slots are reserved for internal use only (for things like stencil
+    // buffer clipping).
+    ((frameContext.renderNumber * 100) + (10 + partNum)) - internalOffset
+  
   fun clone():FrameContext val =>
     recover val
       FrameContext(engine, renderContext, nodeID, frameNumber, renderNumber, matrix)

@@ -4,8 +4,8 @@ use "utility"
 trait tag Viewable
   var engine:(RenderEngine|None) = None
   var nodeID:YogaNodeID = 0
-  var clips:Bool = false
   
+  var clippingGeometry:BufferedGeometry = BufferedGeometry
   
   // convert point from local coordinates to global coordinates
   fun transformPoint(frameContext:FrameContext val, point:V2):V2 =>
@@ -45,18 +45,47 @@ trait tag Viewable
     None
   
   be viewable_render(frameContext:FrameContext val, bounds:R4) =>
-    
-    if clips then
-      // TODO: send command to render bounds to stencil buffer
-      None
-    end
-    
-    render(frameContext, bounds)
-    
-    if clips then
-      // TODO: send command to stop using stencil buffer
-      None
-    end
-    
+    render(frameContext, bounds)    
     RenderPrimitive.renderFinished(frameContext)
   
+  
+  
+  
+  
+  be viewable_pushClips(frameContext:FrameContext val, bounds:R4) =>
+    
+    let geom = clippingGeometry.next()
+    let vertices = geom.vertices
+    
+    if geom.check(frameContext, bounds) == false then
+    
+      vertices.reserve(4 * 7)
+      vertices.clear()
+    
+      let x_min = R4fun.x_min(bounds)
+      let y_min = R4fun.y_min(bounds)
+      let x_max = R4fun.x_max(bounds)
+      let y_max = R4fun.y_max(bounds)
+    
+      RenderPrimitive.quadVC(frameContext,    vertices,   
+                             V3fun(x_min,  y_min, 0.0), 
+                             V3fun(x_max,  y_min, 0.0),
+                             V3fun(x_max,  y_max, 0.0),
+                             V3fun(x_min,  y_max, 0.0),
+                             RGBA.white() )
+    end
+    
+    @RenderEngine_pushClips(frameContext.renderContext,
+                            frameContext.frameNumber, 
+                            frameContext.calcRenderNumber(frameContext, 0, 1),
+                            vertices.size().u32(), 
+                            vertices.cpointer(),
+                            vertices.reserved().u32())
+    RenderPrimitive.renderFinished(frameContext)
+  
+  be viewable_popClips(frameContext:FrameContext val, bounds:R4) =>
+    @RenderEngine_popClips(frameContext.renderContext,
+                           frameContext.frameNumber, 
+                           frameContext.calcRenderNumber(frameContext, 0, 9) )
+    RenderPrimitive.renderFinished(frameContext)
+    

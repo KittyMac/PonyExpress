@@ -15,6 +15,16 @@ use @RenderEngine_render[None]( ctx:RenderContextRef tag,
                             globalB:F32, 
                             globalA:F32, 
                         textureName:Pointer[U8] tag)
+use @RenderEngine_pushClips[None](ctx:RenderContextRef tag,
+                          frameNumber:U64, 
+                         renderNumber:U64, 
+                          numVertices:U32,
+                             vertices:UnsafePointer[F32] tag, 
+                  size_vertices_array:U32)
+use @RenderEngine_popClips[None](ctx:RenderContextRef tag,
+                         frameNumber:U64, 
+                        renderNumber:U64)
+
 
 struct TextureInfo
   let image_width:U32 = 0
@@ -32,6 +42,7 @@ primitive RenderPrimitive
   """
   Rendering actors can call this concurrently safely to submit geometry to the platform rendering engine
   """
+  
   fun tag transform(frameContext:FrameContext val, v:V3):V3 =>
     M4fun.mul_v3_point_3x4(frameContext.matrix, v)
   
@@ -83,7 +94,7 @@ primitive RenderPrimitive
   fun tag renderCachedGeometry(frameContext:FrameContext val, partNum:U64, shaderType:U32, vertices:FloatAlignedArray, gc:RGBA val, t:Pointer[U8] tag) =>
     @RenderEngine_render( frameContext.renderContext,
                           frameContext.frameNumber,
-                          (frameContext.renderNumber * 100) + partNum,
+                          frameContext.calcRenderNumber(frameContext, partNum, 0),
                           shaderType, 
                           vertices.size().u32(), 
                           vertices.cpointer(),
