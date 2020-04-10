@@ -4,14 +4,14 @@ use "linal"
 type ImageModeType is U32
 
 primitive ImageMode
-  fun fill():ImageModeType => 0
-  fun aspectFit():ImageModeType => 1
-  fun aspectFill():ImageModeType => 2
-  fun stretch():ImageModeType => 3
+  let fill:ImageModeType = 0
+  let aspectFit:ImageModeType = 1
+  let aspectFill:ImageModeType = 2
+  let stretch:ImageModeType = 3
 
 trait Imageable is (Viewable & Colorable)
   var _textureName:String = ""
-  var _mode:ImageModeType = ImageMode.fill()
+  var _mode:ImageModeType = ImageMode.fill
   var _sizeToFit:Bool = false
   var stretch_insets:V4 = V4fun.zero()
   
@@ -23,19 +23,19 @@ trait Imageable is (Viewable & Colorable)
     bufferedGeometry.invalidate()
   
   be fill() =>
-    _mode = ImageMode.fill()
+    _mode = ImageMode.fill
     bufferedGeometry.invalidate()
   
   be aspectFit() =>
-    _mode = ImageMode.aspectFit()
+    _mode = ImageMode.aspectFit
     bufferedGeometry.invalidate()
   
   be aspectFill() =>
-    _mode = ImageMode.aspectFill()
+    _mode = ImageMode.aspectFill
     bufferedGeometry.invalidate()
   
   be stretch(top:F32, left:F32, bottom:F32, right:F32) =>
-    _mode = ImageMode.stretch()
+    _mode = ImageMode.stretch
     stretch_insets = V4fun(top, left, bottom, right)
     bufferedGeometry.invalidate()
     
@@ -61,7 +61,7 @@ trait Imageable is (Viewable & Colorable)
     imageable_render(frameContext, bounds)
   
   fun ref imageable_render(frameContext:FrameContext val, bounds:R4) =>
-    if _mode == ImageMode.stretch() then
+    if _mode == ImageMode.stretch then
       imageable_render_stretch(frameContext, bounds)
       return
     end
@@ -93,7 +93,7 @@ trait Imageable is (Viewable & Colorable)
       var t_max:F32 = 1.0
             
       match _mode
-      | ImageMode.aspectFit() =>
+      | ImageMode.aspectFit =>
         
         if image_aspect > bounds_aspect then
           let c = (y_min + y_max) / 2
@@ -107,7 +107,7 @@ trait Imageable is (Viewable & Colorable)
           x_max = c + (w / 2)
         end
         
-      | ImageMode.aspectFill() =>
+      | ImageMode.aspectFill =>
         
         let combined_aspect = (image_aspect / bounds_aspect)
         if combined_aspect > 1.0 then
@@ -135,7 +135,7 @@ trait Imageable is (Viewable & Colorable)
                               
     end
     
-    RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.textured(), vertices, RGBA.white(), _textureName.cpointer())
+    RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.textured, vertices, RGBA.white(), _textureName.cpointer())
 
 
   fun ref imageable_render_stretch(frameContext:FrameContext val, bounds:R4) =>
@@ -238,5 +238,5 @@ trait Imageable is (Viewable & Colorable)
                               V2fun(s_min, t_max) )
     end
     
-    RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.textured(), vertices, RGBA.white(), _textureName.cpointer())
+    RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.textured, vertices, RGBA.white(), _textureName.cpointer())
     

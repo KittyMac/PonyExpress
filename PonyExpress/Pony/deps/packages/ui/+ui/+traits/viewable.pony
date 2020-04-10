@@ -4,6 +4,7 @@ use "utility"
 trait tag Viewable
   var engine:(RenderEngine|None) = None
   var nodeID:YogaNodeID = 0
+  var clips:Bool = false
   
   
   // convert point from local coordinates to global coordinates
@@ -44,6 +45,18 @@ trait tag Viewable
     None
   
   be viewable_render(frameContext:FrameContext val, bounds:R4) =>
+    
+    if clips then
+      // TODO: send command to render bounds to stencil buffer
+      None
+    end
+    
     render(frameContext, bounds)
+    
+    if clips then
+      // TODO: send command to stop using stencil buffer
+      None
+    end
+    
     RenderPrimitive.renderFinished(frameContext)
   

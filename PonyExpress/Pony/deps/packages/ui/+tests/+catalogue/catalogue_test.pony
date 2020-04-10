@@ -6,8 +6,9 @@ primitive SwitchToButtons is Action
 primitive SwitchToImages is Action
 primitive SwitchToFonts is Action
 primitive SwitchToFonts2 is Action
+primitive SwitchToClips is Action
 
-type CatalogAction is (SwitchToColors | SwitchToButtons | SwitchToImages | SwitchToFonts | SwitchToFonts2)
+type CatalogAction is (SwitchToColors | SwitchToButtons | SwitchToImages | SwitchToFonts | SwitchToFonts2 | SwitchToClips)
   
 
 actor Catalog is Controllerable
@@ -32,6 +33,7 @@ actor Catalog is Controllerable
               menuButton("Images", font, SwitchToImages)
               menuButton("Fonts", font, SwitchToFonts)
               menuButton("Fonts2", font, SwitchToFonts2)
+              menuButton("Clip", font, SwitchToClips)
           ])
         
           // Panel
@@ -68,6 +70,7 @@ actor Catalog is Controllerable
         | SwitchToImages => ImageTest.load(renderEngine, "Panel")
         | SwitchToFonts => FontTest.load(renderEngine, "Panel")
         | SwitchToFonts2 => Font2Test.load(renderEngine, "Panel")
+        | SwitchToClips => ClipTest.load(renderEngine, "Panel")
         end
     end
     

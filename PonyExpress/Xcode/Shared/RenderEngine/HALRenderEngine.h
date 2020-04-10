@@ -40,6 +40,8 @@ extern void stopRuntimeAnalysis(bool killed);
 #define ShaderType_Flat 1
 #define ShaderType_Textured 2
 #define ShaderType_SDF 3
+#define ShaderType_Stencil_Begin 4
+#define ShaderType_Stencil_End 5
 
 typedef struct
 {

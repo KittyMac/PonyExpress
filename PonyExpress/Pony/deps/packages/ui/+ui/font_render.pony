@@ -4,20 +4,20 @@ use "stringext"
 
 type FontWrapType is U32
 primitive FontWrap
-  fun character():U32 => 0
-  fun word():U32 => 1
+  let character:U32 = 0
+  let word:U32 = 1
 
 type AlignmentType is U32
 primitive Alignment
-  fun left():U32 => 0
-  fun center():U32 => 1
-  fun right():U32 => 2
+  let left:U32 = 0
+  let center:U32 = 1
+  let right:U32 = 2
 
 type VerticalAlignmentType is U32
 primitive VerticalAlignment
-  fun top():U32 => 0
-  fun middle():U32 => 1
-  fun bottom():U32 => 2
+  let top:U32 = 0
+  let middle:U32 = 1
+  let bottom:U32 = 2
 
 
 struct GlyphRenderData
@@ -48,9 +48,9 @@ class FontRender
   var font:Font
   var fontSize:F32 = 18
   var fontColor:RGBA = RGBA.black()
-  var fontWrap:FontWrapType = FontWrap.word()
-  var fontAlignment:AlignmentType = Alignment.left()
-  var fontVerticalAlignment:VerticalAlignmentType = VerticalAlignment.middle()
+  var fontWrap:FontWrapType = FontWrap.word
+  var fontAlignment:AlignmentType = Alignment.left
+  var fontVerticalAlignment:VerticalAlignmentType = VerticalAlignment.middle
 
   var bufferedGeometry:BufferedGeometry = BufferedGeometry
   
@@ -87,7 +87,7 @@ class FontRender
     let bounds_xmax = R4fun.x_max(bounds)
     
     let space_advance = fontAtlas.space_advance.f32() * fontSize
-    var localWrap = FontWrap.character()
+    var localWrap = FontWrap.character
     
     let zeroGlyph = GlyphRenderData.zero()
         
@@ -151,7 +151,7 @@ class FontRender
         
         // if drawing this glyph will exceed the width of our draw box...
         if (x + w) >= bounds_xmax then
-          if localWrap == FontWrap.word() then
+          if localWrap == FontWrap.word then
             pen_x = end_of_word_pen_x
             i = start_of_word_index
           else
@@ -226,9 +226,9 @@ class FontRender
       (let renderWidth, let next_index) = measureNextTextLine(text, start_index, pen, bounds)
       
       let x_off:F32 = (match fontAlignment
-      | Alignment.left() => 0
-      | Alignment.center() => ((bounds_xmax - bounds_xmin) - renderWidth) / 2.0
-      | Alignment.right() => ((bounds_xmax - bounds_xmin) - renderWidth)
+      | Alignment.left => 0
+      | Alignment.center => ((bounds_xmax - bounds_xmin) - renderWidth) / 2.0
+      | Alignment.right => ((bounds_xmax - bounds_xmin) - renderWidth)
       else 0.0 end).max(0.0)
 
       
@@ -247,9 +247,9 @@ class FontRender
     let renderHeight = pen._2 - (bounds_ymin + fontSize)
     
     let y_off:F32 = (match fontVerticalAlignment
-    | VerticalAlignment.top() => 0
-    | VerticalAlignment.middle() => ((bounds_ymax - bounds_ymin) - renderHeight) / 2.0
-    | VerticalAlignment.bottom() => ((bounds_ymax - bounds_ymin) - renderHeight)
+    | VerticalAlignment.top => 0
+    | VerticalAlignment.middle => ((bounds_ymax - bounds_ymin) - renderHeight) / 2.0
+    | VerticalAlignment.bottom => ((bounds_ymax - bounds_ymin) - renderHeight)
     else 0.0 end).max(0.0)
             
     // commit all glyphs in glyphRenderData to geometry

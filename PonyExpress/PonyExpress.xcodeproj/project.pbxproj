@@ -207,8 +207,8 @@
 			children = (
 				46F3A679243D01440030287A /* avl_tree.c */,
 				46F3A67A243D01440030287A /* avl_tree.h */,
-				46F3A67B243D01440030287A /* HALRenderEngine.c */,
 				46F3A67C243D01440030287A /* HALRenderEngine.h */,
+				46F3A67B243D01440030287A /* HALRenderEngine.c */,
 			);
 			path = RenderEngine;
 			sourceTree = "<group>";
@@ -488,7 +488,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd ./Pony/app\ntime make framework osx\n";
+			shellScript = "cd ./Pony/app\necho \"note: Building Pony\"\ntime make framework osx\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

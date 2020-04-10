@@ -23,10 +23,10 @@ struct TextureInfo
   let texture_height:U32 = 0
     
 primitive ShaderType
-  fun finished():U32 => 0
-  fun flat():U32 => 1
-  fun textured():U32 => 2
-  fun sdf():U32 => 3
+  let finished:U32 = 0
+  let flat:U32 = 1
+  let textured:U32 = 2
+  let sdf:U32 = 3
 
 primitive RenderPrimitive
   """

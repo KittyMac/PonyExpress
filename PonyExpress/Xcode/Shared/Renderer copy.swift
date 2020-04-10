@@ -421,7 +421,7 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             let name = String(cString: namePtr)
             let resolvedName = fileURLFromBundlePath(name)
                         
-            // This doesn't like being multi-threaded, because we use dictionary cache. So lock and then check again before loading
+            // If not, MTKTextureLoader doesn't like being multi-threaded. So lock and then check again before loading
             objc_sync_enter(self)
             defer {
                 objc_sync_exit(self)
@@ -431,6 +431,7 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             if texture != nil {
                 return texture
             }
+            
             
             let textureLoaderOptions = [
                 MTKTextureLoader.Option.textureUsage: NSNumber(value: MTLTextureUsage.shaderRead.rawValue),
@@ -455,7 +456,7 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
         // "documents://landscape_desert.jpg"
         // "caches://landscape_desert.jpg"
         
-        // This doesn't like being multi-threaded, because we use dictionary cache. So lock and then check again before loading
+        // If not, this doesn't like being multi-threaded. So lock and then check again before loading
         objc_sync_enter(self)
         defer {
             objc_sync_exit(self)

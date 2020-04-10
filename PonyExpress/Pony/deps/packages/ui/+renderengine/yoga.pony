@@ -199,7 +199,24 @@ class YogaNode
   fun ref flexBasisPercent(v:F32) => @YGNodeStyleSetFlexBasisPercent(node, v)
   fun ref flexAuto() => @YGNodeStyleSetFlexBasisAuto(node)
   
+  fun ref origin(x:F32, y:F32) => @YGNodeStyleSetPosition(node, YGEdge.left, x); @YGNodeStyleSetPosition(node, YGEdge.top, y)
+  
+  fun ref top(p:F32) => @YGNodeStyleSetPosition(node, YGEdge.top, p)
+  fun ref left(p:F32) => @YGNodeStyleSetPosition(node, YGEdge.left, p)
+  fun ref bottom(p:F32) => @YGNodeStyleSetPosition(node, YGEdge.bottom, p)
+  fun ref right(p:F32) => @YGNodeStyleSetPosition(node, YGEdge.right, p)
+  
   fun ref position(v1:U32, v2:F32) => @YGNodeStyleSetPosition(node, v1, v2)
+  
+  
+  fun ref originPercent(x:F32, y:F32) => @YGNodeStyleSetPositionPercent(node, YGEdge.left, x); @YGNodeStyleSetPositionPercent(node, YGEdge.top, y)
+  
+  fun ref topPercent(p:F32) => @YGNodeStyleSetPositionPercent(node, YGEdge.top, p)
+  fun ref leftPercent(p:F32) => @YGNodeStyleSetPositionPercent(node, YGEdge.left, p)
+  fun ref bottomPercent(p:F32) => @YGNodeStyleSetPositionPercent(node, YGEdge.bottom, p)
+  fun ref rightPercent(p:F32) => @YGNodeStyleSetPositionPercent(node, YGEdge.right, p)
+  
+  
   fun ref positionPercent(v1:U32, v2:F32) => @YGNodeStyleSetPositionPercent(node, v1, v2)
   
   fun ref margin(v1:U32, v2:F32) => @YGNodeStyleSetMargin(node, v1, v2)

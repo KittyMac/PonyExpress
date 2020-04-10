@@ -144,8 +144,6 @@ unlimited access.
 */
 typedef struct AmbientAuth AmbientAuth;
 
-typedef struct ui_ShaderType ui_ShaderType;
-
 typedef struct t4_t4_F32_val_F32_val_F32_val_F32_val_t4_F32_val_F32_val_F32_val_F32_val_t4_F32_val_F32_val_F32_val_F32_val_t4_F32_val_F32_val_F32_val_F32_val t4_t4_F32_val_F32_val_F32_val_F32_val_t4_F32_val_F32_val_F32_val_F32_val_t4_F32_val_F32_val_F32_val_F32_val_t4_F32_val_F32_val_F32_val_F32_val;
 
 /*
@@ -870,15 +868,6 @@ bool PlatformOSX_box__use_main_thread_b(PlatformOSX* self);
 
 /* Allocate a AmbientAuth without initialising it. */
 AmbientAuth* AmbientAuth_Alloc(void);
-
-/* Allocate a ui_ShaderType without initialising it. */
-ui_ShaderType* ui_ShaderType_Alloc(void);
-
-ui_ShaderType* ui_ShaderType_val_create_o(ui_ShaderType* self);
-
-uint32_t ui_ShaderType_val_finished_I(ui_ShaderType* self);
-
-uint32_t ui_ShaderType_box_finished_I(ui_ShaderType* self);
 
 bool USize_val_le_Zb(size_t self, size_t y);
 
