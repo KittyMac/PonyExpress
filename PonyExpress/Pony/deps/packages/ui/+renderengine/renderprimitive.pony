@@ -23,7 +23,10 @@ use @RenderEngine_pushClips[None](ctx:RenderContextRef tag,
                   size_vertices_array:U32)
 use @RenderEngine_popClips[None](ctx:RenderContextRef tag,
                          frameNumber:U64, 
-                        renderNumber:U64)
+                        renderNumber:U64,
+                         numVertices:U32,
+                            vertices:UnsafePointer[F32] tag, 
+                 size_vertices_array:U32)
 
 
 struct TextureInfo

@@ -40,8 +40,9 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
     private var metalCommandQueue: MTLCommandQueue!
     
     private var ignoreStencilState: MTLDepthStencilState!
-    private var drawStencilState: MTLDepthStencilState!
+    private var decrementStencilState: MTLDepthStencilState!
     private var testStencilState: MTLDepthStencilState!
+    private var incrementStencilState: MTLDepthStencilState!
     
     private var stencilPipelineState: MTLRenderPipelineState!
     private var flatPipelineState: MTLRenderPipelineState!
@@ -106,10 +107,10 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
         // render to the stencil buffer, don't render to the color attachment
         if true {
             let stencilDescriptor = MTLStencilDescriptor()
-            stencilDescriptor.stencilCompareFunction = .always
-            stencilDescriptor.stencilFailureOperation = .replace
-            stencilDescriptor.depthFailureOperation = .replace
-            stencilDescriptor.depthStencilPassOperation = .replace
+            stencilDescriptor.stencilCompareFunction = .equal
+            stencilDescriptor.stencilFailureOperation = .keep
+            stencilDescriptor.depthFailureOperation = .keep
+            stencilDescriptor.depthStencilPassOperation = .decrementClamp
             stencilDescriptor.readMask = 0x00
             stencilDescriptor.writeMask = 0xFF
             
@@ -119,7 +120,26 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             depthStencilDescriptor.frontFaceStencil = stencilDescriptor
             depthStencilDescriptor.backFaceStencil = stencilDescriptor
 
-            drawStencilState = metalDevice.makeDepthStencilState(descriptor: depthStencilDescriptor)
+            decrementStencilState = metalDevice.makeDepthStencilState(descriptor: depthStencilDescriptor)
+        }
+        
+        // unrender from the stencil buffer, don't render to the color attachment
+        if true {
+            let stencilDescriptor = MTLStencilDescriptor()
+            stencilDescriptor.stencilCompareFunction = .equal
+            stencilDescriptor.stencilFailureOperation = .keep
+            stencilDescriptor.depthFailureOperation = .keep
+            stencilDescriptor.depthStencilPassOperation = .incrementClamp
+            stencilDescriptor.readMask = 0x00
+            stencilDescriptor.writeMask = 0xFF
+            
+            let depthStencilDescriptor = MTLDepthStencilDescriptor()
+            depthStencilDescriptor.depthCompareFunction = .lessEqual
+            depthStencilDescriptor.isDepthWriteEnabled = false
+            depthStencilDescriptor.frontFaceStencil = stencilDescriptor
+            depthStencilDescriptor.backFaceStencil = stencilDescriptor
+
+            incrementStencilState = metalDevice.makeDepthStencilState(descriptor: depthStencilDescriptor)
         }
         
         // ignore stencil state: normal rendering while ignoring the stencil buffer
@@ -330,7 +350,7 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
                     stencilAttachment.texture = depthAttachment.texture
                     stencilAttachment.storeAction = .dontCare
                     stencilAttachment.loadAction = .clear
-                    stencilAttachment.clearStencil = 0
+                    stencilAttachment.clearStencil = 255
                 }
             }
                 
@@ -364,11 +384,12 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             globalUniforms.globalColor.a = -99999
             
             stencilValueCount = stencilValueMax
+            renderEncoder.setStencilReferenceValue(UInt32(stencilValueCount))
             renderEncoder.setDepthStencilState(ignoreStencilState)
             
-            var lastShaderType:UInt32 = 0
             while let unitPtr = RenderEngineInternal_nextRenderUnit(nil) {
                 let unit = unitPtr.pointee
+                let shaderType = unit.shaderType
                 
                 if unit.textureName != nil {
                     renderEncoder.setFragmentTexture(getTexture(namePtr: unit.textureName), index: 0)
@@ -380,36 +401,38 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
                     renderEncoder.setDepthStencilState(testStencilState)
                 }
                                 
-                if lastShaderType != unit.shaderType {
-                    lastShaderType = unit.shaderType
                     
-                    if lastShaderType == ShaderType_Flat {
-                        renderEncoder.setRenderPipelineState(flatPipelineState)
-                        renderEncoder.setFragmentSamplerState(normalSamplerState, index:0)
-                    } else if lastShaderType == ShaderType_Textured {
-                        renderEncoder.setRenderPipelineState(texturePipelineState)
-                        renderEncoder.setFragmentSamplerState(normalSamplerState, index:0)
-                    } else if lastShaderType == ShaderType_SDF {
-                        renderEncoder.setRenderPipelineState(sdfPipelineState)
-                        renderEncoder.setFragmentSamplerState(mipmapSamplerState, index:0)
-                    } else if lastShaderType == ShaderType_Stencil_Begin {
-                        renderEncoder.setDepthStencilState(drawStencilState)
-                        renderEncoder.setRenderPipelineState(stencilPipelineState)
-                        renderEncoder.setFragmentSamplerState(normalSamplerState, index:0)
-                        stencilValueCount = stencilValueCount - 1
-                        renderEncoder.setStencilReferenceValue(UInt32(stencilValueCount))
-                        
-                    } else if lastShaderType == ShaderType_Stencil_End {
-                        stencilValueCount = max(stencilValueCount + 1, stencilValueMax)
-                        renderEncoder.setStencilReferenceValue(UInt32(stencilValueCount))
-                    }
+                if shaderType == ShaderType_Flat {
+                    renderEncoder.setRenderPipelineState(flatPipelineState)
+                    renderEncoder.setFragmentSamplerState(normalSamplerState, index:0)
+                } else if shaderType == ShaderType_Textured {
+                    renderEncoder.setRenderPipelineState(texturePipelineState)
+                    renderEncoder.setFragmentSamplerState(normalSamplerState, index:0)
+                } else if shaderType == ShaderType_SDF {
+                    renderEncoder.setRenderPipelineState(sdfPipelineState)
+                    renderEncoder.setFragmentSamplerState(mipmapSamplerState, index:0)
+                } else if shaderType == ShaderType_Stencil_Begin {
+                    renderEncoder.setDepthStencilState(decrementStencilState)
+                    renderEncoder.setRenderPipelineState(stencilPipelineState)
+                    renderEncoder.setFragmentSamplerState(normalSamplerState, index:0)
+                } else if shaderType == ShaderType_Stencil_End {
+                    renderEncoder.setDepthStencilState(incrementStencilState)
+                    renderEncoder.setRenderPipelineState(stencilPipelineState)
+                    renderEncoder.setFragmentSamplerState(normalSamplerState, index:0)
                 }
                 
-                if unit.vertices == nil || unit.bytes_vertices == 0 || unit.num_vertices == 0 {
-                    continue
+                if unit.vertices != nil && unit.bytes_vertices != 0 && unit.num_vertices != 0 {
+                    drawRenderUnit(renderEncoder, unit)
                 }
                 
-                drawRenderUnit(renderEncoder, unit)
+                if shaderType == ShaderType_Stencil_Begin {
+                    stencilValueCount = max(stencilValueCount - 1, 0)
+                    renderEncoder.setStencilReferenceValue(UInt32(stencilValueCount))
+                }
+                if shaderType == ShaderType_Stencil_End {
+                    stencilValueCount = min(stencilValueCount + 1, stencilValueMax)
+                    renderEncoder.setStencilReferenceValue(UInt32(stencilValueCount))
+                }
             }
             RenderEngineInternal_frameFinished(nil)
             
@@ -448,6 +471,9 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             globalUniforms.globalColor.g = unit.globalG
             globalUniforms.globalColor.b = unit.globalB
             globalUniforms.globalColor.a = unit.globalA
+            
+            
+            // TODO: replace this with setBlendColor(red: Float, green: Float, blue: Float, alpha: Float)????
             
             renderEncoder.setVertexBytes(&globalUniforms, length: MemoryLayout<GlobalUniforms>.stride, index: 2)
         }

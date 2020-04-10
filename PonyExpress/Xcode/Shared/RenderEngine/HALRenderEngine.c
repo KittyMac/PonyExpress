@@ -132,15 +132,18 @@ void RenderEngine_pushClips(HALRenderContext * ctx,
 
 void RenderEngine_popClips(HALRenderContext * ctx,
                            uint64_t frameNumber,
-                           uint64_t renderNumber)
+                           uint64_t renderNumber,
+                           uint32_t num_vertices,
+                           void * vertices,
+                           uint32_t size_vertices_array)
 {
     RenderEngine_render(ctx,
                         frameNumber,
                         renderNumber,
                         ShaderType_Stencil_End,
-                        0,
-                        NULL,
-                        0,
+                        num_vertices,
+                        vertices,
+                        size_vertices_array,
                         1.0,
                         1.0,
                         1.0,
@@ -183,6 +186,8 @@ void RenderEngine_render(HALRenderContext * ctx,
             unit->num_vertices = 0;
             break;
         case ShaderType_Flat:
+        case ShaderType_Stencil_Begin:
+        case ShaderType_Stencil_End:
             unit->bytes_per_vertex = sizeof(float) * 7;
             unit->bytes_vertices = num_vertices * unit->bytes_per_vertex;
             unit->num_vertices = num_vertices / 7;
@@ -196,16 +201,6 @@ void RenderEngine_render(HALRenderContext * ctx,
             unit->bytes_per_vertex = sizeof(float) * 5;
             unit->bytes_vertices = num_vertices * unit->bytes_per_vertex;
             unit->num_vertices = num_vertices / 5;
-            break;
-        case ShaderType_Stencil_Begin:
-            unit->bytes_per_vertex = sizeof(float) * 7;
-            unit->bytes_vertices = num_vertices * unit->bytes_per_vertex;
-            unit->num_vertices = num_vertices / 7;
-            break;
-        case ShaderType_Stencil_End:
-            unit->bytes_vertices = 0;
-            unit->bytes_per_vertex = 0;
-            unit->num_vertices = 0;
             break;
     }
     unit->bytes_vertices = RenderEngine_alignedSize(unit->bytes_vertices);

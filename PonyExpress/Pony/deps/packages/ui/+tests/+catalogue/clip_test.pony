@@ -38,11 +38,36 @@ actor ClipTest is Controllerable
                                 
                                 YogaNode.>width(100)
                                         .>height(100)
+                                        .>clips(true)
                                         .>originPercent(-75, -75)
                                         .>view( Color.>blue().>alpha(0.25) )
                                 
                               )
                     
               )
+              
+              YogaNode.>width(100)
+                      .>height(100)
+                      .>left(100)
+                      .>clips(true)
+                      .>view( Color.>red().>alpha(0.25) )
+                      .>addChild(
+                    
+                        YogaNode.>width(100)
+                                .>height(100)
+                                .>clips(true)
+                                .>originPercent(50, 50)
+                                .>view( Color.>green().>alpha(0.25) )
+                                .>addChild(
+                                
+                                  YogaNode.>width(100)
+                                          .>height(100)
+                                          .>clips(true)
+                                          .>originPercent(-75, -75)
+                                          .>view( Color.>blue().>alpha(0.25) )
+                                
+                                )
+                    
+                )
           ])
       end
