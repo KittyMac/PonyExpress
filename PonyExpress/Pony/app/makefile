@@ -34,9 +34,9 @@ libponyrt_header2="/src/common/pony/detail/atomics.h"
 
 
 define copy_framework_package
-    @cp -R $(framework_ponydir)/$(1)/$(2) $(deps_packagesdir)
-		@if [ "$(3)" ]; then cp $(framework_ponydir)/$(1)/lib/$(3) $(deps_libdir_ios); fi
-		@if [ "$(4)" ]; then cp $(framework_ponydir)/$(1)/lib/$(4) $(deps_libdir_osx); fi
+    @cp -p -R $(framework_ponydir)/$(1)/$(2) $(deps_packagesdir)
+		@if [ "$(3)" ]; then cp -p $(framework_ponydir)/$(1)/lib/$(3) $(deps_libdir_ios); fi
+		@if [ "$(4)" ]; then cp -p $(framework_ponydir)/$(1)/lib/$(4) $(deps_libdir_osx); fi
 endef
 
 
@@ -54,7 +54,7 @@ build_ios:
 
 build_library_ios:
 	@$(iphonesdk_libtool) -static $(builddir)/*.o -o $(deps_libdir_ios)/lib$(product_name)-ios.a
-	cp $(builddir)/$(product_name).h $(deps_includedir_ios)/$(product_name).h
+	cp -p $(builddir)/$(product_name).h $(deps_includedir_ios)/$(product_name).h
 
 
 osx: confirm build_osx build_library_osx
@@ -64,7 +64,7 @@ build_osx:
 
 build_library_osx:
 	@$(iphonesdk_libtool) -static $(builddir)/*.o -o $(deps_libdir_osx)/lib$(product_name)-osx.a
-	cp $(builddir)/$(product_name).h $(deps_includedir_osx)/$(product_name).h
+	cp -p $(builddir)/$(product_name).h $(deps_includedir_osx)/$(product_name).h
 
 confirm:
 	@mkdir -p $(builddir)
@@ -95,16 +95,16 @@ framework_packages: confirm
 .PHONY: confirm
 
 framework_ponyc:
-	@cp -r $(framework_ponydir)/ponyc/build $(ponycdir)
-	@cp -r $(framework_ponydir)/ponyc/packages $(ponycdir)
+	@cp -p -r $(framework_ponydir)/ponyc/build $(ponycdir)
+	@cp -p -r $(framework_ponydir)/ponyc/packages $(ponycdir)
 	
-	@cp $(framework_ponydir)/ponyc/$(libponyrt_ios_library) $(deps_libdir_ios)/libponyrt-ios.a
-	@cp $(framework_ponydir)/ponyc/$(libponyrt_osx_library) $(deps_libdir_osx)/libponyrt-osx.a
+	@cp -p $(framework_ponydir)/ponyc/$(libponyrt_ios_library) $(deps_libdir_ios)/libponyrt-ios.a
+	@cp -p $(framework_ponydir)/ponyc/$(libponyrt_osx_library) $(deps_libdir_osx)/libponyrt-osx.a
 	
 	@sed "s/<pony\/detail\/atomics.h>/\"atomics.h\"/" $(framework_ponydir)/ponyc/$(libponyrt_header1) > $(deps_includedir_ios)/pony.h
 	@sed "s/<pony\/detail\/atomics.h>/\"atomics.h\"/" $(framework_ponydir)/ponyc/$(libponyrt_header1) > $(deps_includedir_osx)/pony.h
-	@cp $(framework_ponydir)/ponyc/$(libponyrt_header2) $(deps_includedir_ios)/
-	@cp $(framework_ponydir)/ponyc/$(libponyrt_header2) $(deps_includedir_osx)/
+	@cp -p $(framework_ponydir)/ponyc/$(libponyrt_header2) $(deps_includedir_ios)/
+	@cp -p $(framework_ponydir)/ponyc/$(libponyrt_header2) $(deps_includedir_osx)/
 	
 	
 ifeq ("$(USER)", "rjbowli")
