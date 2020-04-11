@@ -256,7 +256,7 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
                 
         super.init()
         
-        depthTexture = getDepthTexture()
+        depthTexture = getDepthTexture(size:CGSize(width: 128, height: 128))
         
         aaplView.delegate = self
         
@@ -310,7 +310,7 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             
             RenderEngineInternal_updateBounds(nil, Float(projectedSize.width), Float(projectedSize.height))
             
-            depthTexture = getDepthTexture()
+            depthTexture = getDepthTexture(size:size)
             
             //print("\(projectedSize.width) x \(projectedSize.height)")
         }
@@ -493,16 +493,16 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
         renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: Int(unit.num_vertices))
     }
     
-    func getDepthTexture() -> MTLTexture {
+    func getDepthTexture(size:CGSize) -> MTLTexture {
         
         var textureWidth:Int = 128
         var textureHeight:Int = 128
         
-        if projectedSize.width > 0 {
-            textureWidth = Int(projectedSize.width)
+        if size.width > 0 {
+            textureWidth = Int(size.width)
         }
-        if projectedSize.height > 0 {
-            textureHeight = Int(projectedSize.height)
+        if size.height > 0 {
+            textureHeight = Int(size.height)
         }
         
         let desc = MTLTextureDescriptor.texture2DDescriptor(

@@ -21,6 +21,8 @@ typedef struct ui_NullEvent ui_NullEvent;
 
 typedef struct ui_RGBA ui_RGBA;
 
+typedef struct StringEncoding StringEncoding;
+
 /*
 Contiguous, resizable memory to store elements of type A.
 
@@ -761,7 +763,7 @@ ui_RGBA* ui_RGBA_Alloc(void);
 
 /*
 string format a vector*/
-String* ui_RGBA_box_string_o(ui_RGBA* self);
+String* ui_RGBA_ref_string_o(ui_RGBA* self);
 
 /*
 string format a vector*/
@@ -769,9 +771,18 @@ String* ui_RGBA_val_string_o(ui_RGBA* self);
 
 /*
 string format a vector*/
-String* ui_RGBA_ref_string_o(ui_RGBA* self);
+String* ui_RGBA_box_string_o(ui_RGBA* self);
 
 ui_RGBA* ui_RGBA_val_white_o(ui_RGBA* self);
+
+/* Allocate a StringEncoding without initialising it. */
+StringEncoding* StringEncoding_Alloc(void);
+
+StringEncoding* StringEncoding_val_create_o(StringEncoding* self);
+
+uint32_t StringEncoding_val_utf8_I(StringEncoding* self);
+
+uint32_t StringEncoding_box_utf8_I(StringEncoding* self);
 
 /* Allocate a Array_String_val without initialising it. */
 Array_String_val* Array_String_val_Alloc(void);
@@ -977,6 +988,10 @@ String* U32_box_string_o(uint32_t self);
 uint32_t U32_val_add_II(uint32_t self, uint32_t y);
 
 uint32_t U32_box_add_II(uint32_t self, uint32_t y);
+
+uint32_t U32_box_neg_I(uint32_t self);
+
+uint32_t U32_val_neg_I(uint32_t self);
 
 uint32_t U32_val_create_II(uint32_t self, uint32_t value);
 
@@ -1391,6 +1406,10 @@ bool I8_val_lt_cb(int8_t self, int8_t y);
 
 bool I8_box_lt_cb(int8_t self, int8_t y);
 
+bool U64_box_le_Wb(uint64_t self, uint64_t y);
+
+bool U64_val_le_Wb(uint64_t self, uint64_t y);
+
 uint64_t U64_val_u64_W(uint64_t self);
 
 uint64_t U64_box_u64_W(uint64_t self);
@@ -1772,6 +1791,11 @@ A null pointer.
 */
 ui_YogaNode** Pointer_ui_YogaNode_ref_ref_create_o(ui_YogaNode** self);
 
+/*
+A null pointer.
+*/
+None** Pointer_None_val_ref_create_o(None** self);
+
 /* Allocate a ui_Geometry without initialising it. */
 ui_Geometry* ui_Geometry_Alloc(void);
 
@@ -1836,6 +1860,8 @@ ui_RenderEngine* ui_RenderEngine_tag_empty_o__send(ui_RenderEngine* self);
 uint32_t ui_RenderEngine_box__batch_I(ui_RenderEngine* self);
 
 None* ui_RenderEngine_tag_setNeedsRendered_o__send(ui_RenderEngine* self);
+
+None* ui_RenderEngine_ref_markRenderFinished_o(ui_RenderEngine* self);
 
 None* ui_RenderEngine_ref_layout_o(ui_RenderEngine* self);
 
@@ -2545,11 +2571,11 @@ None* ui_RenderPrimitive_box_startFinished_oo(ui_RenderPrimitive* self, ui_Frame
 /* Allocate a ui_$2$17 without initialising it. */
 ui_$2$17* ui_$2$17_Alloc(void);
 
-bool ui_$2$17_box_apply_ob(ui_$2$17* self, ui_YogaNode* p1);
+bool ui_$2$17_box_apply_ob(ui_$2$17* self, void* p1);
 
-bool ui_$2$17_val_apply_ob(ui_$2$17* self, ui_YogaNode* p1);
+bool ui_$2$17_val_apply_ob(ui_$2$17* self, void* p1);
 
-bool ui_$2$17_ref_apply_ob(ui_$2$17* self, ui_YogaNode* p1);
+bool ui_$2$17_ref_apply_ob(ui_$2$17* self, void* p1);
 
 bool Bool_box_op_and_bb(bool self, bool y);
 

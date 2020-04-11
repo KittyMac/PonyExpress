@@ -10,7 +10,7 @@ use @RenderEngine_destroy[None](ctx:RenderContextRef tag)
 primitive RenderContext
 type RenderContextRef is Pointer[RenderContext]
 
-type GetYogaNodeCallback is {(YogaNode ref):Bool} val
+type GetYogaNodeCallback is {((YogaNode ref | None)):Bool} val
 
 
 // Context passed to all views when they are told to render. It contains information
@@ -89,12 +89,13 @@ actor@ RenderEngine
   
   var frameNumber:U64 = 0
   var waitingOnViewsToRender:U64 = 0
+  var waitingOnViewsToStart:U64 = 0
   
   var variable_cpu_throttle:U64 = 25
   
   fun _tag():U32 => 2002
   fun _batch():U32 => 5_000_000
-  fun _prioritiy():U32 => 999
+  fun _prioritiy():U32 => -1
   
   fun tag root():String val => "Root"
   
@@ -135,16 +136,10 @@ actor@ RenderEngine
     handleNewNodeAdded()
   
   be getNodeByName(nodeName:String val, callback:GetYogaNodeCallback) =>
-    let found_node = node.getNodeByName(nodeName)
-    if found_node as YogaNode then
-      layoutNeeded = callback(found_node) or layoutNeeded
-    end
+    layoutNeeded = callback(node.getNodeByName(nodeName)) or layoutNeeded
   
   be getNodeByID(id:YogaNodeID, callback:GetYogaNodeCallback) =>
-    let found_node = node.getNodeByID(id)
-    if found_node as YogaNode then
-      layoutNeeded = callback(found_node) or layoutNeeded
-    end
+    layoutNeeded = callback(node.getNodeByID(id)) or layoutNeeded
   
   be updateBounds(w:F32, h:F32) =>
     // update the size of my node to match the window, then relayout everything
@@ -156,17 +151,22 @@ actor@ RenderEngine
     renderNeeded = true
     node.layout()
     //node.print()
+  
+  fun ref markRenderFinished() =>
+    @RenderEngine_render(renderContext, frameNumber, U64.max_value(), ShaderType.finished, 0, UnsafePointer[F32], 0, 1.0, 1.0, 1.0, 1.0, Pointer[U8])
     
   be renderAll() =>
     // run through all yoga nodes and render their associated views
     // keep track of how many views were told to render so we can know when they're all done
-    
+        
     if startNeeded then
-      if (waitingOnViewsToRender == 0) then
+      if (waitingOnViewsToStart == 0) then
         let frameContext = FrameContext(this, renderContext, node.id(), 0, 0, M4fun.id())
-        waitingOnViewsToRender = node.start(frameContext)
+        waitingOnViewsToStart = node.start(frameContext)
         startNeeded = false
       else
+        Log.println("startNeeded required but waitingOnViewsToStart is not 0 (is it %s) \n", waitingOnViewsToStart)
+        markRenderFinished()
         return
       end
     end
@@ -183,7 +183,7 @@ actor@ RenderEngine
       let frameContext = FrameContext(this, renderContext, node.id(), frameNumber, 0, M4fun.id())
       waitingOnViewsToRender = node.render(frameContext)
     else
-      @RenderEngine_render(renderContext, frameNumber, U64.max_value(), ShaderType.finished, 0, UnsafePointer[F32], 0, 1.0, 1.0, 1.0, 1.0, Pointer[U8])
+      markRenderFinished()
     end
   
   be setNeedsRendered() =>
@@ -194,23 +194,23 @@ actor@ RenderEngine
   
   
   be startFinished() =>
-    if waitingOnViewsToRender == 0 then
-      Log.println("Error: startFinished called but waitingOnViewsToRender is 0")
+    if waitingOnViewsToStart <= 0 then
+      waitingOnViewsToStart = 0
     else
-      waitingOnViewsToRender = waitingOnViewsToRender - 1
-      if waitingOnViewsToRender == 0 then
+      waitingOnViewsToStart = waitingOnViewsToStart - 1
+      if waitingOnViewsToStart == 0 then
         layoutNeeded = true
       end
     end
   
   be renderFinished() =>
-    if waitingOnViewsToRender == 0 then
+    if waitingOnViewsToRender <= 0 then
+      waitingOnViewsToRender = 0
       Log.println("Error: renderFinished called but waitingOnViewsToRender is 0")
     else
       waitingOnViewsToRender = waitingOnViewsToRender - 1
       if waitingOnViewsToRender == 0 then
-        // When all of the views have rendered, THEN call finished
-        @RenderEngine_render(renderContext, frameNumber, U64.max_value(), ShaderType.finished, 0, UnsafePointer[F32], 0, 1.0, 1.0, 1.0, 1.0, Pointer[U8])
+        markRenderFinished()
       end
     end
   

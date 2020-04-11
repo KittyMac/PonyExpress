@@ -31,6 +31,8 @@ class YogaNode
   fun id():YogaNodeID =>
     node.usize()
   
+  fun ref getChildren():Array[YogaNode] => children
+  
   fun ref addChild(child:YogaNode) =>
     children.push(child)
     @YGNodeInsertChild(node, child.node, @YGNodeGetChildCount(node))

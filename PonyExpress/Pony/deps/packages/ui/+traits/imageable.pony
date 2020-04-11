@@ -45,8 +45,10 @@ trait Imageable is (Viewable & Colorable)
       var image_height:F32 = 0
       @RenderEngine_textureInfo(frameContext.renderContext, _textureName.cpointer(), addressof image_width, addressof image_height)
     
-      frameContext.engine.getNodeByID(frameContext.nodeID, { (node) => 
-          node.>width(image_width).>height(image_height)
+      frameContext.engine.getNodeByID(frameContext.nodeID, { (node) =>
+          if node as YogaNode then
+            node.>width(image_width).>height(image_height)
+          end
           RenderPrimitive.startFinished(frameContext)
           true
         })

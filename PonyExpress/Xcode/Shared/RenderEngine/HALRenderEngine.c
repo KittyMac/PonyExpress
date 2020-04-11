@@ -304,6 +304,7 @@ bool RenderEngineInternal_gatherAllRenderUnitsForNextFrame(HALRenderContext * co
     RenderUnit * msg_unit = NULL;
     bool captureRenderFrameNumber = true;
     int scaling_sleep = 1;
+    int time_spent_sleeping = 0;
     
     // Note: we want to stay in this loop until we receive the finished commmand
     bool didReceiveCompleteFrame = false;
@@ -340,10 +341,16 @@ bool RenderEngineInternal_gatherAllRenderUnitsForNextFrame(HALRenderContext * co
         if(didReceiveCompleteFrame == false) {
             //RenderEngineInternal_Poll();
             
+            // Sanity check: if for whatever reason we get stuck waiting "forever" for the frame to end, exit without waiting for the end frame
+            if (time_spent_sleeping > 1000000) {
+                break;
+            }
+            
             scaling_sleep += 50;
             if(scaling_sleep > 500) {
                 scaling_sleep = 500;
             }
+            time_spent_sleeping += scaling_sleep;
             usleep(scaling_sleep);
         }
     }

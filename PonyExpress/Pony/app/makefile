@@ -34,15 +34,15 @@ libponyrt_header2="/src/common/pony/detail/atomics.h"
 
 
 define copy_framework_package
-    @cp -p -R $(framework_ponydir)/$(1)/$(2) $(deps_packagesdir)
-		@if [ "$(3)" ]; then cp -p $(framework_ponydir)/$(1)/lib/$(3) $(deps_libdir_ios); fi
-		@if [ "$(4)" ]; then cp -p $(framework_ponydir)/$(1)/lib/$(4) $(deps_libdir_osx); fi
+		@rsync -qav --delete $(framework_ponydir)/$(1)/$(2) $(deps_packagesdir)
+		@if [ "$(3)" ]; then rsync -qav --delete $(framework_ponydir)/$(1)/lib/$(3) $(deps_libdir_ios); fi
+		@if [ "$(4)" ]; then rsync -qav --delete $(framework_ponydir)/$(1)/lib/$(4) $(deps_libdir_osx); fi
 endef
 
-
-
-
 all: framework ios osx
+
+lldb: framework confirm
+	lldb ../ponyc/build/debug/ponyc -- -o $(builddir) --extfun -b "$(product_name)_x86_64"  -p $(deps_packagesdir) -p ../../../PonyExpressDemo/ -p ../../../  --pic --debug -robj
 
 clean:
 	rm -rf $(builddir)
@@ -95,8 +95,8 @@ framework_packages: confirm
 .PHONY: confirm
 
 framework_ponyc:
-	@cp -p -r $(framework_ponydir)/ponyc/build $(ponycdir)
-	@cp -p -r $(framework_ponydir)/ponyc/packages $(ponycdir)
+	@rsync -qav --delete $(framework_ponydir)/ponyc/build $(ponycdir)
+	@rsync -qav --delete $(framework_ponydir)/ponyc/packages $(ponycdir)
 	
 	@cp -p $(framework_ponydir)/ponyc/$(libponyrt_ios_library) $(deps_libdir_ios)/libponyrt-ios.a
 	@cp -p $(framework_ponydir)/ponyc/$(libponyrt_osx_library) $(deps_libdir_osx)/libponyrt-osx.a

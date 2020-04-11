@@ -21,7 +21,7 @@ Pony Express is a UI toolkit for building fully concurrent applications written 
 ## pony.ui
 
 * [ ] scroll view
-* [ ] stencil cropping by view bounds
+* [x] ~~stencil cropping by view bounds~~
 * [ ] input fields
 
 ## renderengine

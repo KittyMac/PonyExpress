@@ -30,21 +30,23 @@ actor Button is Buttonable
   fun ref updateChildren(showChildIdx:USize, isStart:Bool = false) =>
     if engine as RenderEngine then
         engine.getNodeByID(nodeID, { (node) =>
-          var childIdx:USize = 0
-          for child in node.children.values() do
-            if showChildIdx == childIdx then
-              child.>display(YGDisplay.flex)
-            else
-              child.>display(YGDisplay.none)
+          if node as YogaNode then
+            var childIdx:USize = 0
+            for child in node.getChildren().values() do
+              if showChildIdx == childIdx then
+                child.>display(YGDisplay.flex)
+              else
+                child.>display(YGDisplay.none)
+              end
+              childIdx = childIdx + 1
             end
-            childIdx = childIdx + 1
           end
-        
           if isStart then
             if engine as RenderEngine then
               engine.startFinished()
             end
           end
+          
           true
         })
     end

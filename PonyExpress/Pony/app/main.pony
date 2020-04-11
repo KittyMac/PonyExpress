@@ -2,12 +2,14 @@ use "ui"
 use "utility"
 use "ponyapp"
 
-actor Main    
+actor Main
+  let renderEngine:RenderEngine = RenderEngine
+  
 	new create(env:Env) =>
     PlatformIOS(env)
     PlatformOSX(env)
     
-    PonyApp(env, RenderEngine)
+    PonyApp(env, renderEngine)
     
         
 
