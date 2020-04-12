@@ -984,10 +984,6 @@ uint32_t U32_val_add_II(uint32_t self, uint32_t y);
 
 uint32_t U32_box_add_II(uint32_t self, uint32_t y);
 
-uint32_t U32_box_neg_I(uint32_t self);
-
-uint32_t U32_val_neg_I(uint32_t self);
-
 uint32_t U32_val_create_II(uint32_t self, uint32_t value);
 
 /* Allocate a PlatformOSX without initialising it. */

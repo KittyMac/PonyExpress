@@ -7,6 +7,6 @@ actor PonyApp
   new create(env:Env, renderEngine':RenderEngine) =>
     renderEngine = renderEngine'
         
-    Catalog.load(renderEngine, "Root")
+    ScrollTest.load(renderEngine, "Root")
     
     

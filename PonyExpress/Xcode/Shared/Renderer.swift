@@ -72,6 +72,10 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
     private var stencilValueMax:Int = 255
     
     private var aaplView: PonyExpressView
+    
+    private var getTextureLock:NSObject = NSObject()
+    private var fileURLFromBundlePathLock:NSObject = NSObject()
+    private var renderAheadCountLock:NSObject = NSObject()
         
     @objc public init(aaplView: PonyExpressView) {
         metalDevice = MTLCreateSystemDefaultDevice()
@@ -318,13 +322,20 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
     
     public func render(to metalLayer: CAMetalLayer) {
         if let drawable = metalLayer.nextDrawable() {
+            
             #if !RENDER_ON_MAIN_THREAD
             pony_register_thread()
             pony_become(pony_ctx(), platformActor)
             #endif
             
             while renderAheadCount >= RenderEngine_maxConcurrentFrames() {
-                RenderEngineInternal_Poll()
+                //RenderEngineInternal_Poll()
+                usleep(50)
+            }
+            
+            objc_sync_enter(renderAheadCountLock)
+            defer {
+                objc_sync_exit(renderAheadCountLock)
             }
             
             renderAheadCount += 1
@@ -333,7 +344,7 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             //RenderEngineInternal_updateBounds(nil, Float(projectedSize.width) + Float(arc4random() % 20), Float(projectedSize.height) + Float(arc4random() % 20))
             
             RenderEngineInternal_renderAll(nil)
-                    
+            
             if RenderEngineInternal_gatherAllRenderUnitsForNextFrame(nil) == false {
                 renderAheadCount -= 1
                 return
@@ -439,7 +450,9 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             renderEncoder.endEncoding()
             
             commandBuffer.addCompletedHandler { (buffer) in
+                objc_sync_enter(self.renderAheadCountLock)
                 self.renderAheadCount -= 1
+                objc_sync_exit(self.renderAheadCountLock)
             }
             
             commandBuffer.present(drawable)
@@ -520,9 +533,9 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             let resolvedName = fileURLFromBundlePath(name)
                         
             // This doesn't like being multi-threaded, because we use dictionary cache. So lock and then check again before loading
-            objc_sync_enter(self)
+            objc_sync_enter(getTextureLock)
             defer {
-                objc_sync_exit(self)
+                objc_sync_exit(getTextureLock)
             }
             
             var texture = textureCache[resolvedName]
@@ -554,9 +567,9 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
         // "caches://landscape_desert.jpg"
         
         // This doesn't like being multi-threaded, because we use dictionary cache. So lock and then check again before loading
-        objc_sync_enter(self)
+        objc_sync_enter(fileURLFromBundlePathLock)
         defer {
-            objc_sync_exit(self)
+            objc_sync_exit(fileURLFromBundlePathLock)
         }
         
         let cachedPath = bundlePathCache[bundlePath]
