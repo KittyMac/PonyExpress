@@ -281,6 +281,8 @@ typedef struct $0$12_U32_val $0$12_U32_val;
 
 typedef struct $0$6 $0$6;
 
+typedef struct ui_RenderNeeded ui_RenderNeeded;
+
 typedef struct _UnsignedPartialArithmetic _UnsignedPartialArithmetic;
 
 /*
@@ -539,12 +541,16 @@ no guarantees that the GC will actually reclaim any space.
 */
 typedef struct Array_ui_YogaNode_ref Array_ui_YogaNode_ref;
 
+typedef struct ui_LayoutNeeded ui_LayoutNeeded;
+
 /*
 linear functions and helpers for linal types
 */
 typedef struct linal_Linear linal_Linear;
 
 typedef struct t2_U32_val_U8_val t2_U32_val_U8_val;
+
+typedef struct u3_None_val_ui_LayoutNeeded_val_ui_RenderNeeded_val u3_None_val_ui_LayoutNeeded_val_ui_RenderNeeded_val;
 
 typedef struct ui_FrameContext ui_FrameContext;
 
@@ -989,10 +995,6 @@ uint32_t U32_val_add_II(uint32_t self, uint32_t y);
 
 uint32_t U32_box_add_II(uint32_t self, uint32_t y);
 
-uint32_t U32_box_neg_I(uint32_t self);
-
-uint32_t U32_val_neg_I(uint32_t self);
-
 uint32_t U32_val_create_II(uint32_t self, uint32_t value);
 
 /* Allocate a PlatformOSX without initialising it. */
@@ -1333,6 +1335,15 @@ $0$12_U32_val* $0$12_U32_val_val_create_o($0$12_U32_val* self);
 
 /* Allocate a $0$6 without initialising it. */
 $0$6* $0$6_Alloc(void);
+
+/* Allocate a ui_RenderNeeded without initialising it. */
+ui_RenderNeeded* ui_RenderNeeded_Alloc(void);
+
+ui_RenderNeeded* ui_RenderNeeded_val_create_o(ui_RenderNeeded* self);
+
+bool ui_RenderNeeded_box_eq_ob(ui_RenderNeeded* self, ui_RenderNeeded* that);
+
+bool ui_RenderNeeded_val_eq_ob(ui_RenderNeeded* self, ui_RenderNeeded* that);
 
 /* Allocate a _UnsignedPartialArithmetic without initialising it. */
 _UnsignedPartialArithmetic* _UnsignedPartialArithmetic_Alloc(void);
@@ -2362,9 +2373,22 @@ Create an array with zero elements, but space for len elements.
 */
 Array_ui_YogaNode_ref* Array_ui_YogaNode_ref_ref_create_Zo(Array_ui_YogaNode_ref* self, size_t len);
 
+/* Allocate a ui_LayoutNeeded without initialising it. */
+ui_LayoutNeeded* ui_LayoutNeeded_Alloc(void);
+
+ui_LayoutNeeded* ui_LayoutNeeded_val_create_o(ui_LayoutNeeded* self);
+
+bool ui_LayoutNeeded_box_eq_ob(ui_LayoutNeeded* self, ui_LayoutNeeded* that);
+
+bool ui_LayoutNeeded_val_eq_ob(ui_LayoutNeeded* self, ui_LayoutNeeded* that);
+
 float F32_val_sub_ff(float self, float y);
 
 float F32_box_sub_ff(float self, float y);
+
+bool F32_val_ne_fb(float self, float y);
+
+bool F32_box_ne_fb(float self, float y);
 
 String* F32_ref_string_o(float self);
 
@@ -2424,6 +2448,9 @@ bool linal_Linear_val_eq_fffb(linal_Linear* self, float a, float b, float eps);
 
 /* Allocate a t2_U32_val_U8_val without initialising it. */
 t2_U32_val_U8_val* t2_U32_val_U8_val_Alloc(void);
+
+/* Allocate a u3_None_val_ui_LayoutNeeded_val_ui_RenderNeeded_val without initialising it. */
+u3_None_val_ui_LayoutNeeded_val_ui_RenderNeeded_val* u3_None_val_ui_LayoutNeeded_val_ui_RenderNeeded_val_Alloc(void);
 
 /* Allocate a ui_FrameContext without initialising it. */
 ui_FrameContext* ui_FrameContext_Alloc(void);
@@ -2571,11 +2598,11 @@ None* ui_RenderPrimitive_box_startFinished_oo(ui_RenderPrimitive* self, ui_Frame
 /* Allocate a ui_$2$17 without initialising it. */
 ui_$2$17* ui_$2$17_Alloc(void);
 
-bool ui_$2$17_box_apply_ob(ui_$2$17* self, void* p1);
+void* ui_$2$17_val_apply_oo(ui_$2$17* self, void* p1);
 
-bool ui_$2$17_val_apply_ob(ui_$2$17* self, void* p1);
+void* ui_$2$17_box_apply_oo(ui_$2$17* self, void* p1);
 
-bool ui_$2$17_ref_apply_ob(ui_$2$17* self, void* p1);
+void* ui_$2$17_ref_apply_oo(ui_$2$17* self, void* p1);
 
 bool Bool_box_op_and_bb(bool self, bool y);
 

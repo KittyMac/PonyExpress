@@ -1,6 +1,7 @@
 use "collections"
 use "linal"
 use "stringext"
+use "utility"
 
 type FontWrapType is U32
 primitive FontWrap
@@ -194,11 +195,11 @@ class FontRender
     
     let vertices = geom.vertices
     
-    // 4 vertices for each character, x,y,z,u,t
-    vertices.reserve(text.size() * 4 * 5)
+    // 6 vertices for each character, x,y,z,u,t
+    vertices.reserve(text.size() * 6 * 5)
     vertices.clear()
     
-    glyphRenderData.reserve(text.size())
+    glyphRenderData.reserve(text.size() * 2)
     glyphRenderData.clear()
     
     let fontAtlas = font.fontAtlas
@@ -301,6 +302,6 @@ class FontRender
                                 V2fun(st_x_min, 1.0 - st_y_max) )                                
       end
     end
-    
+        
     geom
     

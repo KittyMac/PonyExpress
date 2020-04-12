@@ -46,8 +46,7 @@ actor Button is Buttonable
               engine.startFinished()
             end
           end
-          
-          true
+          LayoutNeeded
         })
     end
   

@@ -15,6 +15,7 @@ class YogaNode
   var last_bounds:R4 = R4fun.zero()
   var last_matrix:M4 = M4fun.id()
   
+  var _content_offset:V2 = V2fun.zero()
   var _clips:Bool = false
   
   fun _final() =>
@@ -54,6 +55,9 @@ class YogaNode
     // Before we can calculate the layout, we need to see if any of our children sizeToFit their content. If we do, we need
     // to have them set the size on the appropriate yoga node
     @YGNodeCalculateLayout(node, @YGNodeStyleGetWidth(node), @YGNodeStyleGetHeight(node), YGDirection.ltr)
+  
+  fun ref scrollContent(delta:V2) =>
+    _content_offset = V2fun.add(_content_offset, delta)
   
   fun print() =>
     @YGNodePrint(node, YGPrintOptions.layout or YGPrintOptions.style or YGPrintOptions.children)
@@ -173,6 +177,13 @@ class YogaNode
             local_matrix,
             M4fun.trans_v3(V3fun(-local_width/2, -local_height/2, 0))
           )
+    
+    if (_content_offset._1 != 0) or (_content_offset._2 != 0) then
+      local_matrix = M4fun.mul_m4(
+              parent_matrix,
+              M4fun.trans_v3(V3fun(_content_offset._1, -_content_offset._2, 0))
+            )
+    end
     
     for child in children.values() do
       n = child._renderRecursive(frameContext, local_matrix)

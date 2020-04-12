@@ -10,7 +10,11 @@ use @RenderEngine_destroy[None](ctx:RenderContextRef tag)
 primitive RenderContext
 type RenderContextRef is Pointer[RenderContext]
 
-type GetYogaNodeCallback is {((YogaNode ref | None)):Bool} val
+primitive LayoutNeeded
+primitive RenderNeeded
+type RenderEngineCommandReturn is (None | LayoutNeeded | RenderNeeded)
+
+type GetYogaNodeCallback is {((YogaNode ref | None)):RenderEngineCommandReturn} val
 
 
 // Context passed to all views when they are told to render. It contains information
@@ -95,7 +99,7 @@ actor@ RenderEngine
   
   fun _tag():U32 => 2002
   fun _batch():U32 => 5_000_000
-  fun _prioritiy():U32 => -1
+  fun _prioritiy():U32 => 999
   
   fun tag root():String val => "Root"
   
@@ -136,10 +140,16 @@ actor@ RenderEngine
     handleNewNodeAdded()
   
   be getNodeByName(nodeName:String val, callback:GetYogaNodeCallback) =>
-    layoutNeeded = callback(node.getNodeByName(nodeName)) or layoutNeeded
+    match callback(node.getNodeByName(nodeName))
+    | LayoutNeeded => layoutNeeded = true
+    | RenderNeeded => renderNeeded = true
+    end
   
   be getNodeByID(id:YogaNodeID, callback:GetYogaNodeCallback) =>
-    layoutNeeded = callback(node.getNodeByID(id)) or layoutNeeded
+    match callback(node.getNodeByID(id))
+    | LayoutNeeded => layoutNeeded = true
+    | RenderNeeded => renderNeeded = true
+    end
   
   be updateBounds(w:F32, h:F32) =>
     // update the size of my node to match the window, then relayout everything
@@ -175,16 +185,23 @@ actor@ RenderEngine
       layout()
     end
         
-    if renderNeeded and (waitingOnViewsToRender == 0) then
-      renderNeeded = false
+    if renderNeeded then
+      if (waitingOnViewsToRender == 0) then
+        renderNeeded = false
             
-      frameNumber = frameNumber + 1
+        frameNumber = frameNumber + 1
       
-      let frameContext = FrameContext(this, renderContext, node.id(), frameNumber, 0, M4fun.id())
-      waitingOnViewsToRender = node.render(frameContext)
+        let frameContext = FrameContext(this, renderContext, node.id(), frameNumber, 0, M4fun.id())
+        waitingOnViewsToRender = node.render(frameContext)
+      else
+        Log.println("renderNeeded required but waitingOnViewsToRender is not 0 (is it %s) \n", waitingOnViewsToRender)
+        markRenderFinished()
+      end
     else
       markRenderFinished()
     end
+    
+    
   
   be setNeedsRendered() =>
     renderNeeded = true

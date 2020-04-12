@@ -50,7 +50,7 @@ trait Imageable is (Viewable & Colorable)
             node.>width(image_width).>height(image_height)
           end
           RenderPrimitive.startFinished(frameContext)
-          true
+          LayoutNeeded
         })
     else
       RenderPrimitive.startFinished(frameContext)
