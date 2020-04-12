@@ -21,6 +21,8 @@ typedef struct ui_NullEvent ui_NullEvent;
 
 typedef struct ui_RGBA ui_RGBA;
 
+typedef struct StringEncoding StringEncoding;
+
 /*
 Contiguous, resizable memory to store elements of type A.
 
@@ -344,16 +346,16 @@ included in a union or intersection, or be a subtype of any interface. Most
 functions on a Pointer[A] are private to maintain memory safety.
 */
 /*
+A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
+included in a union or intersection, or be a subtype of any interface. Most
+functions on a Pointer[A] are private to maintain memory safety.
+*/
+/*
 One unit of geometry. Hash needs to uniquely represent the buffered content in order to allow for reuse of geometric
 data if nothing has changed
 */
 typedef struct ui_Geometry ui_Geometry;
 
-/*
-A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
-included in a union or intersection, or be a subtype of any interface. Most
-functions on a Pointer[A] are private to maintain memory safety.
-*/
 typedef struct utility_Log utility_Log;
 
 typedef struct None None;
@@ -772,6 +774,15 @@ string format a vector*/
 String* ui_RGBA_box_string_o(ui_RGBA* self);
 
 ui_RGBA* ui_RGBA_val_white_o(ui_RGBA* self);
+
+/* Allocate a StringEncoding without initialising it. */
+StringEncoding* StringEncoding_Alloc(void);
+
+StringEncoding* StringEncoding_val_create_o(StringEncoding* self);
+
+uint32_t StringEncoding_val_utf8_I(StringEncoding* self);
+
+uint32_t StringEncoding_box_utf8_I(StringEncoding* self);
 
 /* Allocate a Array_String_val without initialising it. */
 Array_String_val* Array_String_val_Alloc(void);
@@ -1779,6 +1790,11 @@ ui_YogaNode* Pointer_ui_YogaNode_ref_ref__apply_Zo(ui_YogaNode** self, size_t i)
 A null pointer.
 */
 ui_YogaNode** Pointer_ui_YogaNode_ref_ref_create_o(ui_YogaNode** self);
+
+/*
+A null pointer.
+*/
+None** Pointer_None_val_ref_create_o(None** self);
 
 /* Allocate a ui_Geometry without initialising it. */
 ui_Geometry* ui_Geometry_Alloc(void);

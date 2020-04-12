@@ -32,13 +32,18 @@ Implementation of the cross-platform view controller
     // Set the device for the layer so the layer can create drawable textures that can be rendered to
     // on this device.
     view.metalLayer.device = device;
+    view.metalLayer.pixelFormat = MTLPixelFormatBGRA8Unorm;
+    
+    CGFloat backgroundColorValues[] = {0, 0, 0, 1};
+    
+    CGColorSpaceRef colorSpaceRef = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB); //kCGColorSpaceSRGB
+    view.metalLayer.backgroundColor = CGColorCreate(colorSpaceRef, backgroundColorValues);
+    view.metalLayer.colorspace = colorSpaceRef;
 
     // Set this class as the delegate to receive resize and render callbacks.
     view.delegate = self;
 
-    view.metalLayer.pixelFormat = MTLPixelFormatBGRA8Unorm;
     _renderer = [[Renderer alloc] initWithAaplView:view];
-    
 }
 
 - (void)drawableResize:(CGSize)size withScale:(CGFloat)scale
