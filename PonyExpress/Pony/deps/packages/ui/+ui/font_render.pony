@@ -207,9 +207,7 @@ class FontRender
     
     // Take the interactions of the clip bounds and our bounds, only generate geometry for
     // the visible region. The "clipBounds" is essentially the size of the parent
-    // centered in the bounds
-    //let visbounds = R4fun.intersection(bounds, frameContext.clipBounds)
-    
+    // centered in the bounds    
     let bounds_xmin = R4fun.x_min(bounds)
     let bounds_xmax = R4fun.x_max(bounds)
     let bounds_ymin = R4fun.y_min(bounds)
@@ -300,7 +298,7 @@ class FontRender
       st_y_max = g.ty + (g.th * h_mod)
       
       if (x_max > x_min) and (y_max > y_min) then
-        if ((x_min > visbounds_xmax) or (x_max < visbounds_xmin) or (y_min > visbounds_ymax) or (y_max < visbounds_ymin)) == false then
+        if (visbounds_xmax > 999999) or (((x_min > visbounds_xmax) or (x_max < visbounds_xmin) or (y_min > visbounds_ymax) or (y_max < visbounds_ymin)) == false) then
           RenderPrimitive.quadVT(frameContext,    vertices,   
                                   V3fun(x_min,  y_min, 0.0), 
                                   V3fun(x_max,  y_min, 0.0),

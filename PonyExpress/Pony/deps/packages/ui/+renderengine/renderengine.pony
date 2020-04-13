@@ -26,9 +26,10 @@ class FrameContext
   var renderNumber:U64
   var matrix:M4
   var clipBounds:R4
+  var screenBounds:R4
   var nodeID:YogaNodeID
   
-  new ref create(engine':RenderEngine tag, renderContext':RenderContextRef tag, nodeID':YogaNodeID, frameNumber':U64, renderNumber':U64, matrix':M4, clipBounds':R4) =>
+  new ref create(engine':RenderEngine tag, renderContext':RenderContextRef tag, nodeID':YogaNodeID, frameNumber':U64, renderNumber':U64, matrix':M4, clipBounds':R4, screenBounds':R4) =>
     engine = engine'
     renderContext = renderContext'
     frameNumber = frameNumber'
@@ -36,6 +37,7 @@ class FrameContext
     matrix = matrix'
     nodeID = nodeID'
     clipBounds = clipBounds'
+    screenBounds = screenBounds'
   
   fun calcRenderNumber(frameContext:FrameContext val, partNum:U64, internalOffset:U64):U64 =>
     // Each view receives 100 "render slots" for submitting geometry. The first 10 and the last 10
@@ -45,7 +47,7 @@ class FrameContext
   
   fun clone():FrameContext val =>
     recover val
-      FrameContext(engine, renderContext, nodeID, frameNumber, renderNumber, matrix, clipBounds)
+      FrameContext(engine, renderContext, nodeID, frameNumber, renderNumber, matrix, clipBounds, screenBounds)
     end
 
 actor@ RenderEngine
@@ -92,6 +94,8 @@ actor@ RenderEngine
   var layoutNeeded:Bool = false
   var renderNeeded:Bool = false
   var startNeeded:Bool = false
+  
+  var screenBounds:R4 = R4fun.zero()
   
   var frameNumber:U64 = 0
   var waitingOnViewsToRender:U64 = 0
@@ -155,6 +159,7 @@ actor@ RenderEngine
   
   be updateBounds(w:F32, h:F32) =>
     // update the size of my node to match the window, then relayout everything
+    screenBounds = R4fun(0,0,w,h)
     node.>width(w).>height(h)
     layout()
       
@@ -173,7 +178,7 @@ actor@ RenderEngine
         
     if startNeeded then
       if (waitingOnViewsToStart == 0) then
-        let frameContext = FrameContext(this, renderContext, node.id(), 0, 0, M4fun.id(), R4fun.big())
+        let frameContext = FrameContext(this, renderContext, node.id(), 0, 0, M4fun.id(), R4fun.big(), screenBounds)
         waitingOnViewsToStart = node.start(frameContext)
         startNeeded = false
       else
@@ -193,7 +198,7 @@ actor@ RenderEngine
             
         frameNumber = frameNumber + 1
       
-        let frameContext = FrameContext(this, renderContext, node.id(), frameNumber, 0, M4fun.id(), R4fun.big())
+        let frameContext = FrameContext(this, renderContext, node.id(), frameNumber, 0, M4fun.id(), R4fun.big(), screenBounds)
         waitingOnViewsToRender = node.render(frameContext)
       else
         Log.println("renderNeeded required but waitingOnViewsToRender is not 0 (is it %s) \n", waitingOnViewsToRender)
@@ -234,6 +239,6 @@ actor@ RenderEngine
     end
   
   be touchEvent(id:USize, pressed:Bool, x:F32, y:F32) =>
-    let frameContext = FrameContext(this, renderContext, node.id(), 0, 0, M4fun.id(), R4fun.big())
+    let frameContext = FrameContext(this, renderContext, node.id(), 0, 0, M4fun.id(), R4fun.big(), screenBounds)
     node.event(frameContext, TouchEvent(id, pressed, x, y))
   

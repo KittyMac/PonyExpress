@@ -2366,6 +2366,14 @@ bool ui_LayoutNeeded_box_eq_ob(ui_LayoutNeeded* self, ui_LayoutNeeded* that);
 
 bool ui_LayoutNeeded_val_eq_ob(ui_LayoutNeeded* self, ui_LayoutNeeded* that);
 
+bool F32_val_le_fb(float self, float y);
+
+bool F32_box_le_fb(float self, float y);
+
+bool F32_box_ge_fb(float self, float y);
+
+bool F32_val_ge_fb(float self, float y);
+
 float F32_val_sub_ff(float self, float y);
 
 float F32_box_sub_ff(float self, float y);

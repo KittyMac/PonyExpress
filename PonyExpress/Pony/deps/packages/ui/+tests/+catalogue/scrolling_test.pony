@@ -12,7 +12,7 @@ actor ScrollTest is Controllerable
               .>addChildren( [
                                                 
             YogaNode.>view( Scroll )
-                    .>clips(true)
+                    .>clips(false)
                     .>addChild(
                       
                       YogaNode.>widthPercent(100)
