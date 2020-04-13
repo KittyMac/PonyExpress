@@ -27,9 +27,10 @@ class FrameContext
   var matrix:M4
   var clipBounds:R4
   var screenBounds:R4
+  var animation_delta:F32 = 0
   var nodeID:YogaNodeID
   
-  new ref create(engine':RenderEngine tag, renderContext':RenderContextRef tag, nodeID':YogaNodeID, frameNumber':U64, renderNumber':U64, matrix':M4, clipBounds':R4, screenBounds':R4) =>
+  new ref create(engine':RenderEngine tag, renderContext':RenderContextRef tag, nodeID':YogaNodeID, frameNumber':U64, renderNumber':U64, matrix':M4, clipBounds':R4, screenBounds':R4, animation_delta':F32) =>
     engine = engine'
     renderContext = renderContext'
     frameNumber = frameNumber'
@@ -38,6 +39,7 @@ class FrameContext
     nodeID = nodeID'
     clipBounds = clipBounds'
     screenBounds = screenBounds'
+    animation_delta = animation_delta'
   
   fun calcRenderNumber(frameContext:FrameContext val, partNum:U64, internalOffset:U64):U64 =>
     // Each view receives 100 "render slots" for submitting geometry. The first 10 and the last 10
@@ -47,7 +49,7 @@ class FrameContext
   
   fun clone():FrameContext val =>
     recover val
-      FrameContext(engine, renderContext, nodeID, frameNumber, renderNumber, matrix, clipBounds, screenBounds)
+      FrameContext(engine, renderContext, nodeID, frameNumber, renderNumber, matrix, clipBounds, screenBounds, animation_delta)
     end
 
 actor@ RenderEngine
@@ -100,8 +102,9 @@ actor@ RenderEngine
   var frameNumber:U64 = 0
   var waitingOnViewsToRender:U64 = 0
   var waitingOnViewsToStart:U64 = 0
-  
-  var variable_cpu_throttle:U64 = 25
+    
+  var last_animation_time:U64 = @ponyint_cpu_tick()
+  var last_animation_delta:F32 = 0
   
   fun _tag():U32 => 2002
   fun _batch():U32 => 5_000_000
@@ -175,10 +178,14 @@ actor@ RenderEngine
   be renderAll() =>
     // run through all yoga nodes and render their associated views
     // keep track of how many views were told to render so we can know when they're all done
-        
+    
+    let now = @ponyint_cpu_tick()
+    last_animation_delta = (now - last_animation_time).f32() / 1_000_000_000.0
+    last_animation_time = now
+    
     if startNeeded then
       if (waitingOnViewsToStart == 0) then
-        let frameContext = FrameContext(this, renderContext, node.id(), 0, 0, M4fun.id(), R4fun.big(), screenBounds)
+        let frameContext = FrameContext(this, renderContext, node.id(), 0, 0, M4fun.id(), R4fun.big(), screenBounds, last_animation_delta)
         waitingOnViewsToStart = node.start(frameContext)
         startNeeded = false
       else
@@ -198,7 +205,7 @@ actor@ RenderEngine
             
         frameNumber = frameNumber + 1
       
-        let frameContext = FrameContext(this, renderContext, node.id(), frameNumber, 0, M4fun.id(), R4fun.big(), screenBounds)
+        let frameContext = FrameContext(this, renderContext, node.id(), frameNumber, 0, M4fun.id(), R4fun.big(), screenBounds, last_animation_delta)
         waitingOnViewsToRender = node.render(frameContext)
       else
         Log.println("renderNeeded required but waitingOnViewsToRender is not 0 (is it %s) \n", waitingOnViewsToRender)
@@ -239,6 +246,6 @@ actor@ RenderEngine
     end
   
   be touchEvent(id:USize, pressed:Bool, x:F32, y:F32) =>
-    let frameContext = FrameContext(this, renderContext, node.id(), 0, 0, M4fun.id(), R4fun.big(), screenBounds)
+    let frameContext = FrameContext(this, renderContext, node.id(), 0, 0, M4fun.id(), R4fun.big(), screenBounds, last_animation_delta)
     node.event(frameContext, TouchEvent(id, pressed, x, y))
   

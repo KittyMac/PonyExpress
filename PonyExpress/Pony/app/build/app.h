@@ -144,6 +144,10 @@ unlimited access.
 */
 typedef struct AmbientAuth AmbientAuth;
 
+/*
+tuple based Vector 4 functions - see VectorFun for details*/
+typedef struct linal_V4fun linal_V4fun;
+
 typedef struct t4_t4_F32_val_F32_val_F32_val_F32_val_t4_F32_val_F32_val_F32_val_F32_val_t4_F32_val_F32_val_F32_val_F32_val_t4_F32_val_F32_val_F32_val_F32_val t4_t4_F32_val_F32_val_F32_val_F32_val_t4_F32_val_F32_val_F32_val_F32_val_t4_F32_val_F32_val_F32_val_F32_val_t4_F32_val_F32_val_F32_val_F32_val;
 
 /*
@@ -278,6 +282,8 @@ typedef struct linal_M4fun linal_M4fun;
 typedef struct $0$12_U32_val $0$12_U32_val;
 
 typedef struct $0$6 $0$6;
+
+typedef struct u2_ui_Controllerable_tag_None_val u2_ui_Controllerable_tag_None_val;
 
 typedef struct ui_RenderNeeded ui_RenderNeeded;
 
@@ -454,6 +460,8 @@ typedef struct String String;
 
 typedef struct t2_F32_val_F32_val t2_F32_val_F32_val;
 
+typedef struct ui_Controllerable ui_Controllerable;
+
 /*
 Contiguous, resizable memory to store elements of type A.
 
@@ -540,6 +548,8 @@ no guarantees that the GC will actually reclaim any space.
 typedef struct Array_ui_YogaNode_ref Array_ui_YogaNode_ref;
 
 typedef struct ui_LayoutNeeded ui_LayoutNeeded;
+
+typedef struct linal_Q4fun linal_Q4fun;
 
 /*
 linear functions and helpers for linal types
@@ -806,15 +816,41 @@ Create an array with zero elements, but space for len elements.
 */
 Array_String_val* Array_String_val_ref_create_Zo(Array_String_val* self, size_t len);
 
-String* F64_box_string_o(double self);
+double F64_box_sub_dd(double self, double y);
+
+double F64_val_sub_dd(double self, double y);
+
+String* F64_ref_string_o(double self);
 
 String* F64_val_string_o(double self);
 
-String* F64_ref_string_o(double self);
+String* F64_box_string_o(double self);
+
+double F64_val_cos_d(double self);
+
+double F64_box_cos_d(double self);
+
+double F64_val_add_dd(double self, double y);
+
+double F64_box_add_dd(double self, double y);
+
+double F64_box_mul_dd(double self, double y);
+
+double F64_val_mul_dd(double self, double y);
+
+float F64_val_f32_f(double self);
+
+float F64_box_f32_f(double self);
+
+double F64_box_sin_d(double self);
+
+double F64_val_sin_d(double self);
 
 double F64_val_f64_d(double self);
 
 double F64_box_f64_d(double self);
+
+double F64_val_create_dd(double self, double value);
 
 /* Allocate a t2_USize_val_Bool_val without initialising it. */
 t2_USize_val_Bool_val* t2_USize_val_Bool_val_Alloc(void);
@@ -959,6 +995,8 @@ ui_Viewable* ui_Viewable_Alloc(void);
 
 None* ui_Viewable_ref_start_oo(ui_Viewable* self, ui_FrameContext* frameContext);
 
+None* ui_Viewable_ref_performAnimation_oo(ui_Viewable* self, ui_FrameContext* frameContext);
+
 /* Allocate a u2_ui_YogaNode_ref_None_val without initialising it. */
 u2_ui_YogaNode_ref_None_val* u2_ui_YogaNode_ref_None_val_Alloc(void);
 
@@ -999,6 +1037,11 @@ bool PlatformOSX_box__use_main_thread_b(PlatformOSX* self);
 
 /* Allocate a AmbientAuth without initialising it. */
 AmbientAuth* AmbientAuth_Alloc(void);
+
+/* Allocate a linal_V4fun without initialising it. */
+linal_V4fun* linal_V4fun_Alloc(void);
+
+linal_V4fun* linal_V4fun_val_create_o(linal_V4fun* self);
 
 ssize_t USize_box_isize_z(size_t self);
 
@@ -1325,6 +1368,9 @@ $0$12_U32_val* $0$12_U32_val_val_create_o($0$12_U32_val* self);
 /* Allocate a $0$6 without initialising it. */
 $0$6* $0$6_Alloc(void);
 
+/* Allocate a u2_ui_Controllerable_tag_None_val without initialising it. */
+u2_ui_Controllerable_tag_None_val* u2_ui_Controllerable_tag_None_val_Alloc(void);
+
 /* Allocate a ui_RenderNeeded without initialising it. */
 ui_RenderNeeded* ui_RenderNeeded_Alloc(void);
 
@@ -1441,6 +1487,10 @@ uint64_t U64_val_add_WW(uint64_t self, uint64_t y);
 uint64_t U64_val_mul_WW(uint64_t self, uint64_t y);
 
 uint64_t U64_box_mul_WW(uint64_t self, uint64_t y);
+
+float U64_val_f32_f(uint64_t self);
+
+float U64_box_f32_f(uint64_t self);
 
 bool U64_val_eq_Wb(uint64_t self, uint64_t y);
 
@@ -2295,6 +2345,11 @@ size_t String_ref_offset_to_index_zZ(String* self, ssize_t i);
 /* Allocate a t2_F32_val_F32_val without initialising it. */
 t2_F32_val_F32_val* t2_F32_val_F32_val_Alloc(void);
 
+/* Allocate a ui_Controllerable without initialising it. */
+ui_Controllerable* ui_Controllerable_Alloc(void);
+
+None* ui_Controllerable_tag_animate_fo(ui_Controllerable* self, float delta);
+
 /* Allocate a Array_ui_YogaNode_ref without initialising it. */
 Array_ui_YogaNode_ref* Array_ui_YogaNode_ref_Alloc(void);
 
@@ -2374,9 +2429,17 @@ bool F32_box_ge_fb(float self, float y);
 
 bool F32_val_ge_fb(float self, float y);
 
+float F32_val_sqrt_f(float self);
+
+float F32_box_sqrt_f(float self);
+
 float F32_val_sub_ff(float self, float y);
 
 float F32_box_sub_ff(float self, float y);
+
+bool F32_val_ne_fb(float self, float y);
+
+bool F32_box_ne_fb(float self, float y);
 
 String* F32_ref_string_o(float self);
 
@@ -2396,6 +2459,8 @@ float F32_val_epsilon_f(float self);
 float F32_box_mul_ff(float self, float y);
 
 float F32_val_mul_ff(float self, float y);
+
+float F32_val__nan_f(float self);
 
 float F32_box_div_ff(float self, float y);
 
@@ -2420,6 +2485,11 @@ float F32_val_create_ff(float self, float value);
 bool F32_box_lt_fb(float self, float y);
 
 bool F32_val_lt_fb(float self, float y);
+
+/* Allocate a linal_Q4fun without initialising it. */
+linal_Q4fun* linal_Q4fun_Alloc(void);
+
+linal_Q4fun* linal_Q4fun_val_create_o(linal_Q4fun* self);
 
 /* Allocate a linal_Linear without initialising it. */
 linal_Linear* linal_Linear_Alloc(void);

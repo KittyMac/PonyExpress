@@ -15,7 +15,7 @@ trait Actionable
     target = target'
     evt = evt'
   
-  be performAction() =>
+  fun ref performAction() =>
     match target
     | let t:Controllerable tag => t.action(evt)
     else None end

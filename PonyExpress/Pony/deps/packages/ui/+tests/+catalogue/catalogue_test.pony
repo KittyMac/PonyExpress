@@ -8,8 +8,9 @@ primitive SwitchToFonts is Action
 primitive SwitchToFonts2 is Action
 primitive SwitchToClips is Action
 primitive SwitchToScroll is Action
+primitive SwitchToAnimation is Action
 
-type CatalogAction is (SwitchToColors | SwitchToButtons | SwitchToImages | SwitchToFonts | SwitchToFonts2 | SwitchToClips | SwitchToScroll)
+type CatalogAction is (SwitchToColors | SwitchToButtons | SwitchToImages | SwitchToFonts | SwitchToFonts2 | SwitchToClips | SwitchToScroll | SwitchToAnimation)
   
 
 actor Catalog is Controllerable
@@ -32,10 +33,11 @@ actor Catalog is Controllerable
               menuButton("Colors", font, SwitchToColors)
               menuButton("Buttons", font, SwitchToButtons)
               menuButton("Images", font, SwitchToImages)
-              menuButton("Fonts", font, SwitchToFonts)
-              menuButton("Fonts2", font, SwitchToFonts2)
+              menuButton("Fonts 1", font, SwitchToFonts)
+              menuButton("Fonts 2", font, SwitchToFonts2)
               menuButton("Clip", font, SwitchToClips)
               menuButton("Scroll", font, SwitchToScroll)
+              menuButton("Animation", font, SwitchToAnimation)
           ])
         
           // Panel
@@ -62,18 +64,18 @@ actor Catalog is Controllerable
                                                   .>color(RGBA.u32( 0xffffff00 ))
                                                   .>action(this, evt) )
             .>addChild( YogaNode.>view( Label(title, font', 28).>left() ) )
-
-    
+  
   be action(evt:Action) =>
-    if renderEngine as RenderEngine then
+    if engine as RenderEngine then
         match evt
-        | SwitchToColors => ColorTest.load(renderEngine, "Panel")
-        | SwitchToButtons => ButtonTest.load(renderEngine, "Panel")
-        | SwitchToImages => ImageTest.load(renderEngine, "Panel")
-        | SwitchToFonts => FontTest.load(renderEngine, "Panel")
-        | SwitchToFonts2 => Font2Test.load(renderEngine, "Panel")
-        | SwitchToClips => ClipTest.load(renderEngine, "Panel")
-        | SwitchToScroll => ScrollTest.load(renderEngine, "Panel")
+        | SwitchToColors => ColorTest.load(engine, "Panel")
+        | SwitchToButtons => ButtonTest.load(engine, "Panel")
+        | SwitchToImages => ImageTest.load(engine, "Panel")
+        | SwitchToFonts => FontTest.load(engine, "Panel")
+        | SwitchToFonts2 => Font2Test.load(engine, "Panel")
+        | SwitchToClips => ClipTest.load(engine, "Panel")
+        | SwitchToScroll => ScrollTest.load(engine, "Panel")
+        | SwitchToAnimation => AnimationTest.load(engine, "Panel")
         end
     end
     

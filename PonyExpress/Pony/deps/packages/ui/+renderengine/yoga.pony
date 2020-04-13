@@ -18,6 +18,7 @@ class YogaNode
   
   var _content_offset:V2 = V2fun.zero()
   var _clips:Bool = false
+  var _rotation:V3 = V3fun.zero()
   
   fun _final() =>
     //@printf("_final called on yoga node [%d]\n".cstring(), node)
@@ -146,12 +147,12 @@ class YogaNode
             M4fun.trans_v3(V3fun(local_width/2, local_height/2, 0))
           )
     
-    /*
-    local_matrix = M4fun.mul_m4(
-            local_matrix,
-            M4fun.rot(Q4fun.from_euler(V3fun(0,0,F32.pi()/2)))
-          )
-    */
+    if (_rotation._1 != 0) or (_rotation._2 != 0) or (_rotation._3 != 0) then
+      local_matrix = M4fun.mul_m4(
+              local_matrix,
+              M4fun.rot(Q4fun.from_euler(_rotation))
+            )
+    end
     
     frameContext.renderNumber = n
     frameContext.matrix = local_matrix
@@ -216,6 +217,12 @@ class YogaNode
     widthPercent(100)
     heightPercent(100)
   
+  
+  fun ref rotateX(v:F32) => _rotation = V3fun(v, _rotation._2, _rotation._3)
+  fun ref rotateY(v:F32) => _rotation = V3fun(_rotation._1, v, _rotation._3)
+  fun ref rotateZ(v:F32) => _rotation = V3fun(_rotation._1, _rotation._2, v)
+  fun ref rotate(v:V3) => _rotation = v
+  
   fun ref direction(v:U32) => @YGNodeStyleSetDirection(node, v)
   fun ref flexDirection(v:U32) => @YGNodeStyleSetFlexDirection(node, v)
   
@@ -226,6 +233,8 @@ class YogaNode
   fun ref alignSelf(v:U32) => @YGNodeStyleSetAlignSelf(node, v)
   
   fun ref positionType(v:U32) => @YGNodeStyleSetPositionType(node, v)
+  fun ref absolute() => @YGNodeStyleSetPositionType(node, YGPositionType.absolute)
+  fun ref relative() => @YGNodeStyleSetPositionType(node, YGPositionType.relative)
   
   fun ref overflow(v:U32) => @YGNodeStyleSetOverflow(node, v)
   fun ref display(v:U32) => @YGNodeStyleSetDisplay(node, v)
@@ -245,8 +254,6 @@ class YogaNode
   fun ref bottom(p:F32) => @YGNodeStyleSetPosition(node, YGEdge.bottom, p)
   fun ref right(p:F32) => @YGNodeStyleSetPosition(node, YGEdge.right, p)
   
-  fun ref position(v1:U32, v2:F32) => @YGNodeStyleSetPosition(node, v1, v2)
-  
   
   fun ref originPercent(x:F32, y:F32) => @YGNodeStyleSetPositionPercent(node, YGEdge.left, x); @YGNodeStyleSetPositionPercent(node, YGEdge.top, y)
   
@@ -256,6 +263,7 @@ class YogaNode
   fun ref rightPercent(p:F32) => @YGNodeStyleSetPositionPercent(node, YGEdge.right, p)
   
   
+  fun ref position(v1:U32, v2:F32) => @YGNodeStyleSetPosition(node, v1, v2)
   fun ref positionPercent(v1:U32, v2:F32) => @YGNodeStyleSetPositionPercent(node, v1, v2)
   
   fun ref margin(v1:U32, v2:F32) => @YGNodeStyleSetMargin(node, v1, v2)

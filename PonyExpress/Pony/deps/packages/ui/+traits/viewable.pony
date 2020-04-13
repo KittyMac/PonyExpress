@@ -1,7 +1,7 @@
 use "linal"
 use "utility"
 
-trait tag Viewable
+trait tag Viewable is Animatable
   var engine:(RenderEngine|None) = None
   var nodeID:YogaNodeID = 0
   
@@ -48,6 +48,7 @@ trait tag Viewable
   be viewable_render(frameContext:FrameContext val, bounds:R4) =>
     render(frameContext, bounds)    
     RenderPrimitive.renderFinished(frameContext)
+    performAnimation(frameContext)
   
   
   

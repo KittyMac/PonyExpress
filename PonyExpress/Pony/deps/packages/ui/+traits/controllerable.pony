@@ -5,22 +5,24 @@ use "stringext"
 use "utility"
 
 trait Controllerable
-  var renderEngine:(RenderEngine tag|None) = None
+  var engine:(RenderEngine tag|None) = None
   var nodeNamed:String = "Root"    
   
   fun ref mainNode():YogaNode iso^ =>
     recover iso YogaNode end
     
   fun ref reload() =>
-    if renderEngine as RenderEngine then
-      renderEngine.addToNodeByName(nodeNamed, mainNode())
+    if engine as RenderEngine then
+      engine.addToNodeByName(nodeNamed, mainNode())
     end
   
-  be load(renderEngine':RenderEngine tag, nodeNamed':String val) =>
-    renderEngine = renderEngine'
+  be load(engine':RenderEngine tag, nodeNamed':String val) =>
+    engine = engine'
     nodeNamed = nodeNamed'
     reload()
-    
+  
+  be animate(delta:F32) =>
+    None
   
   be action(evt:Action) =>
     None
