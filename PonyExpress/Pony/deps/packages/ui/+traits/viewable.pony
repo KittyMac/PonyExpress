@@ -60,7 +60,7 @@ trait tag Viewable
     
     if geom.check(frameContext, bounds) == false then
     
-      pushedClippingVertices.reserve(4 * 7)
+      pushedClippingVertices.reserve(6 * 7)
       pushedClippingVertices.clear()
     
       let x_min = R4fun.x_min(bounds)
@@ -81,7 +81,7 @@ trait tag Viewable
                             frameContext.calcRenderNumber(frameContext, 0, 1),
                             pushedClippingVertices.size().u32(), 
                             pushedClippingVertices.cpointer(),
-                            pushedClippingVertices.reserved().u32())
+                            pushedClippingVertices.allocSize().u32())
     RenderPrimitive.renderFinished(frameContext)
   
   be viewable_popClips(frameContext:FrameContext val, bounds:R4) =>
@@ -90,6 +90,6 @@ trait tag Viewable
                            frameContext.calcRenderNumber(frameContext, 0, 9),
                            pushedClippingVertices.size().u32(), 
                            pushedClippingVertices.cpointer(),
-                           pushedClippingVertices.reserved().u32() )
+                           pushedClippingVertices.allocSize().u32() )
     RenderPrimitive.renderFinished(frameContext)
     

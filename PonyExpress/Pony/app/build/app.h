@@ -1201,19 +1201,19 @@ None* ui_FloatAlignedArray_ref_reserve_Zo(ui_FloatAlignedArray* self, size_t len
 None* ui_FloatAlignedArray_box__final_o(ui_FloatAlignedArray* self);
 
 /*
-The number of elements in the array.
+The number of byte allocated for this array
 */
-size_t ui_FloatAlignedArray_box_reserved_Z(ui_FloatAlignedArray* self);
+size_t ui_FloatAlignedArray_ref_allocSize_Z(ui_FloatAlignedArray* self);
 
 /*
-The number of elements in the array.
+The number of byte allocated for this array
 */
-size_t ui_FloatAlignedArray_val_reserved_Z(ui_FloatAlignedArray* self);
+size_t ui_FloatAlignedArray_box_allocSize_Z(ui_FloatAlignedArray* self);
 
 /*
-The number of elements in the array.
+The number of byte allocated for this array
 */
-size_t ui_FloatAlignedArray_ref_reserved_Z(ui_FloatAlignedArray* self);
+size_t ui_FloatAlignedArray_val_allocSize_Z(ui_FloatAlignedArray* self);
 
 /*
 Return the underlying C-style pointer.
@@ -2369,10 +2369,6 @@ bool ui_LayoutNeeded_val_eq_ob(ui_LayoutNeeded* self, ui_LayoutNeeded* that);
 float F32_val_sub_ff(float self, float y);
 
 float F32_box_sub_ff(float self, float y);
-
-bool F32_val_ne_fb(float self, float y);
-
-bool F32_box_ne_fb(float self, float y);
 
 String* F32_ref_string_o(float self);
 

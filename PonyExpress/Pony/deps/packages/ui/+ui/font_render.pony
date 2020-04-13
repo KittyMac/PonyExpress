@@ -205,12 +205,21 @@ class FontRender
     let fontAtlas = font.fontAtlas
     let advance_y = fontAtlas.height.f32() * fontSize
     
+    // Take the interactions of the clip bounds and our bounds, only generate geometry for
+    // the visible region. The "clipBounds" is essentially the size of the parent
+    // centered in the bounds
+    //let visbounds = R4fun.intersection(bounds, frameContext.clipBounds)
+    
     let bounds_xmin = R4fun.x_min(bounds)
     let bounds_xmax = R4fun.x_max(bounds)
     let bounds_ymin = R4fun.y_min(bounds)
     let bounds_ymax = R4fun.y_max(bounds)
     
-    
+    let visbounds_xmin = R4fun.x_min(frameContext.clipBounds)
+    let visbounds_xmax = R4fun.x_max(frameContext.clipBounds)
+    let visbounds_ymin = R4fun.y_min(frameContext.clipBounds) - ((R4fun.height(bounds) - R4fun.height(frameContext.clipBounds)) / 2)
+    let visbounds_ymax = R4fun.y_max(frameContext.clipBounds) - ((R4fun.height(bounds) - R4fun.height(frameContext.clipBounds)) / 2)
+        
     let end_index:USize = text.size()
     var start_index:USize = 0
     var pen:V2 = V2fun(bounds_xmin, bounds_ymin + fontSize)
@@ -290,16 +299,18 @@ class FontRender
       st_x_max = g.tx + (g.tw * w_mod)
       st_y_max = g.ty + (g.th * h_mod)
       
-      if (x_max > x_min) and (y_max > y_min) then        
-        RenderPrimitive.quadVT(frameContext,    vertices,   
-                                V3fun(x_min,  y_min, 0.0), 
-                                V3fun(x_max,  y_min, 0.0),
-                                V3fun(x_max,  y_max, 0.0),
-                                V3fun(x_min,  y_max, 0.0),
-                                V2fun(st_x_min, 1.0 - st_y_min),
-                                V2fun(st_x_max, 1.0 - st_y_min),
-                                V2fun(st_x_max, 1.0 - st_y_max),
-                                V2fun(st_x_min, 1.0 - st_y_max) )                                
+      if (x_max > x_min) and (y_max > y_min) then
+        if ((x_min > visbounds_xmax) or (x_max < visbounds_xmin) or (y_min > visbounds_ymax) or (y_max < visbounds_ymin)) == false then
+          RenderPrimitive.quadVT(frameContext,    vertices,   
+                                  V3fun(x_min,  y_min, 0.0), 
+                                  V3fun(x_max,  y_min, 0.0),
+                                  V3fun(x_max,  y_max, 0.0),
+                                  V3fun(x_min,  y_max, 0.0),
+                                  V2fun(st_x_min, 1.0 - st_y_min),
+                                  V2fun(st_x_max, 1.0 - st_y_min),
+                                  V2fun(st_x_max, 1.0 - st_y_max),
+                                  V2fun(st_x_min, 1.0 - st_y_max) )
+        end
       end
     end
         

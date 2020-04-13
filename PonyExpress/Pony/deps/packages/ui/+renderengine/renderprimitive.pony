@@ -101,7 +101,7 @@ primitive RenderPrimitive
                           shaderType, 
                           vertices.size().u32(), 
                           vertices.cpointer(),
-                          vertices.reserved().u32(),
+                          vertices.allocSize().u32(),
                           gc.r, gc.g, gc.b, gc.a,
                           t)
     

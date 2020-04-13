@@ -329,8 +329,7 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             #endif
             
             while renderAheadCount >= RenderEngine_maxConcurrentFrames() {
-                //RenderEngineInternal_Poll()
-                usleep(50)
+                RenderEngineInternal_Poll()
             }
             
             objc_sync_enter(renderAheadCountLock)
@@ -493,17 +492,25 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
         
         if unit.bytes_vertices < 4096 {
             renderEncoder.setVertexBytes(unit.vertices, length: Int(unit.bytes_vertices), index: 0)
+            renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: Int(unit.num_vertices))
+            RenderEngine_release(unit.vertices, unit.size_vertices_array)
         }else{
             vertexBuffer = metalDevice.makeBuffer(bytesNoCopy: unit.vertices,
                                                   length: Int(unit.bytes_vertices),
-                                                  options: [],
+                                                  options: [ .storageModeShared ],
                                                   deallocator: { (pointer: UnsafeMutableRawPointer, _: Int) in
                                                     RenderEngine_release(unit.vertices, unit.size_vertices_array)
                                                 })
-            renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
+            if vertexBuffer != nil {
+                renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
+                renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: Int(unit.num_vertices))
+            }else{
+                print("vertexBuffer is nil: \(unit.bytes_vertices) bytes for \(unit.num_vertices) vertices")
+                RenderEngine_release(unit.vertices, unit.size_vertices_array)
+            }
         }
         
-        renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: Int(unit.num_vertices))
+        
     }
     
     func getDepthTexture(size:CGSize) -> MTLTexture {

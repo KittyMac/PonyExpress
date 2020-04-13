@@ -29,6 +29,10 @@ primitive R4fun
   fun unit(): R4 =>
     """create unit R4"""
     ((0, 0), 1, 1)
+  
+  fun big(): R4 =>
+    """create unit R4"""
+    ((-99999999, -99999999), 99999999*2, 99999999*2)
 
   fun sized(w': F32, h': F32): R4 =>
     """create R4 starting at zero with rectified size *(w', h')*"""
@@ -49,11 +53,41 @@ primitive R4fun
   fun x_max(r: R4): F32 => r._1._1 + r._2
   fun y_max(r: R4): F32 => r._1._2 + r._3
   fun origin(r: R4): V2 => r._1
+  
+  fun left(r: R4): F32 => r._1._1
+  fun top(r: R4): F32 => r._1._2
+  fun right(r: R4): F32 => r._1._1 + r._2
+  fun bottom(r: R4): F32 => r._1._2 + r._3
 
   fun width(r: R4): F32 => r._2
   fun height(r: R4): F32 => r._3
   fun size(r: R4): (F32, F32) => (r._2, r._3)
+  
+  fun union(r1: R4, r2: R4): R4 =>
+    """union of two rect"""
+    let r = R4fun
+    let xmin = r.x_min(r1).min(r.x_min(r2))
+    let ymin = r.y_min(r1).min(r.y_min(r2))
+    let xmax = r.x_max(r1).min(r.x_max(r2))
+    let ymax = r.y_max(r1).min(r.y_max(r2))
+    r(xmin, ymin, xmax-xmin, ymax-ymin)
+  
+  fun intersection(r1: R4, r2: R4): R4 =>
+    """intersection of two rect"""
+    let r = R4fun
 
+    let leftX   = r.x_min(r1).max(r.x_min(r2))
+    let rightX  = (r.x_min(r1) + r.width(r1)).min(r.x_min(r2) + r.width(r2))
+    let topY    = r.y_min(r1).max(r.y_min(r2))
+    let bottomY = (r.y_min(r1) + r.height(r1)).min(r.y_min(r2) + r.height(r2))
+    if (leftX < rightX) and (topY < bottomY) then
+      r(leftX, topY, rightX-leftX, bottomY-topY)
+    else
+      r.zero()
+    end
+    
+    
+  
   fun center(r: R4): V2 =>
     """get center point of R4"""
     ((r._1._1 + r._2) / 2, (r._1._2 + r._3) / 2)

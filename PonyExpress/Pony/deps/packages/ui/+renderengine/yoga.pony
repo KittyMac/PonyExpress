@@ -3,6 +3,7 @@ use "yoga"
 use "collections"
 use "linal"
 use "promises"
+use "utility"
 
 type YogaNodeID is USize
 
@@ -126,9 +127,9 @@ class YogaNode
   
   // Called when the render engine hierarchy needs to... render
   fun ref render(frameContext:FrameContext):U64 =>
-    _renderRecursive(frameContext, M4fun.id())
+    _renderRecursive(frameContext, V2fun.zero(), M4fun.id())
     
-  fun ref _renderRecursive(frameContext:FrameContext, parent_matrix:M4):U64 =>
+  fun ref _renderRecursive(frameContext:FrameContext, parent_content_offset:V2, parent_matrix:M4):U64 =>
     var n:U64 = frameContext.renderNumber + 1
     let local_left:F32 = @YGNodeLayoutGetLeft(node)
     let local_top:F32 = @YGNodeLayoutGetTop(node)
@@ -155,9 +156,11 @@ class YogaNode
     frameContext.renderNumber = n
     frameContext.matrix = local_matrix
     frameContext.nodeID = id()
-    
-    last_bounds = R4fun( -local_width/2, -local_height/2, local_width, local_height)
+        
+    last_bounds = R4fun( (-local_width/2)+parent_content_offset._1, (-local_height/2)-parent_content_offset._2, local_width, local_height)
     last_matrix = local_matrix
+    
+    let savedClipBounds = frameContext.clipBounds
     
     if _clips then
       if _view as Viewable then
@@ -178,19 +181,18 @@ class YogaNode
             M4fun.trans_v3(V3fun(-local_width/2, -local_height/2, 0))
           )
     
-    if (_content_offset._1 != 0) or (_content_offset._2 != 0) then
-      local_matrix = M4fun.mul_m4(
-              parent_matrix,
-              M4fun.trans_v3(V3fun(_content_offset._1, -_content_offset._2, 0))
-            )
+    if _clips then
+      frameContext.clipBounds = last_bounds
     end
     
     for child in children.values() do
-      n = child._renderRecursive(frameContext, local_matrix)
+      n = child._renderRecursive(frameContext, _content_offset, local_matrix)
       frameContext.renderNumber = n
     end
     
     if _clips then
+      frameContext.clipBounds = savedClipBounds
+      
       if _view as Viewable then
         n = n + 1
         frameContext.renderNumber = n

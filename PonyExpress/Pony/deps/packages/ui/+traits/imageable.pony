@@ -73,7 +73,7 @@ trait Imageable is (Viewable & Colorable)
     
     if geom.check(frameContext, bounds) == false then
       
-      vertices.reserve(4 * 9)
+      vertices.reserve(6 * 9)
       vertices.clear()
             
       var image_width:F32 = 0
@@ -146,7 +146,7 @@ trait Imageable is (Viewable & Colorable)
     let geom = bufferedGeometry.next()
     let vertices = geom.vertices
 
-    vertices.reserve(4 * 9 * 9)
+    vertices.reserve(6 * 9 * 9)
     vertices.clear()
     
     var image_width:F32 = 0

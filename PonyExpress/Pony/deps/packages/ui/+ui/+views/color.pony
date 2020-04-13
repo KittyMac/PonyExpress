@@ -13,7 +13,7 @@ actor Color is (Viewable & Colorable)
   
     if geom.check(frameContext, bounds) == false then
       
-      vertices.reserve(4 * 7)
+      vertices.reserve(6 * 7)
       vertices.clear()
       
       let x_min = R4fun.x_min(bounds)

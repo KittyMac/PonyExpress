@@ -28,9 +28,9 @@ pthread_mutex_t memory_mutex;
     #define MEMORY_MUTEX_UNLOCK() ((void)memory_mutex)
 #endif
 
-#define METAL_ALIGNMENT 0x1000
+size_t METAL_PAGE_ALIGNMENT = 4096;
 
-#define COUNT_OF_RETAIN_PTR(x, s) ( ((uint8_t *)ptr)[s-1] )
+#define COUNT_OF_RETAIN_PTR(x, s) ( ((int8_t *)ptr)[s-1] )
 #define INIT_RETAIN_PTR(x, s) ( COUNT_OF_RETAIN_PTR(x, s) = 0 )
 #define FREE_RETAIN_POINTER(x, s) free(ptr)
 #define INCREMENT_RETAIN_PTR(x, s) ( COUNT_OF_RETAIN_PTR(x, s) += 1 )
@@ -38,20 +38,25 @@ pthread_mutex_t memory_mutex;
 
 size_t RenderEngine_alignedSize(size_t size) {
     size += 1;
-    return (size + METAL_ALIGNMENT - 1) & (~(METAL_ALIGNMENT - 1));
+    return (size + METAL_PAGE_ALIGNMENT - 1) & (~(METAL_PAGE_ALIGNMENT - 1));
 }
 
 void * RenderEngine_malloc(size_t * size) {
     if(*size == 0) {
         return NULL;
     }
+    
     void * ptr = NULL;
     *size = RenderEngine_alignedSize(*size);
-    posix_memalign(&ptr, METAL_ALIGNMENT, *size);
+    if(posix_memalign(&ptr, METAL_PAGE_ALIGNMENT, *size) != 0) {
+        return NULL;
+    }
     
     INIT_RETAIN_PTR(ptr, *size);
     INCREMENT_RETAIN_PTR(ptr, *size);
-        
+    
+    //fprintf(stderr, "malloc: %d (ptr: %d, size: %d // %d)\n", COUNT_OF_RETAIN_PTR(ptr, *size), (int)ptr, (int)original_size, (int)*size);
+    
     return ptr;
 }
 
@@ -59,6 +64,7 @@ void * RenderEngine_retain(void * ptr, size_t size) {
     if(ptr != NULL) {
         MEMORY_MUTEX_LOCK();
         INCREMENT_RETAIN_PTR(ptr, size);
+        //fprintf(stderr, "retain: %d (ptr: %d, size: %d)\n", COUNT_OF_RETAIN_PTR(ptr, size), (int)ptr, (int)size);
         MEMORY_MUTEX_UNLOCK();
     }
     return ptr;
@@ -67,8 +73,10 @@ void * RenderEngine_retain(void * ptr, size_t size) {
 void RenderEngine_release(void * ptr, size_t size) {
     if(ptr != NULL) {
         MEMORY_MUTEX_LOCK();
+        //fprintf(stderr, "release: %d (ptr: %d, size: %d)\n", COUNT_OF_RETAIN_PTR(ptr, size), (int)ptr, (int)size);
         DECREMENT_RETAIN_PTR(ptr, size);
-        if(COUNT_OF_RETAIN_PTR(ptr, size) == 0) {
+        if(COUNT_OF_RETAIN_PTR(ptr, size) <= 0) {
+            //fprintf(stderr, "free: %d (ptr: %d, size: %d)\n", COUNT_OF_RETAIN_PTR(ptr, size), (int)ptr, (int)size);
             FREE_RETAIN_POINTER(ptr, size);
         }
         MEMORY_MUTEX_UNLOCK();
@@ -86,8 +94,8 @@ HALRenderContext * RenderEngine_init(ui_RenderEngine * ponyRenderEngine) {
         
     if(sharedContext == NULL) {
         MEMORY_MUTEX_INIT();
-        
         sharedContext = ctx;
+        METAL_PAGE_ALIGNMENT = getpagesize();
     }
     return ctx;
 }
@@ -112,7 +120,7 @@ void RenderEngine_textureInfo(HALRenderContext * ctx, const char * textureName, 
 void RenderEngine_pushClips(HALRenderContext * ctx,
                             uint64_t frameNumber,
                             uint64_t renderNumber,
-                            uint32_t num_vertices,
+                            uint32_t num_floats,
                             void * vertices,
                             uint32_t size_vertices_array)
 {
@@ -120,7 +128,7 @@ void RenderEngine_pushClips(HALRenderContext * ctx,
                         frameNumber,
                         renderNumber,
                         ShaderType_Stencil_Begin,
-                        num_vertices,
+                        num_floats,
                         vertices,
                         size_vertices_array,
                         1.0,
@@ -133,7 +141,7 @@ void RenderEngine_pushClips(HALRenderContext * ctx,
 void RenderEngine_popClips(HALRenderContext * ctx,
                            uint64_t frameNumber,
                            uint64_t renderNumber,
-                           uint32_t num_vertices,
+                           uint32_t num_floats,
                            void * vertices,
                            uint32_t size_vertices_array)
 {
@@ -141,7 +149,7 @@ void RenderEngine_popClips(HALRenderContext * ctx,
                         frameNumber,
                         renderNumber,
                         ShaderType_Stencil_End,
-                        num_vertices,
+                        num_floats,
                         vertices,
                         size_vertices_array,
                         1.0,
@@ -155,7 +163,7 @@ void RenderEngine_render(HALRenderContext * ctx,
                          uint64_t frameNumber,
                          uint64_t renderNumber,
                          uint32_t shaderType,
-                         uint32_t num_vertices,
+                         uint32_t num_floats,
                          void * vertices,
                          uint32_t size_vertices_array,
                          float globalR,
@@ -189,18 +197,18 @@ void RenderEngine_render(HALRenderContext * ctx,
         case ShaderType_Stencil_Begin:
         case ShaderType_Stencil_End:
             unit->bytes_per_vertex = sizeof(float) * 7;
-            unit->bytes_vertices = num_vertices * unit->bytes_per_vertex;
-            unit->num_vertices = num_vertices / 7;
+            unit->bytes_vertices = num_floats * sizeof(float);
+            unit->num_vertices = num_floats / 7;
             break;
         case ShaderType_Textured:
             unit->bytes_per_vertex = sizeof(float) * 9;
-            unit->bytes_vertices = num_vertices * unit->bytes_per_vertex;
-            unit->num_vertices = num_vertices / 9;
+            unit->bytes_vertices = num_floats * sizeof(float);
+            unit->num_vertices = num_floats / 9;
             break;
         case ShaderType_SDF:
             unit->bytes_per_vertex = sizeof(float) * 5;
-            unit->bytes_vertices = num_vertices * unit->bytes_per_vertex;
-            unit->num_vertices = num_vertices / 5;
+            unit->bytes_vertices = num_floats * sizeof(float);
+            unit->num_vertices = num_floats / 5;
             break;
     }
     unit->bytes_vertices = RenderEngine_alignedSize(unit->bytes_vertices);

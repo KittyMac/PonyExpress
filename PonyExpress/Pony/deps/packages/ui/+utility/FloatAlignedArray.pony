@@ -1,4 +1,5 @@
 use "linal"
+use "utility"
 
 //use @RenderEngine_malloc[UnsafePointer[None]](size:UnsafePointer[USize])
 //use @RenderEngine_free[None](ptr:UnsafePointer[None])
@@ -8,11 +9,11 @@ class FloatAlignedArray
   Liek AlignedArray, but optimized for floating point geomtry submission
   """  
   var _size: USize
-  var _alloc: USize
+  var _alloc_num_bytes: USize
   var _ptr: UnsafePointer[F32] ref = UnsafePointer[F32]
   
   fun _final() =>
-    @RenderEngine_release[None](_ptr, _alloc)
+    @RenderEngine_release[None](_ptr, _alloc_num_bytes)
     
   new create(len: USize = 0) =>
     """
@@ -21,10 +22,10 @@ class FloatAlignedArray
     _size = 0
     
     if len > 0 then
-      _alloc = len
-      _ptr = @RenderEngine_malloc[UnsafePointer[F32]](addressof _alloc)
+      _alloc_num_bytes = len * 4
+      _ptr = @RenderEngine_malloc[UnsafePointer[F32]](addressof _alloc_num_bytes)
     else
-      _alloc = 0
+      _alloc_num_bytes = 0
       _ptr = UnsafePointer[F32]
     end
     
@@ -32,10 +33,10 @@ class FloatAlignedArray
     """
     For completeness, you can manually free the non-Pony memory using this method.
     """
-    if _alloc > 0 then
-      @RenderEngine_release[None](_ptr, _alloc)
+    if _alloc_num_bytes > 0 then
+      @RenderEngine_release[None](_ptr, _alloc_num_bytes)
     end
-    _alloc = 0
+    _alloc_num_bytes = 0
     _ptr = UnsafePointer[F32]
 	
   fun apply(i: USize): F32 ? =>
@@ -51,7 +52,7 @@ class FloatAlignedArray
   
   fun ref pushQuadVCT(v0:V3, v1:V3, v2:V3, v3:V3, r:F32, g:F32, b:F32, a:F32, st0:V2, st1:V2, st2:V2, st3:V2) =>
     _size = _size + 54
-    if _size >= _alloc then
+    if _size >= (_alloc_num_bytes/4) then
       reserve(_size)
     end
     
@@ -82,7 +83,7 @@ class FloatAlignedArray
   
   fun ref pushQuadVT(v0:V3, v1:V3, v2:V3, v3:V3, st0:V2, st1:V2, st2:V2, st3:V2) =>
     _size = _size + 30
-    if _size >= _alloc then
+    if _size >= (_alloc_num_bytes/4) then
       reserve(_size)
     end
   
@@ -107,7 +108,7 @@ class FloatAlignedArray
   
   fun ref pushQuadVC(v0:V3, v1:V3, v2:V3, v3:V3, r:F32, g:F32, b:F32, a:F32) =>
     _size = _size + 42
-    if _size >= _alloc then
+    if _size >= (_alloc_num_bytes/4) then
       reserve(_size)
     end
   
@@ -138,7 +139,7 @@ class FloatAlignedArray
     Add an element to the end of the array.
     """
     _size = _size + 1
-    if _size >= _alloc then
+    if _size >= (_alloc_num_bytes/4) then
       reserve(_size)
     end
     _ptr.update(_size-1, consume value)
@@ -281,20 +282,18 @@ class FloatAlignedArray
     Reserve space for len elements, including whatever elements are already in
     the array. Array space grows geometrically.
     """
-    let alignedLen = @RenderEngine_alignedSize[USize](len)
-    
-    if _alloc < alignedLen then
+    if len >= (_alloc_num_bytes/4) then
       let old_ptr = _ptr
-      let old_alloc = _alloc
+      let old_alloc_num_bytes = _alloc_num_bytes
       
-      _alloc = len
-      _ptr = @RenderEngine_malloc[UnsafePointer[F32]](addressof _alloc)
+      _alloc_num_bytes = len * 4
+      _ptr = @RenderEngine_malloc[UnsafePointer[F32]](addressof _alloc_num_bytes)
       
       if old_ptr.is_null() == false then
         old_ptr.copy_to(_ptr, _size)
       end
       
-      @RenderEngine_release[None](old_ptr, old_alloc)
+      @RenderEngine_release[None](old_ptr, old_alloc_num_bytes)
     end
   
   fun ref clear() =>
@@ -316,11 +315,17 @@ class FloatAlignedArray
     """
     _size
   
+  fun allocSize(): USize =>
+    """
+    The number of byte allocated for this array
+    """
+    _alloc_num_bytes
+  
   fun reserved(): USize =>
     """
     The number of elements in the array.
     """
-    _alloc
+    (_alloc_num_bytes/4)
   
   fun cpointer(offset: USize = 0): UnsafePointer[F32] tag =>
     """

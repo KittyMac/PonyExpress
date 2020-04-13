@@ -25,15 +25,17 @@ class FrameContext
   var frameNumber:U64
   var renderNumber:U64
   var matrix:M4
+  var clipBounds:R4
   var nodeID:YogaNodeID
   
-  new ref create(engine':RenderEngine tag, renderContext':RenderContextRef tag, nodeID':YogaNodeID, frameNumber':U64, renderNumber':U64, matrix':M4) =>
+  new ref create(engine':RenderEngine tag, renderContext':RenderContextRef tag, nodeID':YogaNodeID, frameNumber':U64, renderNumber':U64, matrix':M4, clipBounds':R4) =>
     engine = engine'
     renderContext = renderContext'
     frameNumber = frameNumber'
     renderNumber = renderNumber'
     matrix = matrix'
     nodeID = nodeID'
+    clipBounds = clipBounds'
   
   fun calcRenderNumber(frameContext:FrameContext val, partNum:U64, internalOffset:U64):U64 =>
     // Each view receives 100 "render slots" for submitting geometry. The first 10 and the last 10
@@ -43,7 +45,7 @@ class FrameContext
   
   fun clone():FrameContext val =>
     recover val
-      FrameContext(engine, renderContext, nodeID, frameNumber, renderNumber, matrix)
+      FrameContext(engine, renderContext, nodeID, frameNumber, renderNumber, matrix, clipBounds)
     end
 
 actor@ RenderEngine
@@ -171,7 +173,7 @@ actor@ RenderEngine
         
     if startNeeded then
       if (waitingOnViewsToStart == 0) then
-        let frameContext = FrameContext(this, renderContext, node.id(), 0, 0, M4fun.id())
+        let frameContext = FrameContext(this, renderContext, node.id(), 0, 0, M4fun.id(), R4fun.big())
         waitingOnViewsToStart = node.start(frameContext)
         startNeeded = false
       else
@@ -191,7 +193,7 @@ actor@ RenderEngine
             
         frameNumber = frameNumber + 1
       
-        let frameContext = FrameContext(this, renderContext, node.id(), frameNumber, 0, M4fun.id())
+        let frameContext = FrameContext(this, renderContext, node.id(), frameNumber, 0, M4fun.id(), R4fun.big())
         waitingOnViewsToRender = node.render(frameContext)
       else
         Log.println("renderNeeded required but waitingOnViewsToRender is not 0 (is it %s) \n", waitingOnViewsToRender)
@@ -232,6 +234,6 @@ actor@ RenderEngine
     end
   
   be touchEvent(id:USize, pressed:Bool, x:F32, y:F32) =>
-    let frameContext = FrameContext(this, renderContext, node.id(), 0, 0, M4fun.id())
+    let frameContext = FrameContext(this, renderContext, node.id(), 0, 0, M4fun.id(), R4fun.big())
     node.event(frameContext, TouchEvent(id, pressed, x, y))
   
