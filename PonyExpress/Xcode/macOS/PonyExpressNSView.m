@@ -83,6 +83,8 @@ Customized view for macOS
     dispatch_source_set_event_handler(_displaySource, ^(){
         if (self.paused == false) {
             [weakSelf render];
+        }else{
+            [weakSelf setNeedsDisplay:true];
         }
     });
     dispatch_resume(_displaySource);
@@ -181,6 +183,8 @@ static CVReturn DispatchRenderLoop(CVDisplayLinkRef displayLink,
         PonyExpressNSView *customView = (__bridge PonyExpressNSView*)displayLinkContext;
         if (customView.paused == false) {
             [customView render];
+        }else{
+            [customView setNeedsDisplay:true];
         }
     }
 #endif

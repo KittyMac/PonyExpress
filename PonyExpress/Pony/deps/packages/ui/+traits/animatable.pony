@@ -6,10 +6,14 @@ trait Animatable
   """
   var animation_target:(Controllerable tag | None) = None
   
-  be animate(animation_target':Controllerable tag) =>
+  be animation(animation_target':Controllerable tag) =>
     animation_target = animation_target'
   
+  fun ref animate(delta:F32 val) =>
+    None
+  
   fun ref performAnimation(frameContext:FrameContext val) =>
+    animate(frameContext.animation_delta)
     match animation_target
     | let t:Controllerable tag =>
       t.animate(frameContext.animation_delta)

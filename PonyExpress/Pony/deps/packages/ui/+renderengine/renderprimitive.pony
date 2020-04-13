@@ -113,6 +113,9 @@ primitive RenderPrimitive
     frameContext.engine.startFinished()
   
   fun tag renderCachedGeometry(frameContext:FrameContext val, partNum:U64, shaderType:U32, vertices:FloatAlignedArray, gc:RGBA val, t:Pointer[U8] tag) =>
+    if vertices.size() == 0 then
+      return
+    end
     @RenderEngine_render( frameContext.renderContext,
                           frameContext.frameNumber,
                           frameContext.calcRenderNumber(frameContext, partNum, 0),

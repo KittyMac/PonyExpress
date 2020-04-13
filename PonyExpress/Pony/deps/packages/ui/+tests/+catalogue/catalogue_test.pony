@@ -21,10 +21,19 @@ actor Catalog is Controllerable
   fun ref mainNode():YogaNode iso^ =>
     let main = recover iso
       YogaNode.>alignItems(YGAlign.flexstart)
+              .>direction(YGDirection.rtl)
               .>flexDirection(YGFlexDirection.row)
               .>view( Color.>color(RGBA(0.98,0.98,0.98,1)) )
               .>addChildren( [
-        
+          
+          // Panel
+          YogaNode.>name("Panel")
+                  .>view( Clear )
+                  .>direction(YGDirection.ltr)
+                  .>flexGrow(1.0)
+                  .>flexShrink(1.0)
+                  .>fill()
+          
           // Sidebar
           YogaNode.>width(210)
                   .>heightPercent(100)
@@ -39,13 +48,6 @@ actor Catalog is Controllerable
               menuButton("Scroll", font, SwitchToScroll)
               menuButton("Animation", font, SwitchToAnimation)
           ])
-        
-          // Panel
-          YogaNode.>name("Panel")
-                  .>view( Clear )
-                  .>flexGrow(1.0)
-                  .>flexShrink(1.0)
-                  .>fill()
           
         ]
       )

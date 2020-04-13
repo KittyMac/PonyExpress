@@ -15,24 +15,38 @@ actor AnimationTest is Controllerable
   
   var animation:F32 = 0
   
-	fun ref mainNode():YogaNode iso^ =>
+  let progressView:SampleProgressBar = SampleProgressBar
+  
+	fun ref mainNode():YogaNode iso^ =>    
     recover iso 
       YogaNode.>alignItems(YGAlign.center)
               .>justifyContent(YGJustify.center)
               .>flexDirection(YGFlexDirection.row)
               .>padding(YGEdge.all, 40)
-              .>view( Color.>color(RGBA(0.98,0.98,0.98,1)) )
+              .>view( Color.>color(RGBA(0.98,0.98,0.98,1)).>animation(this) )
               .>addChildren( [
-              
+            
+            YogaNode.>name("Progress")
+                    .>view( progressView )
+                    .>width(400)
+                    .>height(40)
+            
             YogaNode.>name("Square")
-                    .>view( Color.>red().>animate(this) )
+                    .>view( Color.>red() )
                     .>width(200)
+                    .>height(200)
+            
+            YogaNode.>name("Rainbow")
+                    .>view( SampleRainbow )
+                    .>width(50)
                     .>height(200)
           ])
       end
   
   be animate(delta:F32) =>
     animation = animation + delta
+    
+    progressView.progress(animation % 1.0)
     
     if engine as RenderEngine then
       engine.getNodeByName("Square", { (node) =>

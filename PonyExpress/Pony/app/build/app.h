@@ -997,6 +997,8 @@ None* ui_Viewable_ref_start_oo(ui_Viewable* self, ui_FrameContext* frameContext)
 
 None* ui_Viewable_ref_performAnimation_oo(ui_Viewable* self, ui_FrameContext* frameContext);
 
+None* ui_Viewable_ref_animate_fo(ui_Viewable* self, float delta);
+
 /* Allocate a u2_ui_YogaNode_ref_None_val without initialising it. */
 u2_ui_YogaNode_ref_None_val* u2_ui_YogaNode_ref_None_val_Alloc(void);
 
