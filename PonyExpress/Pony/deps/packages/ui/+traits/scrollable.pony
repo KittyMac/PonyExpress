@@ -198,8 +198,8 @@ trait Scrollable is (Viewable & Actionable)
     
     fun ref calcMaxScrollX():F32 => (contentWidth - myWidth).max(0.0)
     fun ref calcMaxScrollY():F32 => (contentHeight - myHeight).max(0.0)
-    fun ref bounceEdgeX():F32 => if scrollX < 0 then 0.0 else calcMaxScrollX() end
-    fun ref bounceEdgeY():F32 => if scrollY < 0 then 0.0 else calcMaxScrollY() end
+    fun ref bounceEdgeX():F32 => let m = calcMaxScrollX(); if prevScrollX < (m/2) then 0.0 else m end
+    fun ref bounceEdgeY():F32 => let m = calcMaxScrollY(); if prevScrollY < (m/2) then 0.0 else m end
     fun ref bungee(stretchDist:F32, contentSize:F32):F32 => (1.0 - (1.0 / (((stretchDist * bungeeStretchCoefficient) / contentSize) + 1.0))) * contentSize
         
     fun ref setScrollState(newState:U32) =>
@@ -242,6 +242,7 @@ trait Scrollable is (Viewable & Actionable)
     fun ref commitScrollToYogaNode(x:F32, y:F32) =>
       prevScrollX = x
       prevScrollY = y
+      
       if engine as RenderEngine then
           engine.getNodeByID(nodeID, { (node) =>
             if node as YogaNode then
@@ -286,7 +287,8 @@ trait Scrollable is (Viewable & Actionable)
         velocityY = 0.0
       end
         
-      //we might need to cancel touches on inner nodes when we start a scroll, which is expensive. avoid this if we can by not cancelling when the user touches, but doesn't actually scroll
+      //we might need to cancel touches on inner nodes when we start a scroll, which is expensive. 
+      //avoid this if we can by not cancelling when the user touches, but doesn't actually scroll
       if (velocityX.abs() < minCancelTouchesVelocity) and (velocityY.abs() < minCancelTouchesVelocity) then
         return
       end
@@ -321,7 +323,7 @@ trait Scrollable is (Viewable & Actionable)
         else
           animEndScrollX = scrollX + (swipeDistancePerVelocity * velocityX)
         end
-        
+                
         verticalDecelerationTime = 0.0
         if isPastVerticalEdge then
           //animate back to the edge instead of scrolling
@@ -330,6 +332,7 @@ trait Scrollable is (Viewable & Actionable)
         else
           animEndScrollY = scrollY + (swipeDistancePerVelocity * velocityY)
         end
+        
       else
         //we're not moving or past the edge of the scroll, just idle
         setScrollState(ScrollState.idle)
