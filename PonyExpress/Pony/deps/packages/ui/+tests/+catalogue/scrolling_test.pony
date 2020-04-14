@@ -7,7 +7,7 @@ actor ScrollTest is Controllerable
     recover iso 
       YogaNode.>alignItems(YGAlign.flexstart)
               .>flexDirection(YGFlexDirection.row)
-              .>padding(YGEdge.all, 40)
+              .>padding(YGEdge.all, 0)
               .>view( Color.>color(RGBA(0.98,0.98,0.98,1)) )
               .>addChildren( [
                                                 
@@ -17,7 +17,7 @@ actor ScrollTest is Controllerable
                       
                       YogaNode.>widthPercent(100)
                               .>heightPercent(500)
-                              .>view( Label(LoremText(), font).>size(32) )
+                              .>view( Label(LoremText(), font).>size(24) )
                       
               )
              

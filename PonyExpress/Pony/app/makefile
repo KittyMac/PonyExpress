@@ -88,6 +88,7 @@ framework_packages: confirm
 	$(call copy_framework_package,pony.stringExt,stringExt)
 	$(call copy_framework_package,pony.ttimer,ttimer)
 	$(call copy_framework_package,pony.ui,ui)
+	$(call copy_framework_package,pony.easings,easings)
 	$(call copy_framework_package,pony.utility,utility)
 	$(call copy_framework_package,pony.yoga,yoga,libyoga-ios.a,libyoga-osx.a)
 

@@ -58,6 +58,10 @@ class YogaNode
     // to have them set the size on the appropriate yoga node
     @YGNodeCalculateLayout(node, @YGNodeStyleGetWidth(node), @YGNodeStyleGetHeight(node), YGDirection.ltr)
   
+  
+  fun ref setContentOffset(x:F32, y:F32) =>
+    _content_offset = V2fun(x, y)
+    
   fun ref scrollContent(delta:V2) =>
     _content_offset = V2fun.add(_content_offset, delta)
   
