@@ -133,19 +133,28 @@ trait Scrollable is (Viewable & Actionable)
       let touchPosition = inverseTransformPoint(frameContext, e.position)
       
       // TODO: all touch positions should be the average of all active touches
+      var shouldRender:Bool = false
+      
       if (wasTrackingTouches == false) and (trackingTouches.size() > 0) then
         handleTouchBegan(e, touchPosition)
-        previousPosition = touchPosition
+        shouldRender = true
       elseif (wasTrackingTouches == true) and (trackingTouches.size() == 0) then
         handleTouchEnded(e, touchPosition)
-        previousPosition = touchPosition
+        shouldRender = true
       elseif trackingTouches.size() > 0 then
         try
           let touchID = trackingTouches(0)?
           if touchID == e.id then
             handleTouchMoved(e, touchPosition)
-            previousPosition = touchPosition
+            shouldRender = true
           end
+        end
+      end
+      
+      if shouldRender then
+        previousPosition = touchPosition
+        if engine as RenderEngine then
+          engine.setNeedsRendered()
         end
       end
       
@@ -203,7 +212,7 @@ trait Scrollable is (Viewable & Actionable)
       if engine as RenderEngine then
           engine.getNodeByID(nodeID, { (node) =>
             if node as YogaNode then
-              node.setContentOffset(x, y)
+              node.setContentOffset(prevScrollX, prevScrollY)
               return RenderNeeded
             end        
             None
@@ -281,7 +290,7 @@ trait Scrollable is (Viewable & Actionable)
       end
   
       //TODO: we want to "capture" this touch so no one else can use it.  Need to implement... somewhere.
-      //CCDirector::sharedDirector()->getTouchDispatcher()->cancelTouches(relevantTouches, this);      
+      //CCDirector::sharedDirector()->getTouchDispatcher()->cancelTouches(relevantTouches, this);
     
     fun ref handleTouchEnded(e:TouchEvent val, touchPosition:V2) =>
       //check if we flicked the scroll view
@@ -324,8 +333,7 @@ trait Scrollable is (Viewable & Actionable)
       else
         //we're not moving or past the edge of the scroll, just idle
         setScrollState(ScrollState.idle)
-      end
-    
+      end    
     
     fun ref scrollable_animate(delta:F32 val) =>
       scrollStateTime = scrollStateTime + delta
@@ -510,10 +518,7 @@ trait Scrollable is (Viewable & Actionable)
       end
       
       //update the scroll position
-      //if (scrollX != assignScrollY) or (scrollY != assignScrollY) then
-        //scrollX = assignScrollX
-        //scrollY = assignScrollY
-        
+      if (prevScrollX != assignScrollX) or (prevScrollY != assignScrollY) then
         //perform the scroll
         commitScrollToYogaNode(assignScrollX, assignScrollY)
         
@@ -523,7 +528,7 @@ trait Scrollable is (Viewable & Actionable)
           scrollY = assignScrollY
         end
         
-      //end
+      end
 
 
 
