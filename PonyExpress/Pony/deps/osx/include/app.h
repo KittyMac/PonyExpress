@@ -129,6 +129,8 @@ typedef struct u2_ui_YogaNode_ref_None_val u2_ui_YogaNode_ref_None_val;
 
 typedef struct PlatformOSX PlatformOSX;
 
+typedef struct u3_ui_NullEvent_val_ui_TouchEvent_val_ui_ScrollEvent_val u3_ui_NullEvent_val_ui_TouchEvent_val_ui_ScrollEvent_val;
+
 /*
 This type represents the root capability. When a Pony program starts, the
 Env passed to the Main actor contains an instance of the root capability.
@@ -366,7 +368,7 @@ typedef struct utility_Log utility_Log;
 
 typedef struct None None;
 
-typedef struct u2_ui_NullEvent_val_ui_TouchEvent_val u2_ui_NullEvent_val_ui_TouchEvent_val;
+typedef struct ui_$2$18 ui_$2$18;
 
 /*
 The render engine is responsible for sending "renderable chunks" across the FFI to the 3D engine
@@ -647,6 +649,8 @@ no guarantees that the GC will actually reclaim any space.
 */
 typedef struct Array_U32_val Array_U32_val;
 
+typedef struct ui_ScrollEvent ui_ScrollEvent;
+
 typedef struct ui_YogaNode ui_YogaNode;
 
 typedef struct ui_TouchEvent ui_TouchEvent;
@@ -659,8 +663,6 @@ typedef struct ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_val ArrayValues
 Rendering actors can call this concurrently safely to submit geometry to the platform rendering engine
 */
 typedef struct ui_RenderPrimitive ui_RenderPrimitive;
-
-typedef struct ui_$2$17 ui_$2$17;
 
 /*
 A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
@@ -1036,6 +1038,9 @@ None* PlatformOSX_val_poll_o(PlatformOSX* self);
 None* PlatformOSX_ref_register_oo(PlatformOSX* self, PonyPlatform* platform);
 
 bool PlatformOSX_box__use_main_thread_b(PlatformOSX* self);
+
+/* Allocate a u3_ui_NullEvent_val_ui_TouchEvent_val_ui_ScrollEvent_val without initialising it. */
+u3_ui_NullEvent_val_ui_TouchEvent_val_ui_ScrollEvent_val* u3_ui_NullEvent_val_ui_TouchEvent_val_ui_ScrollEvent_val_Alloc(void);
 
 /* Allocate a AmbientAuth without initialising it. */
 AmbientAuth* AmbientAuth_Alloc(void);
@@ -1868,17 +1873,25 @@ String* None_box_string_o(None* self);
 
 None* None_val_create_o(None* self);
 
-/* Allocate a u2_ui_NullEvent_val_ui_TouchEvent_val without initialising it. */
-u2_ui_NullEvent_val_ui_TouchEvent_val* u2_ui_NullEvent_val_ui_TouchEvent_val_Alloc(void);
+/* Allocate a ui_$2$18 without initialising it. */
+ui_$2$18* ui_$2$18_Alloc(void);
+
+void* ui_$2$18_val_apply_oo(ui_$2$18* self, void* p1);
+
+void* ui_$2$18_box_apply_oo(ui_$2$18* self, void* p1);
+
+void* ui_$2$18_ref_apply_oo(ui_$2$18* self, void* p1);
 
 /* Allocate a ui_RenderEngine without initialising it. */
 ui_RenderEngine* ui_RenderEngine_Alloc(void);
 
-None* ui_RenderEngine_tag_getNodeByName_ooo__send(ui_RenderEngine* self, String* nodeName, ui_$2$17* callback);
+None* ui_RenderEngine_tag_getNodeByName_ooo__send(ui_RenderEngine* self, String* nodeName, ui_$2$18* callback);
 
-None* ui_RenderEngine_tag_getNodeByID_Zoo__send(ui_RenderEngine* self, size_t id, ui_$2$17* callback);
+None* ui_RenderEngine_tag_getNodeByID_Zoo__send(ui_RenderEngine* self, size_t id, ui_$2$18* callback);
 
 None* ui_RenderEngine_tag_addNode_oo__send(ui_RenderEngine* self, ui_YogaNode* yoga);
+
+None* ui_RenderEngine_tag_scrollEvent_Zffffo__send(ui_RenderEngine* self, size_t id, float dx, float dy, float px, float py);
 
 None* ui_RenderEngine_ref_handleNewNodeAdded_o(ui_RenderEngine* self);
 
@@ -2482,6 +2495,10 @@ float F32_box_neg_f(float self);
 
 float F32_val_neg_f(float self);
 
+float F32_box_min_ff(float self, float y);
+
+float F32_val_min_ff(float self, float y);
+
 float F32_val_create_ff(float self, float value);
 
 bool F32_box_lt_fb(float self, float y);
@@ -2578,6 +2595,11 @@ Create an array with zero elements, but space for len elements.
 */
 Array_U32_val* Array_U32_val_ref_create_Zo(Array_U32_val* self, size_t len);
 
+/* Allocate a ui_ScrollEvent without initialising it. */
+ui_ScrollEvent* ui_ScrollEvent_Alloc(void);
+
+ui_ScrollEvent* ui_ScrollEvent_val_create_Zffffo(ui_ScrollEvent* self, size_t id_, float dx, float dy, float px, float py);
+
 /* Allocate a ui_YogaNode without initialising it. */
 ui_YogaNode* ui_YogaNode_Alloc(void);
 
@@ -2654,15 +2676,6 @@ None* ui_RenderPrimitive_val_startFinished_oo(ui_RenderPrimitive* self, ui_Frame
 None* ui_RenderPrimitive_tag_startFinished_oo(ui_RenderPrimitive* self, ui_FrameContext* frameContext);
 
 None* ui_RenderPrimitive_box_startFinished_oo(ui_RenderPrimitive* self, ui_FrameContext* frameContext);
-
-/* Allocate a ui_$2$17 without initialising it. */
-ui_$2$17* ui_$2$17_Alloc(void);
-
-void* ui_$2$17_val_apply_oo(ui_$2$17* self, void* p1);
-
-void* ui_$2$17_box_apply_oo(ui_$2$17* self, void* p1);
-
-void* ui_$2$17_ref_apply_oo(ui_$2$17* self, void* p1);
 
 bool Bool_box_op_and_bb(bool self, bool y);
 

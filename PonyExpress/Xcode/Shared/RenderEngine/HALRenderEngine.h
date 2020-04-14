@@ -151,5 +151,6 @@ void RenderEngineInternal_frameFinished(HALRenderContext * context);
 void RenderEngineInternal_Poll(void);
 
 void RenderEngineInternal_touchEvent(HALRenderContext * context, size_t touchID, bool pressed, float x, float y);
+void RenderEngineInternal_scrollEvent(HALRenderContext * context, size_t touchID, float sx, float sy, float mx, float my);
 
 #endif

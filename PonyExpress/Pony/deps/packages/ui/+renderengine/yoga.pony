@@ -61,10 +61,21 @@ class YogaNode
   
   fun ref setContentOffset(x:F32, y:F32) =>
     _content_offset = V2fun(x, y)
-    
-  fun ref scrollContent(delta:V2) =>
-    _content_offset = V2fun.add(_content_offset, delta)
   
+  fun ref contentSize():V2 =>
+    // width/height from the union of all children bounds
+    var c = R4fun.zero()
+    var first:Bool = true
+    for child in children.values() do
+      let r = R4fun(@YGNodeLayoutGetLeft(child.node), @YGNodeLayoutGetTop(child.node), @YGNodeLayoutGetWidth(child.node), @YGNodeLayoutGetHeight(child.node))
+      if first then
+        c = r
+      else
+        c = R4fun.union(c, r)
+      end
+    end
+    V2fun(R4fun.width(c), R4fun.height(c))
+    
   fun print() =>
     @YGNodePrint(node, YGPrintOptions.layout or YGPrintOptions.style or YGPrintOptions.children)
     @printf("\n".cstring())
@@ -99,6 +110,7 @@ class YogaNode
     
     frameContext.renderNumber = n
     frameContext.nodeID = id()
+    frameContext.contentSize = contentSize()
     
     if _view as Viewable then
       _view.viewable_start( frameContext.clone() )
@@ -119,6 +131,7 @@ class YogaNode
     frameContext.renderNumber = n
     frameContext.matrix = last_matrix
     frameContext.nodeID = id()
+    frameContext.contentSize = contentSize()
     
     if _view as Viewable then
       _view.viewable_event( frameContext.clone(), anyEvent, last_bounds )
@@ -161,7 +174,8 @@ class YogaNode
     frameContext.renderNumber = n
     frameContext.matrix = local_matrix
     frameContext.nodeID = id()
-        
+    frameContext.contentSize = contentSize()
+    
     last_bounds = R4fun( (-local_width/2)+parent_content_offset._1, (-local_height/2)-parent_content_offset._2, local_width, local_height)
     last_matrix = local_matrix
     

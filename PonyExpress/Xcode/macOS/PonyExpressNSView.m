@@ -330,7 +330,8 @@ static CVReturn DispatchRenderLoop(CVDisplayLinkRef displayLink,
 
 - (void)scrollWheel:(NSEvent *)event
 {
-    //[delegate Event:event];
+    NSPoint p = [self convertPoint:[event locationInWindow] fromView:NULL];
+    RenderEngineInternal_scrollEvent(nil, 0, [event deltaX], [event deltaY], p.x, -(self.bounds.size.height - p.y));
 }
 
 - (void)mouseEntered:(NSEvent *)event

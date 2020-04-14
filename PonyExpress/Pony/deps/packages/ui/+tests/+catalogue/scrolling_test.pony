@@ -11,12 +11,12 @@ actor ScrollTest is Controllerable
               .>view( Color.>color(RGBA(0.98,0.98,0.98,1)) )
               .>addChildren( [
                                                 
-            YogaNode.>view( Scroll )
+            YogaNode.>view( Scroll.>horizontal(false) )
                     .>clips(true)
                     .>addChild(
                       
                       YogaNode.>widthPercent(100)
-                              .>heightPercent(500)
+                              .>heightPercent(1000)
                               .>view( Label(LoremText(), font).>size(24) )
                       
               )

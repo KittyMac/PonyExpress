@@ -2,11 +2,6 @@ use "linal"
 use "utility"
 use "easings"
 
-primitive ScrollDirection
-  let vertical:U32 = 1
-  let horizontal:U32 = 2
-  let both:U32 = 0xFF
-
 primitive ScrollState
   let idle:U32 = 0
   let dragging:U32 = 1
@@ -30,12 +25,15 @@ trait Scrollable is (Viewable & Actionable)
   let edgeBounceEaseTimePercent:F32 = 0.2
   let bungeeStretchCoefficient:F32 = 0.35
   let minCancelTouchesVelocity:F32 = 3
-  let scrollDuration:F32 = 2.75
+  let scrollTouchDuration:F32 = 2.75
+  let scrollWheelDuration:F32 = 0.75
   let pageVelocity:F32 = 400.0
   let swipeDistancePerVelocity:F32 = 0.4
   let bounceDistancePerVelocity:F32 = 0.03
   let animationDuration:F32 = 0.5
   let minScrollSpeed:F32 = 1.0
+  
+  var scrollDuration:F32 = 0
   
   var scrollEnabled:Bool = true
   
@@ -71,7 +69,9 @@ trait Scrollable is (Viewable & Actionable)
   var myWidth:F32 = 0
   var myHeight:F32 = 0
   
-  var scrollDirection:U32 = ScrollDirection.both
+  var scrollHorizontal:Bool = true
+  var scrollVertical:Bool = true
+  
   var horizontalDecelerationState:U32 = DeceleratingState.idle
   var verticalDecelerationState:U32 = DeceleratingState.idle
   
@@ -82,16 +82,47 @@ trait Scrollable is (Viewable & Actionable)
   
   var touchTimestamp:U64 = 0
   
+  be horizontal(v:Bool) =>
+    scrollHorizontal = v
+  
+  be vertical(v:Bool) =>
+    scrollVertical = v
+  
   fun ref scrollable_render(frameContext:FrameContext val, bounds:R4) =>
     myWidth = R4fun.width(bounds)
     myHeight = R4fun.height(bounds)
     
-    // TODO: get my content width and height from the frameContext
-    contentWidth = myWidth
-    contentHeight = myHeight * 5
+    contentWidth = frameContext.contentSize._1
+    contentHeight = frameContext.contentSize._2
         
   fun ref scrollable_event(frameContext:FrameContext val, anyEvent:AnyEvent val, bounds:R4) =>
     match anyEvent
+    | let e:ScrollEvent val =>
+      if scrollEnabled == false then
+        trackingTouches.clear()
+        return
+      end
+      
+      let inside = pointInBounds(frameContext, bounds, e.position)
+      
+      if inside and (scrollState != ScrollState.dragging) then
+        if scrollHorizontal then
+          velocityX = e.delta._1 * 200.0
+        end
+        if scrollVertical then
+          velocityY = e.delta._2 * -200.0
+        end
+        
+        scrollDuration = scrollWheelDuration
+        
+        setScrollState(ScrollState.dragging)
+        oneShotScrollingPush(0)
+        
+        if engine as RenderEngine then
+          engine.setNeedsRendered()
+        end
+      end
+    
     | let e:TouchEvent val =>
     
       if scrollEnabled == false then
@@ -134,6 +165,8 @@ trait Scrollable is (Viewable & Actionable)
       
       // TODO: all touch positions should be the average of all active touches
       var shouldRender:Bool = false
+      
+      scrollDuration = scrollTouchDuration
       
       if (wasTrackingTouches == false) and (trackingTouches.size() > 0) then
         handleTouchBegan(e, touchPosition)
@@ -185,8 +218,8 @@ trait Scrollable is (Viewable & Actionable)
         end
     
         if (newState == ScrollState.animating) or (newState == ScrollState.decelerating) then
-          animStartScrollX = scrollX
-          animStartScrollY = scrollY
+          animStartScrollX = prevScrollX
+          animStartScrollY = prevScrollY
           animStartVelocityX = velocityX
           animStartVelocityY = velocityY
           horizontalDecelerationState = DeceleratingState.scrolling
@@ -223,30 +256,7 @@ trait Scrollable is (Viewable & Actionable)
       //we have some touches that will stop this scroll view in it's tracks
       velocityX = 0
       velocityY = 0
-  
-      //check if the view was rubber banding when we touched down
-      /*
-      if scrollX > 0 then
-        touchEdgeOffsetX = scrollX
-      else
-        let maxScroll = calcMaxScrollX()
-        if scrollX > maxScroll then
-          touchEdgeOffsetX = maxScroll - scrollX
-        else
-          touchEdgeOffsetX = 0
-        end
-      end
-      if scrollY > 0 then
-        touchEdgeOffsetY = scrollY
-      else
-        let maxScroll = calcMaxScrollY()
-        if scrollY > maxScroll then
-          touchEdgeOffsetY = maxScroll - scrollY
-        else
-          touchEdgeOffsetY = 0
-        end
-      end
-      */
+      
       //make sure we know the timestep
       touchTimestamp = @ponyint_cpu_tick()
     
@@ -265,12 +275,12 @@ trait Scrollable is (Viewable & Actionable)
   
       //calculate the touch velocity
       let dLoc = V2fun.sub(touchPosition, previousPosition)
-      if (scrollDirection and ScrollDirection.horizontal) != 0 then
+      if scrollHorizontal then
         velocityX = (velocityX + (dLoc._1 / touchDt)) * 0.5
       else
         velocityX = 0.0
       end
-      if (scrollDirection and ScrollDirection.vertical) != 0 then
+      if scrollVertical then
         velocityY = (velocityY + (dLoc._2 / touchDt)) * 0.5
       else
         velocityY = 0.0
@@ -282,15 +292,48 @@ trait Scrollable is (Viewable & Actionable)
       end
   
       //update the scroll
-      if (scrollDirection and ScrollDirection.horizontal) != 0 then
+      if scrollHorizontal then
         scrollX = scrollX + dLoc._1
       end
-      if (scrollDirection and ScrollDirection.vertical) != 0 then
+      if scrollVertical then
         scrollY = scrollY + dLoc._2
       end
   
       //TODO: we want to "capture" this touch so no one else can use it.  Need to implement... somewhere.
       //CCDirector::sharedDirector()->getTouchDispatcher()->cancelTouches(relevantTouches, this);
+    
+    
+    fun ref oneShotScrollingPush(localMinScrollSpeed:F32) =>
+      let isPastHorizontalEdge:Bool = ((scrollX < 0.0) or (scrollX > calcMaxScrollX())) and (localMinScrollSpeed > 0)
+      let isPastVerticalEdge:Bool = ((scrollY < 0.0) or (scrollY > calcMaxScrollY())) and (localMinScrollSpeed > 0)
+      let isMoving:Bool = (velocityX.abs() > localMinScrollSpeed) or (velocityY.abs() > localMinScrollSpeed)
+      
+      if isMoving or isPastHorizontalEdge or isPastVerticalEdge then
+        //switch to decelerating
+        setScrollState(ScrollState.decelerating)
+
+        //we should scroll, calculate where our scroll should end
+        horizontalDecelerationTime = 0.0
+        if isPastHorizontalEdge then
+          //animate back to the edge instead of scrolling
+          horizontalDecelerationState = DeceleratingState.returningFromEdge
+          animEndScrollX = bounceEdgeX()
+        else
+          animEndScrollX = scrollX + (swipeDistancePerVelocity * velocityX)
+        end
+        
+        verticalDecelerationTime = 0.0
+        if isPastVerticalEdge then
+          //animate back to the edge instead of scrolling
+          verticalDecelerationState = DeceleratingState.returningFromEdge
+          animEndScrollY = bounceEdgeY()
+        else
+          animEndScrollY = scrollY + (swipeDistancePerVelocity * velocityY)
+        end
+      else
+        //we're not moving or past the edge of the scroll, just idle
+        setScrollState(ScrollState.idle)
+      end    
     
     fun ref handleTouchEnded(e:TouchEvent val, touchPosition:V2) =>
       //check if we flicked the scroll view
@@ -304,36 +347,7 @@ trait Scrollable is (Viewable & Actionable)
       scrollX = prevScrollX
       scrollY = prevScrollY
       
-      let isPastHorizontalEdge:Bool = (scrollX < 0.0) or (scrollX > calcMaxScrollX())
-      let isPastVerticalEdge:Bool = (scrollY < 0.0) or (scrollY > calcMaxScrollY())
-      let isMoving:Bool = (velocityX.abs() > minScrollSpeed) or (velocityY.abs() > minScrollSpeed)
-
-      if isMoving or isPastHorizontalEdge or isPastVerticalEdge then
-        //switch to decelerating
-        setScrollState(ScrollState.decelerating)
-  
-        //we should scroll, calculate where our scroll should end
-        if isPastHorizontalEdge then
-          //animate back to the edge instead of scrolling
-          horizontalDecelerationTime = 0.0
-          horizontalDecelerationState = DeceleratingState.returningFromEdge
-          animEndScrollX = bounceEdgeX()
-        else
-          animEndScrollX = scrollX + (swipeDistancePerVelocity * velocityX)
-        end
-          
-        if isPastVerticalEdge then
-          //animate back to the edge instead of scrolling
-          verticalDecelerationTime = 0.0
-          verticalDecelerationState = DeceleratingState.returningFromEdge
-          animEndScrollY = bounceEdgeY()
-        else
-          animEndScrollY = scrollY + (swipeDistancePerVelocity * velocityY)
-        end
-      else
-        //we're not moving or past the edge of the scroll, just idle
-        setScrollState(ScrollState.idle)
-      end    
+      oneShotScrollingPush(minScrollSpeed)
     
     fun ref scrollable_animate(delta:F32 val) =>
       scrollStateTime = scrollStateTime + delta
@@ -342,11 +356,11 @@ trait Scrollable is (Viewable & Actionable)
       var assignScrollY = scrollY
       
       var updateScroll = false
-      
+            
       match scrollState
       | ScrollState.decelerating =>
         //update the horizontal deceleration
-        if (scrollDirection and ScrollDirection.horizontal) != 0 then
+        if scrollHorizontal then
         
           if horizontalDecelerationState == DeceleratingState.returningFromEdge then
             //we're returning from being scrolled past the edge
@@ -404,7 +418,7 @@ trait Scrollable is (Viewable & Actionable)
         
         
         //update the vertical deceleration
-        if (scrollDirection and ScrollDirection.vertical) != 0 then
+        if scrollVertical then
           if verticalDecelerationState == DeceleratingState.returningFromEdge then
             //we're returning from being scrolled past the edge
             verticalDecelerationTime = verticalDecelerationTime + delta
@@ -418,7 +432,7 @@ trait Scrollable is (Viewable & Actionable)
             end
           else
             //we were not scrolled past the edge, scroll normally
-            if verticalDecelerationState == DeceleratingState.scrolling then
+            if verticalDecelerationState == DeceleratingState.scrolling then              
               //we're scrolling, and have not yet hit the edge
               let deceleratingPercent = scrollStateTime / scrollDuration
               assignScrollY = Easing.tweenQuinticEaseOut(animStartScrollY, animEndScrollY, deceleratingPercent)
@@ -494,13 +508,13 @@ trait Scrollable is (Viewable & Actionable)
       
       | ScrollState.animating =>
         //animate horizontally
-        if (scrollDirection and ScrollDirection.horizontal) != 0 then
+        if scrollHorizontal then
           //animate towards our desired scroll position
           assignScrollX = Easing.tweenCubicEaseOut(animStartScrollX, animEndScrollX, scrollStateTime / animationDuration)
         end
 
         //animate vertically
-        if (scrollDirection and ScrollDirection.vertical) != 0 then
+        if scrollVertical then
           //animate towards our desired scroll position
           assignScrollY = Easing.tweenCubicEaseOut(animStartScrollY, animEndScrollY, scrollStateTime / animationDuration)
         end
