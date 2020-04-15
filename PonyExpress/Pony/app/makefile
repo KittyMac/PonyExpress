@@ -107,8 +107,8 @@ framework_ponyc:
 	@cp -p $(framework_ponydir)/ponyc/$(libponyrt_header2) $(deps_includedir_ios)/
 	@cp -p $(framework_ponydir)/ponyc/$(libponyrt_header2) $(deps_includedir_osx)/
 	
-	
-ifeq ("$(USER)", "rjbowli")
+
+ifeq ("$(USER):$(HOSTNAME)","rjbowli:beast.local")
 framework: confirm framework_ponyc framework_packages
 else
 framework:
