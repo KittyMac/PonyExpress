@@ -113,6 +113,15 @@ Custom view base class
 
 - (void)resizeDrawable:(CGFloat)scaleFactor
 {
+    CGRect insets = CGRectZero;
+    #if TARGET_OS_IPHONE
+        UIWindow * window = [self window];
+        if( [window respondsToSelector:@selector(safeAreaInsets)] ) {
+            UIEdgeInsets edgeInsets = window.safeAreaInsets;
+            insets = CGRectMake(edgeInsets.top, edgeInsets.left, edgeInsets.bottom, edgeInsets.right);
+        }
+    #endif
+    
     CGSize newSize = self.bounds.size;
     newSize.width *= scaleFactor;
     newSize.height *= scaleFactor;
@@ -123,7 +132,7 @@ Custom view base class
 
     if(_delegate)
     {
-        [_delegate drawableResize:newSize withScale:scaleFactor];
+        [_delegate drawableResize:newSize withScale:scaleFactor andInsets:insets];
     }
 #else
     // All AppKit and UIKit calls which notify of a resize are called on the main thread.  Use
@@ -133,7 +142,7 @@ Custom view base class
         _metalLayer.contentsScale = scaleFactor;
         _metalLayer.drawableSize = newSize;
 
-        [_delegate drawableResize:newSize withScale:scaleFactor];
+        [_delegate drawableResize:newSize withScale:scaleFactor andInsets:insets];
     }
 #endif
 }

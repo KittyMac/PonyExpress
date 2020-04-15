@@ -291,6 +291,8 @@ typedef struct ui_RenderNeeded ui_RenderNeeded;
 
 typedef struct _UnsignedPartialArithmetic _UnsignedPartialArithmetic;
 
+typedef struct ui_$2$19 ui_$2$19;
+
 /*
 Things that can be turned into a String.
 */
@@ -367,8 +369,6 @@ functions on a Pointer[A] are private to maintain memory safety.
 typedef struct utility_Log utility_Log;
 
 typedef struct None None;
-
-typedef struct ui_$2$18 ui_$2$18;
 
 /*
 The render engine is responsible for sending "renderable chunks" across the FFI to the 3D engine
@@ -550,6 +550,8 @@ no guarantees that the GC will actually reclaim any space.
 typedef struct Array_ui_YogaNode_ref Array_ui_YogaNode_ref;
 
 typedef struct ui_LayoutNeeded ui_LayoutNeeded;
+
+typedef struct ui_SafeEdges ui_SafeEdges;
 
 typedef struct linal_Q4fun linal_Q4fun;
 
@@ -1392,6 +1394,15 @@ _UnsignedPartialArithmetic* _UnsignedPartialArithmetic_Alloc(void);
 
 _UnsignedPartialArithmetic* _UnsignedPartialArithmetic_val_create_o(_UnsignedPartialArithmetic* self);
 
+/* Allocate a ui_$2$19 without initialising it. */
+ui_$2$19* ui_$2$19_Alloc(void);
+
+void* ui_$2$19_val_apply_oo(ui_$2$19* self, void* p1);
+
+void* ui_$2$19_box_apply_oo(ui_$2$19* self, void* p1);
+
+void* ui_$2$19_ref_apply_oo(ui_$2$19* self, void* p1);
+
 /* Allocate a Stringable without initialising it. */
 Stringable* Stringable_Alloc(void);
 
@@ -1873,21 +1884,12 @@ String* None_box_string_o(None* self);
 
 None* None_val_create_o(None* self);
 
-/* Allocate a ui_$2$18 without initialising it. */
-ui_$2$18* ui_$2$18_Alloc(void);
-
-void* ui_$2$18_val_apply_oo(ui_$2$18* self, void* p1);
-
-void* ui_$2$18_box_apply_oo(ui_$2$18* self, void* p1);
-
-void* ui_$2$18_ref_apply_oo(ui_$2$18* self, void* p1);
-
 /* Allocate a ui_RenderEngine without initialising it. */
 ui_RenderEngine* ui_RenderEngine_Alloc(void);
 
-None* ui_RenderEngine_tag_getNodeByName_ooo__send(ui_RenderEngine* self, String* nodeName, ui_$2$18* callback);
+None* ui_RenderEngine_tag_getNodeByName_ooo__send(ui_RenderEngine* self, String* nodeName, ui_$2$19* callback);
 
-None* ui_RenderEngine_tag_getNodeByID_Zoo__send(ui_RenderEngine* self, size_t id, ui_$2$18* callback);
+None* ui_RenderEngine_tag_getNodeByID_Zoo__send(ui_RenderEngine* self, size_t id, ui_$2$19* callback);
 
 None* ui_RenderEngine_tag_addNode_oo__send(ui_RenderEngine* self, ui_YogaNode* yoga);
 
@@ -1937,7 +1939,7 @@ uint32_t ui_RenderEngine_box__tag_I(ui_RenderEngine* self);
 
 None* ui_RenderEngine_tag_setNeedsLayout_o__send(ui_RenderEngine* self);
 
-None* ui_RenderEngine_tag_updateBounds_ffo__send(ui_RenderEngine* self, float w, float h);
+None* ui_RenderEngine_tag_updateBounds_ffffffo__send(ui_RenderEngine* self, float w, float h, float safeTop, float safeLeft, float safeBottom, float safeRight);
 
 ui_RenderEngine* ui_RenderEngine_tag_create_o__send(ui_RenderEngine* self);
 
@@ -2438,6 +2440,27 @@ bool ui_LayoutNeeded_box_eq_ob(ui_LayoutNeeded* self, ui_LayoutNeeded* that);
 
 bool ui_LayoutNeeded_val_eq_ob(ui_LayoutNeeded* self, ui_LayoutNeeded* that);
 
+/* Allocate a ui_SafeEdges without initialising it. */
+ui_SafeEdges* ui_SafeEdges_Alloc(void);
+
+float ui_SafeEdges_box_right_f(ui_SafeEdges* self);
+
+float ui_SafeEdges_val_right_f(ui_SafeEdges* self);
+
+float ui_SafeEdges_box_bottom_f(ui_SafeEdges* self);
+
+float ui_SafeEdges_val_bottom_f(ui_SafeEdges* self);
+
+float ui_SafeEdges_box_left_f(ui_SafeEdges* self);
+
+float ui_SafeEdges_val_left_f(ui_SafeEdges* self);
+
+float ui_SafeEdges_val_top_f(ui_SafeEdges* self);
+
+float ui_SafeEdges_box_top_f(ui_SafeEdges* self);
+
+ui_SafeEdges* ui_SafeEdges_val_create_o(ui_SafeEdges* self);
+
 bool F32_val_le_fb(float self, float y);
 
 bool F32_box_le_fb(float self, float y);
@@ -2629,6 +2652,8 @@ None* ui_YogaNode_ref_addChild_oo(ui_YogaNode* self, ui_YogaNode* child);
 
 uint64_t ui_YogaNode_ref_start_oW(ui_YogaNode* self, ui_FrameContext* frameContext);
 
+None* ui_YogaNode_ref_preLayout_o(ui_YogaNode* self);
+
 None* ui_YogaNode_ref_heightPercent_fo(ui_YogaNode* self, float v);
 
 None* ui_YogaNode_ref_layout_o(ui_YogaNode* self);
@@ -2640,6 +2665,8 @@ None* ui_YogaNode_box__final_o(ui_YogaNode* self);
 None* ui_YogaNode_ref_width_fo(ui_YogaNode* self, float v);
 
 ui_YogaNode* ui_YogaNode_ref_create_o(ui_YogaNode* self);
+
+None* ui_YogaNode_ref_padding_Ifo(ui_YogaNode* self, uint32_t v1, float v2);
 
 None* ui_YogaNode_ref_name_oo(ui_YogaNode* self, String* name_);
 

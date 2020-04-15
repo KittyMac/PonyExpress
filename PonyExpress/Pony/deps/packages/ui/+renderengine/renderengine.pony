@@ -7,6 +7,11 @@ use "utility"
 use @RenderEngine_init[RenderContextRef](engine:RenderEngine tag)
 use @RenderEngine_destroy[None](ctx:RenderContextRef tag)
 
+use @RenderEngine_safeTop[F32]()
+use @RenderEngine_safeLeft[F32]()
+use @RenderEngine_safeBottom[F32]()
+use @RenderEngine_safeRight[F32]()
+
 primitive RenderContext
 type RenderContextRef is Pointer[RenderContext]
 
@@ -15,6 +20,12 @@ primitive RenderNeeded
 type RenderEngineCommandReturn is (None | LayoutNeeded | RenderNeeded)
 
 type GetYogaNodeCallback is {((YogaNode ref | None)):RenderEngineCommandReturn} val
+
+primitive SafeEdges
+  fun top():F32 => @RenderEngine_safeTop()
+  fun left():F32 => @RenderEngine_safeLeft()
+  fun bottom():F32 => @RenderEngine_safeBottom()
+  fun right():F32 => @RenderEngine_safeRight()
 
 
 // Context passed to all views when they are told to render. It contains information
@@ -166,7 +177,7 @@ actor@ RenderEngine
     | RenderNeeded => renderNeeded = true
     end
   
-  be updateBounds(w:F32, h:F32) =>
+  be updateBounds(w:F32, h:F32, safeTop:F32, safeLeft:F32, safeBottom:F32, safeRight:F32) =>
     // update the size of my node to match the window, then relayout everything
     screenBounds = R4fun(0,0,w,h)
     node.>width(w).>height(h)

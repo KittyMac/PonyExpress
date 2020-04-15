@@ -22,7 +22,8 @@ Custom view base class
 @protocol PonyExpressViewDelegate <NSObject>
 
 - (void)drawableResize:(CGSize)size
-             withScale:(CGFloat)scale;
+             withScale:(CGFloat)scale
+             andInsets:(CGRect)insets;
 
 - (void)renderToMetalLayer:(nonnull CAMetalLayer *)metalLayer;
 

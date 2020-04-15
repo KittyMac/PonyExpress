@@ -14,6 +14,13 @@ extern PlatformOSX * platformActor;
 
 #pragma mark - C API meant to be called by Pony code
 
+static float topInset = 0.0f;
+static float leftInset = 0.0f;
+static float bottomInset = 0.0f;
+static float rightInset = 0.0f;
+
+
+
 #define USE_MEMORY_MUTEX 1
 
 pthread_mutex_t memory_mutex;
@@ -219,7 +226,21 @@ void RenderEngine_render(HALRenderContext * ctx,
     ponyint_thread_messageq_push(&ctx->renderUnitQueue, (pony_msg_t*)unit, (pony_msg_t*)unit);
 }
 
+float RenderEngine_safeTop() {
+    return topInset;
+}
 
+float RenderEngine_safeLeft() {
+    return leftInset;
+}
+
+float RenderEngine_safeBottom() {
+    return bottomInset;
+}
+
+float RenderEngine_safeRight() {
+    return rightInset;
+}
 
 
 
@@ -251,10 +272,15 @@ void RenderEngineInternal_renderUnitFree(RenderUnit * unit) {
     free(unit);
 }
 
-void RenderEngineInternal_updateBounds(HALRenderContext * context, float width, float height) {
+void RenderEngineInternal_updateBounds(HALRenderContext * context, float width, float height, float _topInset, float _leftInset, float _bottomInset, float _rightInset) {
+    topInset = _topInset;
+    leftInset = _leftInset;
+    bottomInset = _bottomInset;
+    rightInset = _rightInset;
+    
     RESOLVE_CONTEXT();
     
-    ui_RenderEngine_tag_updateBounds_ffo__send(context->ponyRenderEngine, width, height);
+    ui_RenderEngine_tag_updateBounds_ffffffo__send(context->ponyRenderEngine, width, height, topInset, leftInset, bottomInset, rightInset);
 }
 
 void RenderEngineInternal_renderAll(HALRenderContext * context) {

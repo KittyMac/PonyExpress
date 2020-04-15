@@ -46,9 +46,9 @@ Implementation of the cross-platform view controller
     _renderer = [[Renderer alloc] initWithAaplView:view];
 }
 
-- (void)drawableResize:(CGSize)size withScale:(CGFloat)scale
+- (void)drawableResize:(CGSize)size withScale:(CGFloat)scale andInsets:(CGRect)insets
 {
-    [_renderer drawableResize:size withScale:scale];
+    [_renderer drawableResize:size withScale:scale andInsets:insets];
 }
 
 - (void)renderToMetalLayer:(nonnull CAMetalLayer *)layer

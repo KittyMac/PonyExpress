@@ -20,6 +20,11 @@ class YogaNode
   var _clips:Bool = false
   var _rotation:V3 = V3fun.zero()
   
+  var _safeTop:Bool = false
+  var _safeLeft:Bool = false
+  var _safeBottom:Bool = false
+  var _safeRight:Bool = false
+  
   fun _final() =>
     //@printf("_final called on yoga node [%d]\n".cstring(), node)
     @YGNodeFree(node)
@@ -56,6 +61,8 @@ class YogaNode
   fun ref layout() =>
     // Before we can calculate the layout, we need to see if any of our children sizeToFit their content. If we do, we need
     // to have them set the size on the appropriate yoga node
+    preLayout()
+    
     @YGNodeCalculateLayout(node, @YGNodeStyleGetWidth(node), @YGNodeStyleGetHeight(node), YGDirection.ltr)
   
   
@@ -129,6 +136,17 @@ class YogaNode
     end
     n
   
+  // Called on all nodes right before Yoga layout calculations are made
+  fun ref preLayout() =>
+    if _safeTop then padding(YGEdge.top, SafeEdges.top()) end
+    if _safeLeft then padding(YGEdge.left, SafeEdges.left()) end
+    if _safeBottom then padding(YGEdge.bottom, SafeEdges.bottom()) end
+    if _safeRight then padding(YGEdge.right, SafeEdges.right()) end  
+    
+    for child in children.values() do
+      child.preLayout()
+    end
+  
   // Called when distributing events to nodes
   fun ref event(frameContext:FrameContext, anyEvent:AnyEvent val):U64 =>
     var n:U64 = frameContext.renderNumber + 1
@@ -153,7 +171,7 @@ class YogaNode
   fun ref render(frameContext:FrameContext):U64 =>
     _renderRecursive(frameContext, V2fun.zero(), M4fun.id())
     
-  fun ref _renderRecursive(frameContext:FrameContext, parentContentOffset:V2, parent_matrix:M4):U64 =>
+  fun ref _renderRecursive(frameContext:FrameContext, parentContentOffset:V2, parent_matrix:M4):U64 =>    
     var n:U64 = frameContext.renderNumber + 1
     let local_left:F32 = @YGNodeLayoutGetLeft(node)
     let local_top:F32 = @YGNodeLayoutGetTop(node)
@@ -243,6 +261,11 @@ class YogaNode
     widthPercent(100)
     heightPercent(100)
   
+  
+  fun ref safeTop(v:Bool=true) => _safeTop = v
+  fun ref safeLeft(v:Bool=true) => _safeLeft = v
+  fun ref safeBottom(v:Bool=true) => _safeBottom = v
+  fun ref safeRight(v:Bool=true) => _safeRight = v
   
   fun ref rotateX(v:F32) => _rotation = V3fun(v, _rotation._2, _rotation._3)
   fun ref rotateY(v:F32) => _rotation = V3fun(_rotation._1, v, _rotation._3)

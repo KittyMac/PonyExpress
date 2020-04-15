@@ -137,12 +137,17 @@ void RenderEngine_render(HALRenderContext * ctx,
                          float globalA,
                          const char * textureName);
 
+float RenderEngine_safeTop(void);
+float RenderEngine_safeLeft(void);
+float RenderEngine_safeBottom(void);
+float RenderEngine_safeRight(void);
+
 void RenderEngineInternal_registerAPICallbacks(HALRenderContext * context,
                                                void * classPtr,
                                                REAPI_getTextureInfo _getTextureInfo);
 
 void RenderEngineInternal_renderAll(HALRenderContext * context);
-void RenderEngineInternal_updateBounds(HALRenderContext * context, float width, float height);
+void RenderEngineInternal_updateBounds(HALRenderContext * context, float width, float height, float topInset, float leftInset, float bottomInset, float rightInset);
 bool RenderEngineInternal_hasRenderUnits(HALRenderContext * context);
 
 bool RenderEngineInternal_gatherAllRenderUnitsForNextFrame(HALRenderContext * context);

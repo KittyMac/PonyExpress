@@ -285,7 +285,7 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
     
     var renderAheadCount:Int = 0
 
-    public func drawableResize(_ size: CGSize, withScale scale: CGFloat) {
+    public func drawableResize(_ size: CGSize, withScale scale: CGFloat, andInsets insets:CGRect) {
         var local_size = size
                 
         if (scale != 0.0) {
@@ -312,7 +312,13 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
               distance * 10.0)
             sceneMatrices.projectionMatrix = projectionMatrix
             
-            RenderEngineInternal_updateBounds(nil, Float(projectedSize.width), Float(projectedSize.height))
+            RenderEngineInternal_updateBounds(nil,
+                                              Float(projectedSize.width),
+                                              Float(projectedSize.height),
+                                              Float(insets.origin.x),
+                                              Float(insets.origin.y),
+                                              Float(insets.size.width),
+                                              Float(insets.size.height))
             
             depthTexture = getDepthTexture(size:size)
             

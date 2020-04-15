@@ -185,13 +185,13 @@ Customized view for iOS & tvOS
 - (void)setFrame:(CGRect)frame
 {
     [super setFrame:frame];
-    [self resizeDrawable:self.window.screen.nativeScale];
+    //[self resizeDrawable:self.window.screen.nativeScale];
 }
 
 - (void)setBounds:(CGRect)bounds
 {
     [super setBounds:bounds];
-    [self resizeDrawable:self.window.screen.nativeScale];
+    //[self resizeDrawable:self.window.screen.nativeScale];
 }
 
 #endif // END AUTOMATICALLY_RESIZE

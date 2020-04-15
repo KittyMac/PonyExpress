@@ -30,6 +30,7 @@ actor Catalog is Controllerable
           YogaNode.>name("Panel")
                   .>view( Clear )
                   .>direction(YGDirection.ltr)
+                  .>safeTop()
                   .>flexGrow(1.0)
                   .>flexShrink(1.0)
                   .>fill()
@@ -37,7 +38,7 @@ actor Catalog is Controllerable
           // Sidebar
           YogaNode.>width(110)
                   .>heightPercent(100)
-                  .>padding(YGEdge.top, 30)
+                  .>safeTop()
                   .>direction(YGDirection.ltr)
                   .>view( Image("sidebar").>stretch(10,10,10,10) )
                   .>addChildren([
