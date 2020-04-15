@@ -171,6 +171,10 @@ class FontRender
       end
     end
     
+    if i == start_index then
+      i = start_index + 1
+    end
+    
     glyphRenderData.truncate(i)
     
     (pen_x - start_pen._1, i - start_index)

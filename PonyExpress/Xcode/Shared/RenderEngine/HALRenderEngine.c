@@ -351,9 +351,9 @@ bool RenderEngineInternal_gatherAllRenderUnitsForNextFrame(HALRenderContext * co
             //RenderEngineInternal_Poll();
             
             // Sanity check: if for whatever reason we get stuck waiting "forever" for the frame to end, exit without waiting for the end frame
-            if (time_spent_sleeping > 1000000) {
-                break;
-            }
+            //if (time_spent_sleeping > 1000000) {
+            //    break;
+            //}
             
             scaling_sleep += 50;
             if(scaling_sleep > 500) {

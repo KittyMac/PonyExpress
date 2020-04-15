@@ -368,7 +368,15 @@ trait Scrollable is (Viewable & Actionable)
       var assignScrollY = scrollY
       
       var updateScroll = false
-            
+          
+      //check if we're done decelerating
+      if scrollState == ScrollState.decelerating then
+        if (horizontalDecelerationState == DeceleratingState.idle) and
+           (verticalDecelerationState == DeceleratingState.idle) then
+           setScrollState(ScrollState.idle)
+        end
+      end
+                  
       match scrollState
       | ScrollState.decelerating =>
         //update the horizontal deceleration
@@ -486,8 +494,8 @@ trait Scrollable is (Viewable & Actionable)
         end
       
         //check if we're done decelerating
-        if (horizontalDecelerationState == DeceleratingState.idle) and
-           (verticalDecelerationState == DeceleratingState.idle) then
+        if ((horizontalDecelerationState == DeceleratingState.idle) or (scrollHorizontal == false)) and
+           ((verticalDecelerationState == DeceleratingState.idle) or (scrollVertical == false)) then
            setScrollState(ScrollState.idle)
         end
         
@@ -542,7 +550,21 @@ trait Scrollable is (Viewable & Actionable)
         
         updateScroll = false
       
+      
+      | ScrollState.idle =>
+        
+        if assignScrollX > calcMaxScrollX() then
+          assignScrollX = calcMaxScrollX()
+          updateScroll = true
+        end
+        if assignScrollY > calcMaxScrollY() then
+          assignScrollY = calcMaxScrollY()
+          updateScroll = true
+        end
+        
       end
+      
+      
       
       //update the scroll position
       if (prevScrollX != assignScrollX) or (prevScrollY != assignScrollY) then

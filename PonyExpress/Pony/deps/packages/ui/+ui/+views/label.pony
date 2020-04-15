@@ -69,14 +69,20 @@ actor Label is (Viewable & Colorable)
 	fun ref render(frameContext:FrameContext val, bounds:R4) =>    
     // If our layout has changed since the last time we measured our height, then we need to re-measure
     // it and fix our bounds (for this render) to match the corrected bounds (for the upcoming render)
+    var fixedBounds = bounds
+    
     if _sizeToFit and (_sizedAtWidth != frameContext.nodeSize._1) then
-      resizeToFit(frameContext, false)
-      // abort the render?
-      if engine as RenderEngine then
-        engine.renderAbort()
+      let real_height = resizeToFit(frameContext, false)
+      let old_height = R4fun.height(bounds)
+      
+      if real_height < old_height then
+        fixedBounds = R4fun(  R4fun.x_min(bounds),
+                              R4fun.y_min(bounds) + ((real_height - old_height) / 2),
+                              R4fun.width(bounds),
+                              R4fun.height(bounds))
       end
     end
     
     fontRender.fontColor = _color
-    let geom = fontRender.geometry(frameContext, value, bounds)
+    let geom = fontRender.geometry(frameContext, value, fixedBounds)
     RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.sdf, geom.vertices, fontRender.fontColor, fontRender.font.name.cpointer())
