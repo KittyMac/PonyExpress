@@ -13,6 +13,7 @@ Pony Express is a UI toolkit for building fully concurrent applications written 
 
 * [x] ~~ponyc should skip building if nothing has changed since last build~~
 * [ ] ensure that stub functions or behaviors are optimized out by ponyc
+* [x] ~~FFI calls on iOS under release builds are... wonky (see garbled printf output)~~
 
 ## ponyrt
 

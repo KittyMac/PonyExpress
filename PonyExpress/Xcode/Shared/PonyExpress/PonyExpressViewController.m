@@ -33,8 +33,9 @@ Implementation of the cross-platform view controller
     // on this device.
     view.metalLayer.device = device;
     view.metalLayer.pixelFormat = MTLPixelFormatBGRA8Unorm;
+    view.metalLayer.opaque = true;
     
-    CGFloat backgroundColorValues[] = {0, 0, 0, 1};
+    CGFloat backgroundColorValues[] = {1, 0, 0, 1};
     
     CGColorSpaceRef colorSpaceRef = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB); //kCGColorSpaceSRGB
     view.metalLayer.backgroundColor = CGColorCreate(colorSpaceRef, backgroundColorValues);

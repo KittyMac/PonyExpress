@@ -53,7 +53,7 @@ primitive RenderPrimitive
   fun tag transform(frameContext:FrameContext val, v:V3):V3 =>
     M4fun.mul_v3_point_3x4(frameContext.matrix, v)
   
-  fun tag quadVCT(frameContext:FrameContext val, vertices:FloatAlignedArray, p0:V3, p1:V3, p2:V3, p3:V3, c:RGBA, st0:V2, st1:V2, st2:V2, st3:V2) =>
+  fun tag quadVCT(frameContext:FrameContext val, vertices:FloatAlignedArray, p0:V3, p1:V3, p2:V3, p3:V3, c:RGBA, st0:V2, st1:V2, st2:V2, st3:V2):Bool =>
     let r = frameContext.screenBounds
     let v0 = M4fun.mul_v3_point_3x4(frameContext.matrix, p0)
     let v1 = M4fun.mul_v3_point_3x4(frameContext.matrix, p1)
@@ -64,9 +64,11 @@ primitive RenderPrimitive
         ((r._1._1 <= v2._1) and ((r._1._1 + r._2) >= v2._1) and (r._1._2 <= v2._2) and ((r._1._2 + r._3) >= v2._2)) or
         ((r._1._1 <= v3._1) and ((r._1._1 + r._2) >= v3._1) and (r._1._2 <= v3._2) and ((r._1._2 + r._3) >= v3._2)) then
       vertices.pushQuadVCT(v0, v1, v2, v3, c.r, c.g, c.b, c.a, st0, st1, st2, st3)
+      return true
     end
+    false
    
-  fun tag quadVC(frameContext:FrameContext val, vertices:FloatAlignedArray, p0:V3, p1:V3, p2:V3, p3:V3, c:RGBA) =>
+  fun tag quadVC(frameContext:FrameContext val, vertices:FloatAlignedArray, p0:V3, p1:V3, p2:V3, p3:V3, c:RGBA):Bool =>
     let r = frameContext.screenBounds
     let v0 = M4fun.mul_v3_point_3x4(frameContext.matrix, p0)
     let v1 = M4fun.mul_v3_point_3x4(frameContext.matrix, p1)
@@ -76,10 +78,12 @@ primitive RenderPrimitive
         ((r._1._1 <= v1._1) and ((r._1._1 + r._2) >= v1._1) and (r._1._2 <= v1._2) and ((r._1._2 + r._3) >= v1._2)) or
         ((r._1._1 <= v2._1) and ((r._1._1 + r._2) >= v2._1) and (r._1._2 <= v2._2) and ((r._1._2 + r._3) >= v2._2)) or
         ((r._1._1 <= v3._1) and ((r._1._1 + r._2) >= v3._1) and (r._1._2 <= v3._2) and ((r._1._2 + r._3) >= v3._2)) then
-      vertices.pushQuadVC(v0, v1, v2, v3, c.r, c.g, c.b, c.a) 
+      vertices.pushQuadVC(v0, v1, v2, v3, c.r, c.g, c.b, c.a)
+      return true
     end
+    false
   
-  fun tag quadVT(frameContext:FrameContext val, vertices:FloatAlignedArray, p0:V3, p1:V3, p2:V3, p3:V3, st0:V2, st1:V2, st2:V2, st3:V2) =>
+  fun tag quadVT(frameContext:FrameContext val, vertices:FloatAlignedArray, p0:V3, p1:V3, p2:V3, p3:V3, st0:V2, st1:V2, st2:V2, st3:V2):Bool =>
     let r = frameContext.screenBounds
     let v0 = M4fun.mul_v3_point_3x4(frameContext.matrix, p0)
     let v1 = M4fun.mul_v3_point_3x4(frameContext.matrix, p1)
@@ -89,8 +93,10 @@ primitive RenderPrimitive
         ((r._1._1 <= v1._1) and ((r._1._1 + r._2) >= v1._1) and (r._1._2 <= v1._2) and ((r._1._2 + r._3) >= v1._2)) or
         ((r._1._1 <= v2._1) and ((r._1._1 + r._2) >= v2._1) and (r._1._2 <= v2._2) and ((r._1._2 + r._3) >= v2._2)) or
         ((r._1._1 <= v3._1) and ((r._1._1 + r._2) >= v3._1) and (r._1._2 <= v3._2) and ((r._1._2 + r._3) >= v3._2)) then
-      vertices.pushQuadVT(v0, v1, v2, v3, st0, st1, st2, st3) 
+      vertices.pushQuadVT(v0, v1, v2, v3, st0, st1, st2, st3)
+      return true
     end
+    false
     
   
   fun tag buildVCT(frameContext:FrameContext val, vertices:FloatAlignedArray, v:V3, c:RGBA, st:V2) =>

@@ -1,5 +1,7 @@
 builddir=./build
 
+HOSTNAME=$(shell hostname)
+
 iphonesdk_libtool=$(shell xcrun --sdk iphoneos --find libtool)
 
 product_name=app
