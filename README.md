@@ -31,6 +31,10 @@ Pony Express is a UI toolkit for building fully concurrent applications written 
 * [ ] load textures from image memory in pony
 * [ ] expose bundle path conversion to pony
 
+## misc
+
+* [ ] in StringExt.format, if the %s is at the end of the string the print is garbled on iOS
+
 ## demos
 
 * [ ] massively scrolling google image search

@@ -47,6 +47,7 @@ actor ImageButton is (Imageable & Buttonable)
     imageable_start(frameContext)
   
   fun ref updateButton(pressed:Bool) =>
+    Log.println("ImageButton.updateButton() == %s", pressed)
     if pressed then
       _textureName = pressedImage
       _color = _pressedColor
