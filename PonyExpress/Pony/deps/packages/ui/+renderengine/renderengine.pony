@@ -141,7 +141,7 @@ actor@ RenderEngine
       n.addChild( consume yoga )
     end
     
-    // TODO: this doesn't compile, fix!
+    // TODO: this doesn't work right, fix in ponyc!
     /*
     if found_node as YogaNode then
       found_node.addChild( consume yoga )
@@ -199,6 +199,8 @@ actor@ RenderEngine
         let frameContext = FrameContext(this, renderContext, node.id(), 0, 0, M4fun.id(), V2fun.zero(), node.nodeSize(), node.contentSize(), R4fun.big(), screenBounds, last_animation_delta)
         waitingOnViewsToStart = node.start(frameContext)
         startNeeded = false
+        layoutNeeded = false
+        renderNeeded = false
       else
         Log.println("startNeeded required but waitingOnViewsToStart is not 0 (is it %s) \n", waitingOnViewsToStart)
         markRenderFinished()
@@ -242,6 +244,7 @@ actor@ RenderEngine
       waitingOnViewsToStart = waitingOnViewsToStart - 1
       if waitingOnViewsToStart == 0 then
         layoutNeeded = true
+        renderNeeded = true
       end
     end
   

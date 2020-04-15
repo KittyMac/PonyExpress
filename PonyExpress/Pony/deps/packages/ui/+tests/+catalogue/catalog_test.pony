@@ -35,8 +35,10 @@ actor Catalog is Controllerable
                   .>fill()
           
           // Sidebar
-          YogaNode.>width(210)
+          YogaNode.>width(110)
                   .>heightPercent(100)
+                  .>padding(YGEdge.top, 30)
+                  .>direction(YGDirection.ltr)
                   .>view( Image("sidebar").>stretch(10,10,10,10) )
                   .>addChildren([
               menuButton("Colors", font, SwitchToColors)
@@ -58,14 +60,14 @@ actor Catalog is Controllerable
     main
   
   fun tag menuButton(title:String, font':Font, evt:CatalogAction):YogaNode =>
-    YogaNode.>width(204)
-            .>height(46)
+    YogaNode.>width(104)
+            .>height(36)
             .>padding(YGEdge.all, 6)
             .>padding(YGEdge.left, 12)
             .>view( ImageButton( "white", "white").>pressedColor(RGBA.u32( 0x98cbf3ff ))
                                                   .>color(RGBA.u32( 0xffffff00 ))
                                                   .>action(this, evt) )
-            .>addChild( YogaNode.>view( Label(title, font', 28).>left() ) )
+            .>addChild( YogaNode.>view( Label(title, font', 18).>left() ) )
   
   be action(evt:Action) =>
     if engine as RenderEngine then
