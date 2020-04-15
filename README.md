@@ -12,6 +12,7 @@ Pony Express is a UI toolkit for building fully concurrent applications written 
 ## ponyc
 
 * [x] ~~ponyc should skip building if nothing has changed since last build~~
+* [ ] ensure that stub functions or behaviors are optimized out by ponyc
 
 ## ponyrt
 

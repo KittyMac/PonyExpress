@@ -37,11 +37,12 @@ extern void stopRuntimeAnalysis(bool killed);
 #define EventType_scroll 2
 
 #define ShaderType_Finished 0
-#define ShaderType_Flat 1
-#define ShaderType_Textured 2
-#define ShaderType_SDF 3
-#define ShaderType_Stencil_Begin 4
-#define ShaderType_Stencil_End 5
+#define ShaderType_Abort 1
+#define ShaderType_Flat 2
+#define ShaderType_Textured 3
+#define ShaderType_SDF 4
+#define ShaderType_Stencil_Begin 5
+#define ShaderType_Stencil_End 6
 
 typedef struct
 {

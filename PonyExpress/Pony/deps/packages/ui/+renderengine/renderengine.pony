@@ -28,10 +28,12 @@ class FrameContext
   var clipBounds:R4
   var screenBounds:R4
   var animation_delta:F32
+  var parentContentOffset:V2
   var contentSize:V2
+  var nodeSize:V2
   var nodeID:YogaNodeID
   
-  new ref create(engine':RenderEngine tag, renderContext':RenderContextRef tag, nodeID':YogaNodeID, frameNumber':U64, renderNumber':U64, matrix':M4, contentSize':V2, clipBounds':R4, screenBounds':R4, animation_delta':F32) =>
+  new ref create(engine':RenderEngine tag, renderContext':RenderContextRef tag, nodeID':YogaNodeID, frameNumber':U64, renderNumber':U64, matrix':M4, parentContentOffset':V2, nodeSize':V2, contentSize':V2, clipBounds':R4, screenBounds':R4, animation_delta':F32) =>
     engine = engine'
     renderContext = renderContext'
     frameNumber = frameNumber'
@@ -42,6 +44,8 @@ class FrameContext
     screenBounds = screenBounds'
     animation_delta = animation_delta'
     contentSize = contentSize'
+    nodeSize = nodeSize'
+    parentContentOffset = parentContentOffset'
   
   fun calcRenderNumber(frameContext:FrameContext val, partNum:U64, internalOffset:U64):U64 =>
     // Each view receives 100 "render slots" for submitting geometry. The first 10 and the last 10
@@ -51,7 +55,7 @@ class FrameContext
   
   fun clone():FrameContext val =>
     recover val
-      FrameContext(engine, renderContext, nodeID, frameNumber, renderNumber, matrix, contentSize, clipBounds, screenBounds, animation_delta)
+      FrameContext(engine, renderContext, nodeID, frameNumber, renderNumber, matrix, parentContentOffset, nodeSize, contentSize, clipBounds, screenBounds, animation_delta)
     end
 
 actor@ RenderEngine
@@ -184,10 +188,15 @@ actor@ RenderEngine
     let now = @ponyint_cpu_tick()
     last_animation_delta = (now - last_animation_time).f32() / 1_000_000_000.0
     last_animation_time = now
-    
+        
     if startNeeded then
       if (waitingOnViewsToStart == 0) then
-        let frameContext = FrameContext(this, renderContext, node.id(), 0, 0, M4fun.id(), node.contentSize(), R4fun.big(), screenBounds, last_animation_delta)
+        
+        // In order to provide *some* level of layout information to the views when they load, we call layout here fully expecting that
+        // we will need to layout again once the starts are done
+        node.layout()
+        
+        let frameContext = FrameContext(this, renderContext, node.id(), 0, 0, M4fun.id(), V2fun.zero(), node.nodeSize(), node.contentSize(), R4fun.big(), screenBounds, last_animation_delta)
         waitingOnViewsToStart = node.start(frameContext)
         startNeeded = false
       else
@@ -207,7 +216,7 @@ actor@ RenderEngine
             
         frameNumber = frameNumber + 1
       
-        let frameContext = FrameContext(this, renderContext, node.id(), frameNumber, 0, M4fun.id(), node.contentSize(), R4fun.big(), screenBounds, last_animation_delta)
+        let frameContext = FrameContext(this, renderContext, node.id(), frameNumber, 0, M4fun.id(), V2fun.zero(), node.nodeSize(), node.contentSize(), R4fun.big(), screenBounds, last_animation_delta)
         waitingOnViewsToRender = node.render(frameContext)
       else
         Log.println("renderNeeded required but waitingOnViewsToRender is not 0 (is it %s) \n", waitingOnViewsToRender)
@@ -247,11 +256,15 @@ actor@ RenderEngine
       end
     end
   
+  be renderAbort() =>
+    // For some reason we want to skip rendering this frame!
+    @RenderEngine_render(renderContext, frameNumber, U64.max_value(), ShaderType.abort, 0, UnsafePointer[F32], 0, 1.0, 1.0, 1.0, 1.0, Pointer[U8])
+  
   be touchEvent(id:USize, pressed:Bool, x:F32, y:F32) =>
-    let frameContext = FrameContext(this, renderContext, node.id(), 0, 0, M4fun.id(), node.contentSize(), R4fun.big(), screenBounds, last_animation_delta)
+    let frameContext = FrameContext(this, renderContext, node.id(), 0, 0, M4fun.id(), V2fun.zero(), node.nodeSize(), node.contentSize(), R4fun.big(), screenBounds, last_animation_delta)
     node.event(frameContext, TouchEvent(id, pressed, x, y))
   
   be scrollEvent(id:USize, dx:F32, dy:F32, px:F32, py:F32) =>
-    let frameContext = FrameContext(this, renderContext, node.id(), 0, 0, M4fun.id(), node.contentSize(), R4fun.big(), screenBounds, last_animation_delta)
+    let frameContext = FrameContext(this, renderContext, node.id(), 0, 0, M4fun.id(), V2fun.zero(), node.nodeSize(), node.contentSize(), R4fun.big(), screenBounds, last_animation_delta)
     node.event(frameContext, ScrollEvent(id, dx, dy, px, py))
   

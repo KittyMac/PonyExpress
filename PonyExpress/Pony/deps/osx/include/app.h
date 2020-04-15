@@ -1923,6 +1923,8 @@ None* ui_RenderEngine_tag_setNeedsRendered_o__send(ui_RenderEngine* self);
 
 None* ui_RenderEngine_ref_markRenderFinished_o(ui_RenderEngine* self);
 
+None* ui_RenderEngine_tag_renderAbort_o__send(ui_RenderEngine* self);
+
 None* ui_RenderEngine_ref_layout_o(ui_RenderEngine* self);
 
 None* ui_RenderEngine_box__final_o(ui_RenderEngine* self);

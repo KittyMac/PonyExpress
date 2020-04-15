@@ -189,6 +189,7 @@ void RenderEngine_render(HALRenderContext * ctx,
     // Each shader expects specific geometry
     switch(shaderType){
         case ShaderType_Finished:
+        case ShaderType_Abort:
             unit->bytes_vertices = 0;
             unit->bytes_per_vertex = 0;
             unit->num_vertices = 0;

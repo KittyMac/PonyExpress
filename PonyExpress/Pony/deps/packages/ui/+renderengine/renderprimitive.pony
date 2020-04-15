@@ -38,9 +38,12 @@ struct TextureInfo
     
 primitive ShaderType
   let finished:U32 = 0
-  let flat:U32 = 1
-  let textured:U32 = 2
-  let sdf:U32 = 3
+  let abort:U32 = 1
+  let flat:U32 = 2
+  let textured:U32 = 3
+  let sdf:U32 = 4
+  let stencilBegin:U32 = 5
+  let stencilEnd:U32 = 6
 
 primitive RenderPrimitive
   """

@@ -201,20 +201,29 @@ trait Scrollable is (Viewable & Actionable)
     fun ref bounceEdgeX():F32 => let m = calcMaxScrollX(); if prevScrollX < (m/2) then 0.0 else m end
     fun ref bounceEdgeY():F32 => let m = calcMaxScrollY(); if prevScrollY < (m/2) then 0.0 else m end
     fun ref bungee(stretchDist:F32, contentSize:F32):F32 => (1.0 - (1.0 / (((stretchDist * bungeeStretchCoefficient) / contentSize) + 1.0))) * contentSize
+    
+    // stubs to be overridden by Scrollables. TODO: change ponyc to optimize these out
+    fun ref scrollViewWillBeginDragging() => None
+    fun ref scrollViewWillBeginDecelerating() => None
+    fun ref scrollViewWillBeginAnimating() => None
+    fun ref scrollViewWillEndDragging() => None
+    fun ref scrollViewDidEndDragging() => None
+    fun ref scrollViewDidEndDecelerating() => None
+    fun ref scrollViewDidEndAnimating() => None
         
     fun ref setScrollState(newState:U32) =>
       if scrollState != newState then
         // TODO: should we alert someone that things are happening?
-        if newState == ScrollState.dragging then  // scrollViewWillBeginDragging
-          None
-        elseif newState == ScrollState.decelerating then  // scrollViewWillBeginDecelerating
-          None
-        elseif newState == ScrollState.animating then   // scrollViewWillBeginAnimating
-          None
+        if newState == ScrollState.dragging then
+          scrollViewWillBeginDragging()
+        elseif newState == ScrollState.decelerating then
+          scrollViewWillBeginDecelerating()
+        elseif newState == ScrollState.animating then
+          scrollViewWillBeginAnimating()
         end
         
-        if scrollState == ScrollState.dragging then   // scrollViewWillEndDragging
-          None
+        if scrollState == ScrollState.dragging then
+          scrollViewWillEndDragging()
         end
     
         if (newState == ScrollState.animating) or (newState == ScrollState.decelerating) then
@@ -230,12 +239,12 @@ trait Scrollable is (Viewable & Actionable)
         scrollState = newState
         scrollStateTime = 0.0
     
-        if oldState == ScrollState.dragging then  // scrollViewDidEndDragging
-          None
-        elseif oldState == ScrollState.decelerating then  // scrollViewDidEndDecelerating
-          None
-        elseif oldState == ScrollState.animating then // scrollViewDidEndAnimating
-          None
+        if oldState == ScrollState.dragging then
+          scrollViewDidEndDragging()
+        elseif oldState == ScrollState.decelerating then
+          scrollViewDidEndDecelerating()
+        elseif oldState == ScrollState.animating then
+          scrollViewDidEndAnimating()
         end
       end
     
@@ -532,6 +541,7 @@ trait Scrollable is (Viewable & Actionable)
         end
         
         updateScroll = false
+      
       end
       
       //update the scroll position

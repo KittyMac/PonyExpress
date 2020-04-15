@@ -62,6 +62,10 @@ class YogaNode
   fun ref setContentOffset(x:F32, y:F32) =>
     _content_offset = V2fun(x, y)
   
+  fun ref nodeSize():V2 =>
+    // width/height of me
+    V2fun(@YGNodeLayoutGetWidth(node), @YGNodeLayoutGetHeight(node))
+  
   fun ref contentSize():V2 =>
     // width/height from the union of all children bounds
     var c = R4fun.zero()
@@ -111,6 +115,7 @@ class YogaNode
     frameContext.renderNumber = n
     frameContext.nodeID = id()
     frameContext.contentSize = contentSize()
+    frameContext.nodeSize = nodeSize()
     
     if _view as Viewable then
       _view.viewable_start( frameContext.clone() )
@@ -132,6 +137,7 @@ class YogaNode
     frameContext.matrix = last_matrix
     frameContext.nodeID = id()
     frameContext.contentSize = contentSize()
+    frameContext.nodeSize = nodeSize()
     
     if _view as Viewable then
       _view.viewable_event( frameContext.clone(), anyEvent, last_bounds )
@@ -147,7 +153,7 @@ class YogaNode
   fun ref render(frameContext:FrameContext):U64 =>
     _renderRecursive(frameContext, V2fun.zero(), M4fun.id())
     
-  fun ref _renderRecursive(frameContext:FrameContext, parent_content_offset:V2, parent_matrix:M4):U64 =>
+  fun ref _renderRecursive(frameContext:FrameContext, parentContentOffset:V2, parent_matrix:M4):U64 =>
     var n:U64 = frameContext.renderNumber + 1
     let local_left:F32 = @YGNodeLayoutGetLeft(node)
     let local_top:F32 = @YGNodeLayoutGetTop(node)
@@ -175,8 +181,10 @@ class YogaNode
     frameContext.matrix = local_matrix
     frameContext.nodeID = id()
     frameContext.contentSize = contentSize()
+    frameContext.nodeSize = nodeSize()
+    frameContext.parentContentOffset = parentContentOffset
     
-    last_bounds = R4fun( (-local_width/2)+parent_content_offset._1, (-local_height/2)-parent_content_offset._2, local_width, local_height)
+    last_bounds = R4fun( (-local_width/2)+parentContentOffset._1, (-local_height/2)-parentContentOffset._2, local_width, local_height)
     last_matrix = local_matrix
     
     let savedClipBounds = frameContext.clipBounds

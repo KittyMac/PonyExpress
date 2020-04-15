@@ -16,8 +16,7 @@ actor ScrollTest is Controllerable
                     .>addChild(
                       
                       YogaNode.>widthPercent(100)
-                              .>heightPercent(1000)
-                              .>view( Label(LoremText(), font).>size(24) )
+                              .>view( Label(LoremText(), font).>size(24).>sizeToFit() )
                       
               )
              

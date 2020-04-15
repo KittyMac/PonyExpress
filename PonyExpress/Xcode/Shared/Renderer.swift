@@ -397,6 +397,8 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             renderEncoder.setStencilReferenceValue(UInt32(stencilValueCount))
             renderEncoder.setDepthStencilState(ignoreStencilState)
             
+            var aborted = false
+            
             while let unitPtr = RenderEngineInternal_nextRenderUnit(nil) {
                 let unit = unitPtr.pointee
                 let shaderType = unit.shaderType
@@ -410,7 +412,10 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
                 } else {
                     renderEncoder.setDepthStencilState(testStencilState)
                 }
-                                
+                
+                if shaderType == ShaderType_Abort {
+                    aborted = true
+                }
                     
                 if shaderType == ShaderType_Flat {
                     renderEncoder.setRenderPipelineState(flatPipelineState)
@@ -454,7 +459,9 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
                 objc_sync_exit(self.renderAheadCountLock)
             }
             
-            commandBuffer.present(drawable)
+            if aborted == false {
+                commandBuffer.present(drawable)
+            }
             commandBuffer.commit()
             //commandBuffer.waitUntilScheduled()
             

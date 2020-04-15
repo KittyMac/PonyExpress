@@ -1,7 +1,11 @@
 use "linal"
+use "utility"
 
 actor Label is (Viewable & Colorable)
-		  
+	
+  var _sizeToFit:Bool = false
+  var _sizedAtWidth:F32 = 0
+  
   var value:String
   
   var fontRender:FontRender
@@ -16,6 +20,10 @@ actor Label is (Viewable & Colorable)
     
     _color = RGBA.black()
     fontRender = FontRender(font, fontSize', RGBA.black())
+  
+  be sizeToFit() =>
+    _sizeToFit = true
+    fontRender.invalidate()
   
   be left() =>
     fontRender.fontAlignment = Alignment.left
@@ -34,7 +42,41 @@ actor Label is (Viewable & Colorable)
   be size(fontSize:F32) =>
     fontRender.fontSize = fontSize
   
-	fun ref render(frameContext:FrameContext val, bounds:R4) =>
+  fun ref start(frameContext:FrameContext val) =>
+    if _sizeToFit then
+      resizeToFit(frameContext, true)
+    else
+      RenderPrimitive.startFinished(frameContext)
+    end
+  
+  fun ref resizeToFit(frameContext:FrameContext val, isStart:Bool):F32 =>
+    _sizedAtWidth = frameContext.nodeSize._1
+    
+    let height = fontRender.measureHeight(frameContext, value, _sizedAtWidth)
+    if height != frameContext.nodeSize._2 then
+      frameContext.engine.getNodeByID(frameContext.nodeID, { (node) =>
+          if node as YogaNode then
+            node.>height(height).>widthPercent(100)
+          end
+          if isStart then
+            RenderPrimitive.startFinished(frameContext)
+          end
+          LayoutNeeded
+        })
+    end
+    height
+  
+	fun ref render(frameContext:FrameContext val, bounds:R4) =>    
+    // If our layout has changed since the last time we measured our height, then we need to re-measure
+    // it and fix our bounds (for this render) to match the corrected bounds (for the upcoming render)
+    if _sizeToFit and (_sizedAtWidth != frameContext.nodeSize._1) then
+      resizeToFit(frameContext, false)
+      // abort the render?
+      if engine as RenderEngine then
+        engine.renderAbort()
+      end
+    end
+    
     fontRender.fontColor = _color
     let geom = fontRender.geometry(frameContext, value, bounds)
     RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.sdf, geom.vertices, fontRender.fontColor, fontRender.font.name.cpointer())

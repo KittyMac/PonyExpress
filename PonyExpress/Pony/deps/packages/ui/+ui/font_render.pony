@@ -70,10 +70,11 @@ class FontRender
   fun calcHash(bounds:R4):USize =>
     ((R4fun.x_min(bounds) + 0) + (R4fun.y_min(bounds) * 14639) + (R4fun.width(bounds) * 27143) + (R4fun.height(bounds) * 46811)).abs().usize()
   
+  fun ref invalidate() =>
+    bufferedGeometry.invalidate()
   
   
-  
-  fun ref measureNextTextLine(text:String, start_index:USize, start_pen:V2, bounds:R4):(F32,USize) =>
+  fun ref measureNextTextLine(text:String, start_index:USize, start_pen:V2, bounds_xmax:F32):(F32,USize) =>
     var i:USize = start_index
     var pen_x:F32 = start_pen._1
     var pen_y:F32 = start_pen._2
@@ -84,9 +85,7 @@ class FontRender
     
     var start_of_word_index:USize = start_index
     var end_of_word_pen_x:F32 = pen_x
-    
-    let bounds_xmax = R4fun.x_max(bounds)
-    
+        
     let space_advance = fontAtlas.space_advance.f32() * fontSize
     var localWrap = FontWrap.character
     
@@ -176,6 +175,28 @@ class FontRender
     
     (pen_x - start_pen._1, i - start_index)
   
+  
+  fun ref measureHeight(frameContext:FrameContext val,
+                        text:String,
+                        width:F32):F32 =>
+    // Find the minimum height needed in order to contain this text given the width provided
+    let fontAtlas = font.fontAtlas
+    let advance_y = fontAtlas.height.f32() * fontSize
+    
+    let end_index:USize = text.size()
+    var start_index:USize = 0
+    var pen:V2 = V2fun(0, fontSize)
+    
+    while start_index < end_index do
+      (let _, let next_index) = measureNextTextLine(text, start_index, pen, width)
+      
+      pen = V2fun(pen._1, pen._2 + advance_y)
+      
+      start_index = start_index + next_index
+    end
+    
+    (pen._2 - fontSize)
+  
   fun ref geometry( frameContext:FrameContext val, 
                     text:String, 
                     bounds:R4):Geometry =>
@@ -231,7 +252,7 @@ class FontRender
       
       let start_glyph_idx = glyphRenderData.size()
       
-      (let renderWidth, let next_index) = measureNextTextLine(text, start_index, pen, bounds)
+      (let renderWidth, let next_index) = measureNextTextLine(text, start_index, pen, bounds_xmax)
       
       let x_off:F32 = (match fontAlignment
       | Alignment.left => 0
