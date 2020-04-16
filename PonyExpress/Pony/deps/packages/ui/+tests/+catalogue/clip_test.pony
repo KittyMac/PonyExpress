@@ -6,7 +6,7 @@ actor ClipTest is Controllerable
     recover iso 
       YogaNode.>alignItems(YGAlign.flexstart)
               .>flexDirection(YGFlexDirection.row)
-              .>padding(YGEdge.all, 40)
+              .>padding(YGEdge.all, 12)
               .>view( Color.>color(RGBA(0.98,0.98,0.98,1)) )
               .>addChildren( [
                                                 

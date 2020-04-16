@@ -215,16 +215,22 @@ class FontRender
   
   fun ref geometry( frameContext:FrameContext val, 
                     text:String, 
-                    bounds:R4):Geometry =>
+                    bounds:R4,
+                    topOffset:F32 = 0.0):Geometry =>
     """
     Generate a mesh for rendering the string. Wrap words before maxWidth is encountered
-    TODO:
-    - implement separable word wrapping and character wrapping (current it does character wrapping)
-    - center vertically (ie like UILabel)
+
+    topOffset: if the bounds needs "fudged" in order to account for dynamic size to fit, this value
+    can be set to adjust for the expected differences in height
     """
     
+    let local_bounds = R4fun( R4fun.x_min(bounds),
+                              R4fun.y_min(bounds) + topOffset,
+                              R4fun.width(bounds),
+                              R4fun.height(bounds))
+    
     let geom = bufferedGeometry.next()
-    if geom.check(frameContext, bounds) then
+    if geom.check(frameContext, local_bounds) then
       return geom
     end
     
@@ -243,15 +249,15 @@ class FontRender
     // Take the interactions of the clip bounds and our bounds, only generate geometry for
     // the visible region. The "clipBounds" is essentially the size of the parent
     // centered in the bounds    
-    let bounds_xmin = R4fun.x_min(bounds)
-    let bounds_xmax = R4fun.x_max(bounds)
-    let bounds_ymin = R4fun.y_min(bounds)
-    let bounds_ymax = R4fun.y_max(bounds)
+    let bounds_xmin = R4fun.x_min(local_bounds)
+    let bounds_xmax = R4fun.x_max(local_bounds)
+    let bounds_ymin = R4fun.y_min(local_bounds)
+    let bounds_ymax = R4fun.y_max(local_bounds)
     
     let visbounds_xmax = R4fun.x_max(frameContext.clipBounds)
-    let visbounds_ymin = R4fun.y_min(frameContext.clipBounds) - ((R4fun.height(bounds) - R4fun.height(frameContext.clipBounds)) / 2)
-    let visbounds_ymax = R4fun.y_max(frameContext.clipBounds) - ((R4fun.height(bounds) - R4fun.height(frameContext.clipBounds)) / 2)
-        
+    let visbounds_ymin = R4fun.y_min(frameContext.clipBounds) - (((R4fun.height(local_bounds) - R4fun.height(frameContext.clipBounds)) / 2) - topOffset)
+    let visbounds_ymax = R4fun.y_max(frameContext.clipBounds) - (((R4fun.height(local_bounds) - R4fun.height(frameContext.clipBounds)) / 2) - topOffset)
+            
     let end_index:USize = text.size()
     var start_index:USize = 0
     var pen:V2 = V2fun(bounds_xmin, bounds_ymin + fontSize)
@@ -270,7 +276,7 @@ class FontRender
         break
       end
       
-      var line_is_visible = (pen._2 >= vis_ymin) and ((pen._2 - advance_y) <= vis_ymax)
+      let line_is_visible = (pen._2 >= vis_ymin) and ((pen._2 - advance_y) <= vis_ymax)
       
       let start_glyph_idx = glyphRenderData.size()
       
@@ -282,7 +288,7 @@ class FontRender
       | Alignment.right => ((bounds_xmax - bounds_xmin) - renderWidth)
       else 0.0 end).max(0.0)
 
-
+      
       // update each glyph in this line with the x_off
       if x_off != 0 then
         for g in glyphRenderData.valuesAfter(start_glyph_idx) do
@@ -340,15 +346,17 @@ class FontRender
       st_x_max = g.tx + (g.tw * w_mod)
       st_y_max = g.ty + (g.th * h_mod)
       
-      RenderPrimitive.quadVT(frameContext,    vertices,   
-                              V3fun(x_min,  y_min, 0.0), 
-                              V3fun(x_max,  y_min, 0.0),
-                              V3fun(x_max,  y_max, 0.0),
-                              V3fun(x_min,  y_max, 0.0),
-                              V2fun(st_x_min, 1.0 - st_y_min),
-                              V2fun(st_x_max, 1.0 - st_y_min),
-                              V2fun(st_x_max, 1.0 - st_y_max),
-                              V2fun(st_x_min, 1.0 - st_y_max) )
+      if (x_max > x_min) and (y_max > y_min) then
+        RenderPrimitive.quadVT(frameContext, vertices,   
+                                V3fun(x_min, y_min, 0.0), 
+                                V3fun(x_max, y_min, 0.0),
+                                V3fun(x_max, y_max, 0.0),
+                                V3fun(x_min, y_max, 0.0),
+                                V2fun(st_x_min, 1.0 - st_y_min),
+                                V2fun(st_x_max, 1.0 - st_y_min),
+                                V2fun(st_x_max, 1.0 - st_y_max),
+                                V2fun(st_x_min, 1.0 - st_y_max) )
+      end
     end
         
     geom

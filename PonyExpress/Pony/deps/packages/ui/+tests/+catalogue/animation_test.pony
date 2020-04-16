@@ -22,7 +22,7 @@ actor AnimationTest is Controllerable
       YogaNode.>alignItems(YGAlign.center)
               .>justifyContent(YGJustify.center)
               .>flexDirection(YGFlexDirection.row)
-              .>padding(YGEdge.all, 40)
+              .>padding(YGEdge.all, 12)
               .>view( Color.>color(RGBA(0.98,0.98,0.98,1)).>animation(this) )
               .>addChildren( [
             

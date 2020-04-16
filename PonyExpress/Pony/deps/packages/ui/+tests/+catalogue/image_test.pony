@@ -8,7 +8,7 @@ actor ImageTest is Controllerable
       YogaNode.>alignItems(YGAlign.flexstart)
               .>flexDirection(YGFlexDirection.row)
               .>flexWrap(YGWrap.wrap)
-              .>padding(YGEdge.all, 40)
+              .>padding(YGEdge.all, 12)
               .>view( Color.>color(RGBA(0.98,0.98,0.98,1)) )
               .>addChildren( [
                                                         

@@ -17,6 +17,7 @@ actor Main
     rto.ponynoscale = true
     rto.ponynoblock = true
     rto.ponymainthread = true
-    //rto.ponygcinitial = 0
-    //rto.ponygcfactor = 1.0
+    rto.ponygcinitial = 0
+    rto.ponygcfactor = 1.0
+    
     

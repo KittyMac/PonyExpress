@@ -332,9 +332,8 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             pony_become(pony_ctx(), platformActor)
             #endif
             
-            while renderAheadCount >= RenderEngine_maxConcurrentFrames() {
-                RenderEngineInternal_Poll()
-            }
+            let maxConcurrentFrames = RenderEngine_maxConcurrentFrames()
+            while renderAheadCount >= maxConcurrentFrames { }
             
             objc_sync_enter(renderAheadCountLock)
             defer {
@@ -349,6 +348,11 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             if depthTexture.width != drawable.texture.width || depthTexture.height != drawable.texture.height {
                 let drawableSize = CGSize(width:drawable.texture.width, height:drawable.texture.height)
                 depthTexture = getDepthTexture(size:drawableSize)
+            }
+            
+            if RenderEngineInternal_gatherAllRenderUnitsForNextFrame(nil) == false {
+                renderAheadCount -= 1
+                return
             }
             
             let renderPassDescriptor = MTLRenderPassDescriptor()
@@ -400,10 +404,6 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             renderEncoder.setDepthStencilState(ignoreStencilState)
             
             var aborted = false
-            
-            if RenderEngineInternal_gatherAllRenderUnitsForNextFrame(nil) == false {
-                aborted = true
-            }
             
             while let unitPtr = RenderEngineInternal_nextRenderUnit(nil) {
                 let unit = unitPtr.pointee
