@@ -282,7 +282,7 @@ class FontRender
       | Alignment.right => ((bounds_xmax - bounds_xmin) - renderWidth)
       else 0.0 end).max(0.0)
 
-      
+
       // update each glyph in this line with the x_off
       if x_off != 0 then
         for g in glyphRenderData.valuesAfter(start_glyph_idx) do
