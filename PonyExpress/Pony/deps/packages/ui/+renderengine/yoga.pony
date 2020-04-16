@@ -10,15 +10,18 @@ type YogaNodeID is USize
 class YogaNode
   var node:YGNodeRef tag
   var _name:String val
-  var _view:(Viewable|None)
+  var _views:Array[Viewable]
   
   var children:Array[YogaNode]
   var last_bounds:R4 = R4fun.zero()
   var last_matrix:M4 = M4fun.id()
   
   var _content_offset:V2 = V2fun.zero()
-  var _clips:Bool = false
   var _rotation:V3 = V3fun.zero()
+  
+  var _clips:Bool = false
+  var _clippingGeometry:BufferedGeometry = BufferedGeometry
+  var _pushedClippingVertices:FloatAlignedArray = FloatAlignedArray
   
   var _safeTop:Bool = false
   var _safeLeft:Bool = false
@@ -33,7 +36,7 @@ class YogaNode
     children = Array[YogaNode](32)
     node = @YGNodeNew()
     _name = ""
-    _view = None
+    _views = Array[Viewable](12)
     fill()
   
   fun id():YogaNodeID =>
@@ -117,17 +120,19 @@ class YogaNode
   
   // Called when the node is first added to the render engine hierarchy
   fun ref start(frameContext:FrameContext):U64 =>
-    var n:U64 = frameContext.renderNumber + 1
+    var n:U64 = frameContext.renderNumber
     
-    frameContext.renderNumber = n
-    frameContext.nodeID = id()
-    frameContext.contentSize = contentSize()
-    frameContext.nodeSize = nodeSize()
+    for local_view in _views.values() do
+      
+      n = frameContext.renderNumber + 1
     
-    if _view as Viewable then
-      _view.viewable_start( frameContext.clone() )
-    else
-      frameContext.engine.startFinished()
+      frameContext.renderNumber = n
+      frameContext.nodeID = id()
+      frameContext.contentSize = contentSize()
+      frameContext.nodeSize = nodeSize()
+      
+      local_view.viewable_start( frameContext.clone() )
+      
     end
     
     for child in children.values() do
@@ -149,16 +154,18 @@ class YogaNode
   
   // Called when distributing events to nodes
   fun ref event(frameContext:FrameContext, anyEvent:AnyEvent val):U64 =>
-    var n:U64 = frameContext.renderNumber + 1
-  
-    frameContext.renderNumber = n
-    frameContext.matrix = last_matrix
-    frameContext.nodeID = id()
-    frameContext.contentSize = contentSize()
-    frameContext.nodeSize = nodeSize()
+    var n:U64 = frameContext.renderNumber
     
-    if _view as Viewable then
-      _view.viewable_event( frameContext.clone(), anyEvent, last_bounds )
+    for local_view in _views.values() do
+      n = frameContext.renderNumber + 1
+      
+      frameContext.renderNumber = n
+      frameContext.matrix = last_matrix
+      frameContext.nodeID = id()
+      frameContext.contentSize = contentSize()
+      frameContext.nodeSize = nodeSize()
+    
+      local_view.viewable_event( frameContext.clone(), anyEvent, last_bounds )
     end
   
     for child in children.values() do
@@ -172,7 +179,8 @@ class YogaNode
     _renderRecursive(frameContext, V2fun.zero(), M4fun.id())
     
   fun ref _renderRecursive(frameContext:FrameContext, parentContentOffset:V2, parent_matrix:M4):U64 =>    
-    var n:U64 = frameContext.renderNumber + 1
+    var n:U64 = frameContext.renderNumber
+    
     let local_left:F32 = @YGNodeLayoutGetLeft(node)
     let local_top:F32 = @YGNodeLayoutGetTop(node)
     let local_width:F32 = @YGNodeLayoutGetWidth(node)
@@ -195,7 +203,6 @@ class YogaNode
             )
     end
     
-    frameContext.renderNumber = n
     frameContext.matrix = local_matrix
     frameContext.nodeID = id()
     frameContext.contentSize = contentSize()
@@ -208,17 +215,17 @@ class YogaNode
     let savedClipBounds = frameContext.clipBounds
     
     if _clips then
-      if _view as Viewable then
-        _view.viewable_pushClips( frameContext.clone(), last_bounds )
-        n = n + 1
-        frameContext.renderNumber = n
-      end
+      n = frameContext.renderNumber + 1
+      frameContext.renderNumber = n
+      
+      pushClips( frameContext.clone(), last_bounds )
     end
     
-    if _view as Viewable then
-      _view.viewable_render( frameContext.clone(), last_bounds )
-    else
-      frameContext.engine.renderFinished()
+    for local_view in _views.values() do
+      n = frameContext.renderNumber + 1
+      frameContext.renderNumber = n      
+    
+      local_view.viewable_render( frameContext.clone(), last_bounds )
     end
     
     local_matrix = M4fun.mul_m4(
@@ -238,18 +245,59 @@ class YogaNode
     if _clips then
       frameContext.clipBounds = savedClipBounds
       
-      if _view as Viewable then
-        n = n + 1
-        frameContext.renderNumber = n
-        _view.viewable_popClips( frameContext.clone(), last_bounds )
-      end
+      n = n + 1
+      frameContext.renderNumber = n
+      
+      popClips( frameContext.clone(), last_bounds )
     end
     
     n
   
   
-  fun ref view(view':Viewable) =>
-    _view = view'
+  fun ref pushClips(frameContext:FrameContext val, bounds:R4) =>
+  
+    let geom = _clippingGeometry.next()
+    _pushedClippingVertices = geom.vertices
+  
+    if geom.check(frameContext, bounds) == false then
+  
+      _pushedClippingVertices.reserve(6 * 7)
+      _pushedClippingVertices.clear()
+  
+      let x_min = R4fun.x_min(bounds)
+      let y_min = R4fun.y_min(bounds)
+      let x_max = R4fun.x_max(bounds)
+      let y_max = R4fun.y_max(bounds)
+  
+      RenderPrimitive.quadVC(frameContext,    _pushedClippingVertices,   
+                             V3fun(x_min,  y_min, 0.0), 
+                             V3fun(x_max,  y_min, 0.0),
+                             V3fun(x_max,  y_max, 0.0),
+                             V3fun(x_min,  y_max, 0.0),
+                             RGBA.white() )
+    end
+  
+    @RenderEngine_pushClips(frameContext.renderContext,
+                            frameContext.frameNumber, 
+                            frameContext.calcRenderNumber(frameContext, 0, 1),
+                            _pushedClippingVertices.size().u32(), 
+                            _pushedClippingVertices.cpointer(),
+                            _pushedClippingVertices.allocSize().u32())
+    RenderPrimitive.renderFinished(frameContext)
+
+  fun ref popClips(frameContext:FrameContext val, bounds:R4) =>
+    @RenderEngine_popClips(frameContext.renderContext,
+                           frameContext.frameNumber, 
+                           frameContext.calcRenderNumber(frameContext, 0, 9),
+                           _pushedClippingVertices.size().u32(), 
+                           _pushedClippingVertices.cpointer(),
+                           _pushedClippingVertices.allocSize().u32() )
+    RenderPrimitive.renderFinished(frameContext)
+  
+  
+  
+  fun ref view(local_view:Viewable) =>
+    _views.push(local_view)
   
   fun ref name(name':String val) =>
     _name = name'

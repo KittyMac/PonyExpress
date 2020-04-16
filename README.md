@@ -35,7 +35,7 @@ Pony Express is a UI toolkit for building fully concurrent applications written 
 
 ## misc
 
-
+* [ ] add support for Laba animations
 
 ## demos
 

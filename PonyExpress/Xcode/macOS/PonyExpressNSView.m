@@ -183,8 +183,6 @@ static CVReturn DispatchRenderLoop(CVDisplayLinkRef displayLink,
         PonyExpressNSView *customView = (__bridge PonyExpressNSView*)displayLinkContext;
         if (customView.paused == false) {
             [customView render];
-        }else{
-            [customView setNeedsDisplay:true];
         }
     }
 #endif

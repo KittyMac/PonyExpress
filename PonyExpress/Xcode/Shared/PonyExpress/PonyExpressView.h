@@ -42,6 +42,10 @@ Custom view base class
 
 @property (nonatomic, nullable) id<PonyExpressViewDelegate> delegate;
 
+@property (nonatomic, assign) BOOL drawableNeedsToBeResized;
+@property (nonatomic, assign) CGSize drawableSize;
+@property (nonatomic, assign) CGFloat drawableContentScale;
+
 - (nonnull instancetype)initCommon;
 
 #if AUTOMATICALLY_RESIZE

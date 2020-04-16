@@ -5,9 +5,6 @@ trait tag Viewable is Animatable
   var engine:(RenderEngine|None) = None
   var nodeID:YogaNodeID = 0
   
-  var clippingGeometry:BufferedGeometry = BufferedGeometry
-  var pushedClippingVertices:FloatAlignedArray = FloatAlignedArray
-  
   // convert point from local coordinates to global coordinates
   fun transformPoint(frameContext:FrameContext val, point:V2):V2 =>
     V3fun.v2(M4fun.mul_v3_point_3x4(frameContext.matrix, V3fun(point._1, point._2, 0.0)))
@@ -50,47 +47,4 @@ trait tag Viewable is Animatable
     RenderPrimitive.renderFinished(frameContext)
     performAnimation(frameContext)
   
-  
-  
-  
-  
-  be viewable_pushClips(frameContext:FrameContext val, bounds:R4) =>
-    
-    let geom = clippingGeometry.next()
-    pushedClippingVertices = geom.vertices
-    
-    if geom.check(frameContext, bounds) == false then
-    
-      pushedClippingVertices.reserve(6 * 7)
-      pushedClippingVertices.clear()
-    
-      let x_min = R4fun.x_min(bounds)
-      let y_min = R4fun.y_min(bounds)
-      let x_max = R4fun.x_max(bounds)
-      let y_max = R4fun.y_max(bounds)
-    
-      RenderPrimitive.quadVC(frameContext,    pushedClippingVertices,   
-                             V3fun(x_min,  y_min, 0.0), 
-                             V3fun(x_max,  y_min, 0.0),
-                             V3fun(x_max,  y_max, 0.0),
-                             V3fun(x_min,  y_max, 0.0),
-                             RGBA.white() )
-    end
-    
-    @RenderEngine_pushClips(frameContext.renderContext,
-                            frameContext.frameNumber, 
-                            frameContext.calcRenderNumber(frameContext, 0, 1),
-                            pushedClippingVertices.size().u32(), 
-                            pushedClippingVertices.cpointer(),
-                            pushedClippingVertices.allocSize().u32())
-    RenderPrimitive.renderFinished(frameContext)
-  
-  be viewable_popClips(frameContext:FrameContext val, bounds:R4) =>
-    @RenderEngine_popClips(frameContext.renderContext,
-                           frameContext.frameNumber, 
-                           frameContext.calcRenderNumber(frameContext, 0, 9),
-                           pushedClippingVertices.size().u32(), 
-                           pushedClippingVertices.cpointer(),
-                           pushedClippingVertices.allocSize().u32() )
-    RenderPrimitive.renderFinished(frameContext)
     

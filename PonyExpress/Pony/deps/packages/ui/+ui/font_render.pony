@@ -74,7 +74,7 @@ class FontRender
     bufferedGeometry.invalidate()
   
   
-  fun ref measureNextTextLine(text:String, start_index:USize, start_pen:V2, bounds_xmax:F32):(F32,USize) =>
+  fun ref measureNextTextLine(text:String, start_index:USize, start_pen:V2, bounds_xmax:F32, skipRenderData:Bool):(F32,USize) =>
     var i:USize = start_index
     var pen_x:F32 = start_pen._1
     var pen_y:F32 = start_pen._2
@@ -102,20 +102,26 @@ class FontRender
           end_of_word_pen_x = pen_x
           localWrap = fontWrap
           start_of_word_index = i
-          glyphRenderData.push(zeroGlyph)
+          if skipRenderData == false then 
+            glyphRenderData.push(zeroGlyph)
+          end
           break
         elseif c == ' ' then
           end_of_word_pen_x = pen_x
           pen_x = pen_x + space_advance
           localWrap = fontWrap
           start_of_word_index = i
-          glyphRenderData.push(zeroGlyph)
+          if skipRenderData == false then 
+            glyphRenderData.push(zeroGlyph)
+          end
           continue
         elseif c == '\t' then
           pen_x = pen_x + (space_advance * 2)
           localWrap = fontWrap
           start_of_word_index = i
-          glyphRenderData.push(zeroGlyph)
+          if skipRenderData == false then 
+            glyphRenderData.push(zeroGlyph)
+          end
           continue
         end
         
@@ -125,7 +131,9 @@ class FontRender
           end_of_word_pen_x = pen_x
           localWrap = fontWrap
           start_of_word_index = i
-          glyphRenderData.push(zeroGlyph)
+          if skipRenderData == false then 
+            glyphRenderData.push(zeroGlyph)
+          end
           continue
         end
         
@@ -135,14 +143,6 @@ class FontRender
         let g_bearing_x = glyph.bearing_x.f32() * fontSize
         let g_bearing_y = glyph.bearing_y.f32() * fontSize
         let g_advance_x = glyph.advance_x.f32() * fontSize
-      
-        let s0 = glyph.s0.f32()
-        let s1 = glyph.s1.f32()
-        let t0 = glyph.t0.f32()
-        let t1 = glyph.t1.f32()
-    
-        let sW = s1 - s0
-        let sH = t1 - t0
 
         var x = pen_x + g_bearing_x
         var y = pen_y - g_bearing_y
@@ -159,12 +159,22 @@ class FontRender
           end
           break
         end
-                
-        glyphRenderData.push(
-          GlyphRenderData(x, y, w, h,
-                          s0, t0, sW, sH
+        
+        if skipRenderData == false then
+          let s0 = glyph.s0.f32()
+          let s1 = glyph.s1.f32()
+          let t0 = glyph.t0.f32()
+          let t1 = glyph.t1.f32()
+    
+          let sW = s1 - s0
+          let sH = t1 - t0
+          
+          glyphRenderData.push(
+            GlyphRenderData(x, y, w, h,
+                            s0, t0, sW, sH
+            )
           )
-        )
+        end
         
         pen_x = pen_x + g_advance_x
         
@@ -175,7 +185,9 @@ class FontRender
       i = start_index + 1
     end
     
-    glyphRenderData.truncate(i)
+    if skipRenderData == false then
+      glyphRenderData.truncate(i)
+    end
     
     (pen_x - start_pen._1, i - start_index)
   
@@ -192,7 +204,7 @@ class FontRender
     var pen:V2 = V2fun(0, fontSize)
     
     while start_index < end_index do
-      (let _, let next_index) = measureNextTextLine(text, start_index, pen, width)
+      (let _, let next_index) = measureNextTextLine(text, start_index, pen, width, true)
       
       pen = V2fun(pen._1, pen._2 + advance_y)
       
@@ -256,7 +268,7 @@ class FontRender
       
       let start_glyph_idx = glyphRenderData.size()
       
-      (let renderWidth, let next_index) = measureNextTextLine(text, start_index, pen, bounds_xmax)
+      (let renderWidth, let next_index) = measureNextTextLine(text, start_index, pen, bounds_xmax, false)
       
       let x_off:F32 = (match fontAlignment
       | Alignment.left => 0

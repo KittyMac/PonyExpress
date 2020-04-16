@@ -125,11 +125,12 @@ Custom view base class
     CGSize newSize = self.bounds.size;
     newSize.width *= scaleFactor;
     newSize.height *= scaleFactor;
+    
+    _drawableNeedsToBeResized = true;
+    _drawableSize = newSize;
+    _drawableContentScale = scaleFactor;
 
 #if RENDER_ON_MAIN_THREAD
-    _metalLayer.contentsScale = scaleFactor;
-    _metalLayer.drawableSize = newSize;
-
     if(_delegate)
     {
         [_delegate drawableResize:newSize withScale:scaleFactor andInsets:insets];
@@ -139,9 +140,6 @@ Custom view base class
     // a synchronized block to ensure that resize notifications on the delegate are atomic
     @synchronized(_metalLayer)
     {
-        _metalLayer.contentsScale = scaleFactor;
-        _metalLayer.drawableSize = newSize;
-
         [_delegate drawableResize:newSize withScale:scaleFactor andInsets:insets];
     }
 #endif
@@ -155,6 +153,12 @@ Custom view base class
 
 - (void)render
 {
+    if (_drawableNeedsToBeResized) {
+        _drawableNeedsToBeResized = false;
+        _metalLayer.drawableSize = _drawableSize;
+        _metalLayer.contentsScale = _drawableContentScale;
+    }
+    
 #if RENDER_ON_MAIN_THREAD
     [_delegate renderToMetalLayer:_metalLayer];
 #else

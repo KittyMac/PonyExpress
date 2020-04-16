@@ -295,7 +295,14 @@ trait Scrollable is (Viewable & Actionable)
       else
         velocityY = 0.0
       end
-        
+      
+      //ensure a maximum velocity
+      let m:F32 = 30_000
+      if velocityX > m then velocityX = m end
+      if velocityX < -m then velocityX = -m end
+      if velocityY > m then velocityY = m end
+      if velocityY < -m then velocityY = -m end
+      
       //we might need to cancel touches on inner nodes when we start a scroll, which is expensive. 
       //avoid this if we can by not cancelling when the user touches, but doesn't actually scroll
       if (velocityX.abs() < minCancelTouchesVelocity) and (velocityY.abs() < minCancelTouchesVelocity) then

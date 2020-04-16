@@ -320,8 +320,6 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
                                               Float(insets.size.width),
                                               Float(insets.size.height))
             
-            depthTexture = getDepthTexture(size:size)
-            
             //print("\(projectedSize.width) x \(projectedSize.height)")
         }
     }
@@ -344,15 +342,13 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             }
             
             renderAheadCount += 1
-            
-            // uncomment to do performance testing on layout->render sequence
-            //RenderEngineInternal_updateBounds(nil, Float(projectedSize.width) + Float(arc4random() % 20), Float(projectedSize.height) + Float(arc4random() % 20))
-            
+                        
             RenderEngineInternal_renderAll(nil)
             
-            if RenderEngineInternal_gatherAllRenderUnitsForNextFrame(nil) == false {
-                renderAheadCount -= 1
-                return
+            // ensure that our depth texture size is correct!
+            if depthTexture.width != drawable.texture.width || depthTexture.height != drawable.texture.height {
+                let drawableSize = CGSize(width:drawable.texture.width, height:drawable.texture.height)
+                depthTexture = getDepthTexture(size:drawableSize)
             }
             
             let renderPassDescriptor = MTLRenderPassDescriptor()
@@ -404,6 +400,10 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             renderEncoder.setDepthStencilState(ignoreStencilState)
             
             var aborted = false
+            
+            if RenderEngineInternal_gatherAllRenderUnitsForNextFrame(nil) == false {
+                aborted = true
+            }
             
             while let unitPtr = RenderEngineInternal_nextRenderUnit(nil) {
                 let unit = unitPtr.pointee

@@ -329,10 +329,7 @@ bool RenderEngineInternal_gatherAllRenderUnitsForNextFrame(HALRenderContext * co
         // We should only expect a new frame of data IF we asked for it. So if we didn't, then we shouldn't wait for nothing
         return false;
     }
-    
-    // Give the platform actor time to process
-    RenderEngineInternal_Poll();
-    
+        
     // reset the binary tree
     context->unit_tree_root = NULL;
     
@@ -374,19 +371,22 @@ bool RenderEngineInternal_gatherAllRenderUnitsForNextFrame(HALRenderContext * co
         }
         
         if(didReceiveCompleteFrame == false) {
-            //RenderEngineInternal_Poll();
+            RenderEngineInternal_Poll();
+            
+            if (RenderEngineInternal_hasRenderUnits(context) == false) {
+                scaling_sleep += 50;
+                if(scaling_sleep > 500) {
+                    scaling_sleep = 500;
+                }
+                time_spent_sleeping += scaling_sleep;
+                usleep(scaling_sleep);
+            }
             
             // Sanity check: if for whatever reason we get stuck waiting "forever" for the frame to end, exit without waiting for the end frame
-            //if (time_spent_sleeping > 1000000) {
-            //    break;
-            //}
-            
-            scaling_sleep += 50;
-            if(scaling_sleep > 500) {
-                scaling_sleep = 500;
+            if (time_spent_sleeping > 1000000) {
+                fprintf(stderr, "failed to reach end of frame in reasonable amount of time, bailing...");
+                break;
             }
-            time_spent_sleeping += scaling_sleep;
-            usleep(scaling_sleep);
         }
     }
     
