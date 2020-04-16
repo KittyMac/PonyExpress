@@ -21,7 +21,7 @@ primitive VerticalAlignment
   let bottom:U32 = 2
 
 
-struct GlyphRenderData
+class GlyphRenderData
   var bx:F32 = 0
   var by:F32 = 0
   var bw:F32 = 0
@@ -30,9 +30,10 @@ struct GlyphRenderData
   var ty:F32 = 0
   var tw:F32 = 0
   var th:F32 = 0
+  var skip:Bool = false
   
   new zero() =>
-    bx = 0
+    skip = true
   
   new create(bx':F32, by':F32, bw':F32, bh':F32, tx':F32, ty':F32, tw':F32, th':F32) =>
     bx = bx'
@@ -86,7 +87,7 @@ class FontRender
     var start_of_word_index:USize = start_index
     var end_of_word_pen_x:F32 = pen_x
         
-    let space_advance = fontAtlas.space_advance.f32() * fontSize
+    let space_advance = fontAtlas.space_advance * fontSize
     var localWrap = FontWrap.character
     
     let zeroGlyph = GlyphRenderData.zero()
@@ -138,16 +139,12 @@ class FontRender
         end
         
         
-        let g_width = glyph.bbox_width.f32() * fontSize
-        let g_height = glyph.bbox_height.f32() * fontSize
-        let g_bearing_x = glyph.bearing_x.f32() * fontSize
-        let g_bearing_y = glyph.bearing_y.f32() * fontSize
-        let g_advance_x = glyph.advance_x.f32() * fontSize
+        let g_width = glyph.bbox_width * fontSize
+        let g_bearing_x = glyph.bearing_x * fontSize
+        let g_advance_x = glyph.advance_x * fontSize
 
         var x = pen_x + g_bearing_x
-        var y = pen_y - g_bearing_y
         let w = g_width
-        let h = g_height
         
         // if drawing this glyph will exceed the width of our draw box...
         if (x + w) >= bounds_xmax then
@@ -161,10 +158,15 @@ class FontRender
         end
         
         if skipRenderData == false then
-          let s0 = glyph.s0.f32()
-          let s1 = glyph.s1.f32()
-          let t0 = glyph.t0.f32()
-          let t1 = glyph.t1.f32()
+          let g_height = glyph.bbox_height * fontSize
+          let g_bearing_y = glyph.bearing_y * fontSize
+          var y = pen_y - g_bearing_y
+          let h = g_height
+          
+          let s0 = glyph.s0
+          let s1 = glyph.s1
+          let t0 = glyph.t0
+          let t1 = glyph.t1
     
           let sW = s1 - s0
           let sH = t1 - t0
@@ -197,7 +199,7 @@ class FontRender
                         width:F32):F32 =>
     // Find the minimum height needed in order to contain this text given the width provided
     let fontAtlas = font.fontAtlas
-    let advance_y = fontAtlas.height.f32() * fontSize
+    let advance_y = fontAtlas.height * fontSize
     
     let end_index:USize = text.size()
     var start_index:USize = 0
@@ -240,7 +242,7 @@ class FontRender
     glyphRenderData.clear()
     
     let fontAtlas = font.fontAtlas
-    let advance_y = fontAtlas.height.f32() * fontSize
+    let advance_y = fontAtlas.height * fontSize
     
     // Take the interactions of the clip bounds and our bounds, only generate geometry for
     // the visible region. The "clipBounds" is essentially the size of the parent
@@ -300,7 +302,7 @@ class FontRender
     // commit all glyphs in glyphRenderData to geometry
     for g in glyphRenderData.values() do
     
-      if (g.bw == 0) or (g.bh == 0) or (g.tw == 0) or (g.th == 0) then
+      if g.skip then
           continue
       end
       

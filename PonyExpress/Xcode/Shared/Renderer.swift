@@ -471,15 +471,17 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             commandBuffer.commit()
             //commandBuffer.waitUntilScheduled()
             
-            // Simple FPS so we can compare performance
-            numFrames = numFrames + 1
-            
-            let currentTime = CFAbsoluteTimeGetCurrent()
-            let elapsedTime = currentTime - lastFramesTime
-            if elapsedTime > 1.0 {
-                print("\(numFrames) fps")
-                numFrames = 0
-                lastFramesTime = currentTime
+            if aborted == false {
+                // Simple FPS so we can compare performance
+                numFrames = numFrames + 1
+                
+                let currentTime = CFAbsoluteTimeGetCurrent()
+                let elapsedTime = currentTime - lastFramesTime
+                if elapsedTime > 1.0 {
+                    print("\(numFrames) fps")
+                    numFrames = 0
+                    lastFramesTime = currentTime
+                }
             }
         }
     }

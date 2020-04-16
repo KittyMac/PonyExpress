@@ -293,8 +293,6 @@ typedef struct ui_RenderNeeded ui_RenderNeeded;
 
 typedef struct _UnsignedPartialArithmetic _UnsignedPartialArithmetic;
 
-typedef struct ui_$2$19 ui_$2$19;
-
 /*
 Things that can be turned into a String.
 */
@@ -334,13 +332,98 @@ functions on a Pointer[A] are private to maintain memory safety.
 */
 typedef struct t2_USize_val_USize_val t2_USize_val_USize_val;
 
-typedef struct StringRunes StringRunes;
+/*
+Contiguous, resizable memory to store elements of type A.
 
-typedef struct u2_ui_Viewable_tag_None_val u2_ui_Viewable_tag_None_val;
+## Usage
+
+Creating an Array of String:
+```pony
+  let array: Array[String] = ["dog"; "cat"; "wombat"]
+  // array.size() == 3
+  // array.space() >= 3
+```
+
+Creating an empty Array of String, which may hold at least 10 elements before
+requesting more space:
+```pony
+  let array = Array[String](10)
+  // array.size() == 0
+  // array.space() >= 10
+```
+
+Accessing elements can be done via the `apply(i: USize): this->A ?` method.
+The provided index might be out of bounds so `apply` is partial and has to be
+called within a try-catch block or inside another partial method:
+```pony
+  let array: Array[String] = ["dog"; "cat"; "wombat"]
+  let is_second_element_wobat = try
+    // indexes start from 0, so 1 is the second element
+    array(1)? == "wombat"
+  else
+    false
+  end
+```
+
+Adding and removing elements to and from the end of the Array can be done via
+`push` and `pop` methods. You could treat the array as a LIFO stack using
+those methods:
+```pony
+  while (array.size() > 0) do
+    let elem = array.pop()?
+    // do something with element
+  end
+```
+
+Modifying the Array can be done via `update`, `insert` and `delete` methods
+which alter the Array at an arbitrary index, moving elements left (when
+deleting) or right (when inserting) as necessary.
+
+Iterating over the elements of an Array can be done using the `values` method:
+```pony
+  for element in array.values() do
+      // do something with element
+  end
+```
+
+## Memory allocation
+Array allocates contiguous memory. It always allocates at least enough memory
+space to hold all of its elements. Space is the number of elements the Array
+can hold without allocating more memory. The `space()` method returns the
+number of elements an Array can hold. The `size()` method returns the number
+of elements the Array holds.
+
+Different data types require different amounts of memory. Array[U64] with size
+of 6 will take more memory than an Array[U8] of the same size.
+
+When creating an Array or adding more elements will calculate the next power
+of 2 of the requested number of elements and allocate that much space, with a
+lower bound of space for 8 elements.
+
+Here's a few examples of the space allocated when initialising an Array with
+various number of elements:
+
+| size | space |
+|------|-------|
+| 0    | 0     |
+| 1    | 8     |
+| 8    | 8     |
+| 9    | 16    |
+| 16   | 16    |
+| 17   | 32    |
+
+Call the `compact()` method to ask the GC to reclaim unused space. There are
+no guarantees that the GC will actually reclaim any space.
+*/
+typedef struct Array_ui_Viewable_tag Array_ui_Viewable_tag;
+
+typedef struct StringRunes StringRunes;
 
 typedef struct yoga_YGNode yoga_YGNode;
 
 typedef struct ui_RenderContext ui_RenderContext;
+
+typedef struct ui_$2$22 ui_$2$22;
 
 /*
 Memory allocations for large amounts of geometry can get expensive. So the ideal circumstance is we allocate it once and it can be
@@ -411,6 +494,8 @@ associated view should be laid out.
 */
 typedef struct ui_RenderEngine ui_RenderEngine;
 
+typedef struct ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_val ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_val;
+
 typedef struct PonyPlatform PonyPlatform;
 
 /*
@@ -463,6 +548,8 @@ actor Main
 typedef struct String String;
 
 typedef struct t2_F32_val_F32_val t2_F32_val_F32_val;
+
+typedef struct ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_box ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_box;
 
 typedef struct ui_Controllerable ui_Controllerable;
 
@@ -659,6 +746,8 @@ typedef struct ui_YogaNode ui_YogaNode;
 
 typedef struct ui_TouchEvent ui_TouchEvent;
 
+typedef struct ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref;
+
 typedef struct $0$9_U32_val $0$9_U32_val;
 
 typedef struct ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_val ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_val;
@@ -673,9 +762,80 @@ A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
 included in a union or intersection, or be a subtype of any interface. Most
 functions on a Pointer[A] are private to maintain memory safety.
 */
+/*
+A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
+included in a union or intersection, or be a subtype of any interface. Most
+functions on a Pointer[A] are private to maintain memory safety.
+*/
 typedef struct u2_String_box_Array_U8_val_box u2_String_box_Array_U8_val_box;
 
 typedef struct t2_ISize_val_Bool_val t2_ISize_val_Bool_val;
+
+/*
+Produces `[min, max)` with a step of `inc` for any `Number` type.
+
+```pony
+// iterating with for-loop
+for i in Range(0, 10) do
+  env.out.print(i.string())
+end
+
+// iterating over Range of U8 with while-loop
+let range = Range[U8](5, 100, 5)
+while range.has_next() do
+  handle_u8(range.next())
+end
+```
+
+Supports `min` being smaller than `max` with negative `inc`
+but only for signed integer types and floats:
+
+```pony
+var previous = 11
+for left in Range[I64](10, -5, -1) do
+  if not (left < previous) then
+    error
+  end
+  previous = left
+end
+```
+
+If the `step` is not moving `min` towards `max` or if it is `0`,
+the Range is considered infinite and iterating over it
+will never terminate:
+
+```pony
+let infinite_range1 = Range(0, 1, 0)
+infinite_range1.is_infinite() == true
+
+let infinite_range2 = Range[I8](0, 10, -1)
+for _ in infinite_range2 do
+  env.out.print("will this ever end?")
+  env.err.print("no, never!")
+end
+```
+
+When using `Range` with  floating point types (`F32` and `F64`)
+`inc` steps < 1.0 are possible. If any of the arguments contains
+`NaN`, `+Inf` or `-Inf` the range is considered infinite as operations on
+any of them won't move `min` towards `max`.
+The actual values produced by such a `Range` are determined by what IEEE 754
+defines as the result of `min` + `inc`:
+
+```pony
+for and_a_half in Range[F64](0.5, 100) do
+  handle_half(and_a_half)
+end
+
+// this Range will produce 0 at first, then infinitely NaN
+let nan: F64 = F64(0) / F64(0)
+for what_am_i in Range[F64](0, 1000, nan) do
+  wild_guess(what_am_i)
+end
+```
+
+*/
+typedef struct collections_Range_USize_val collections_Range_USize_val;
 
 typedef struct stringext_StringExt stringext_StringExt;
 
@@ -1008,6 +1168,8 @@ char* Pointer_U8_val_box__copy_to_oZo(char* self, char* that, size_t n);
 /* Allocate a ui_Viewable without initialising it. */
 ui_Viewable* ui_Viewable_Alloc(void);
 
+None* ui_Viewable_tag_viewable_start_oo(ui_Viewable* self, ui_FrameContext* frameContext);
+
 None* ui_Viewable_ref_start_oo(ui_Viewable* self, ui_FrameContext* frameContext);
 
 None* ui_Viewable_ref_performAnimation_oo(ui_Viewable* self, ui_FrameContext* frameContext);
@@ -1038,6 +1200,10 @@ String* U32_box_string_o(uint32_t self);
 uint32_t U32_val_add_II(uint32_t self, uint32_t y);
 
 uint32_t U32_box_add_II(uint32_t self, uint32_t y);
+
+uint32_t U32_box_neg_I(uint32_t self);
+
+uint32_t U32_val_neg_I(uint32_t self);
 
 uint32_t U32_val_create_II(uint32_t self, uint32_t value);
 
@@ -1210,6 +1376,21 @@ String* _ToString_box__u64_Wbo(_ToString* self, uint64_t x, bool neg);
 String* _ToString_val__u64_Wbo(_ToString* self, uint64_t x, bool neg);
 
 /*
+Space for len instances of A.
+*/
+ui_Geometry** Pointer_ui_Geometry_ref_ref__alloc_Zo(ui_Geometry** self, size_t len);
+
+/*
+Keep the contents, but reserve space for len instances of A.
+*/
+ui_Geometry** Pointer_ui_Geometry_ref_ref__realloc_Zo(ui_Geometry** self, size_t len);
+
+/*
+Set index i and return the previous value.
+*/
+ui_Geometry* Pointer_ui_Geometry_ref_ref__update_Zoo(ui_Geometry** self, size_t i, ui_Geometry* value);
+
+/*
 Retrieve index i.
 */
 ui_Geometry* Pointer_ui_Geometry_ref_box__apply_Zo(ui_Geometry** self, size_t i);
@@ -1223,6 +1404,11 @@ ui_Geometry* Pointer_ui_Geometry_ref_val__apply_Zo(ui_Geometry** self, size_t i)
 Retrieve index i.
 */
 ui_Geometry* Pointer_ui_Geometry_ref_ref__apply_Zo(ui_Geometry** self, size_t i);
+
+/*
+A null pointer.
+*/
+ui_Geometry** Pointer_ui_Geometry_ref_ref_create_o(ui_Geometry** self);
 
 /* Allocate a ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_box without initialising it. */
 ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_box* ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_box_Alloc(void);
@@ -1404,15 +1590,6 @@ bool ui_RenderNeeded_val_eq_ob(ui_RenderNeeded* self, ui_RenderNeeded* that);
 _UnsignedPartialArithmetic* _UnsignedPartialArithmetic_Alloc(void);
 
 _UnsignedPartialArithmetic* _UnsignedPartialArithmetic_val_create_o(_UnsignedPartialArithmetic* self);
-
-/* Allocate a ui_$2$19 without initialising it. */
-ui_$2$19* ui_$2$19_Alloc(void);
-
-void* ui_$2$19_val_apply_oo(ui_$2$19* self, void* p1);
-
-void* ui_$2$19_box_apply_oo(ui_$2$19* self, void* p1);
-
-void* ui_$2$19_ref_apply_oo(ui_$2$19* self, void* p1);
 
 /* Allocate a Stringable without initialising it. */
 Stringable* Stringable_Alloc(void);
@@ -1661,6 +1838,52 @@ bool U8_box_gt_Cb(char self, char y);
 /* Allocate a t2_USize_val_USize_val without initialising it. */
 t2_USize_val_USize_val* t2_USize_val_USize_val_Alloc(void);
 
+/* Allocate a Array_ui_Viewable_tag without initialising it. */
+Array_ui_Viewable_tag* Array_ui_Viewable_tag_Alloc(void);
+
+/*
+The number of elements in the array.
+*/
+size_t Array_ui_Viewable_tag_ref_size_Z(Array_ui_Viewable_tag* self);
+
+/*
+The number of elements in the array.
+*/
+size_t Array_ui_Viewable_tag_val_size_Z(Array_ui_Viewable_tag* self);
+
+/*
+The number of elements in the array.
+*/
+size_t Array_ui_Viewable_tag_box_size_Z(Array_ui_Viewable_tag* self);
+
+/*
+Return an iterator over the values in the array.
+*/
+ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref* Array_ui_Viewable_tag_ref_values_o(Array_ui_Viewable_tag* self);
+
+/*
+Return an iterator over the values in the array.
+*/
+ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_box* Array_ui_Viewable_tag_box_values_o(Array_ui_Viewable_tag* self);
+
+/*
+Return an iterator over the values in the array.
+*/
+ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_val* Array_ui_Viewable_tag_val_values_o(Array_ui_Viewable_tag* self);
+
+size_t Array_ui_Viewable_tag_ref_next_growth_size_ZZ(Array_ui_Viewable_tag* self, size_t s);
+
+size_t Array_ui_Viewable_tag_val_next_growth_size_ZZ(Array_ui_Viewable_tag* self, size_t s);
+
+size_t Array_ui_Viewable_tag_box_next_growth_size_ZZ(Array_ui_Viewable_tag* self, size_t s);
+
+size_t Array_ui_Viewable_tag_tag_next_growth_size_ZZ(Array_ui_Viewable_tag* self, size_t s);
+
+/*
+Create an array with zero elements, but space for len elements.
+*/
+Array_ui_Viewable_tag* Array_ui_Viewable_tag_ref_create_Zo(Array_ui_Viewable_tag* self, size_t len);
+
 /* Allocate a StringRunes without initialising it. */
 StringRunes* StringRunes_Alloc(void);
 
@@ -1700,16 +1923,20 @@ bool I64_box_lt_wb(int64_t self, int64_t y);
 
 int64_t I64_val_create_ww(int64_t self, int64_t value);
 
-/* Allocate a u2_ui_Viewable_tag_None_val without initialising it. */
-u2_ui_Viewable_tag_None_val* u2_ui_Viewable_tag_None_val_Alloc(void);
-
-None* u2_ui_Viewable_tag_None_val_tag_viewable_start_oo(void* self, ui_FrameContext* frameContext);
-
 /* Allocate a yoga_YGNode without initialising it. */
 yoga_YGNode* yoga_YGNode_Alloc(void);
 
 /* Allocate a ui_RenderContext without initialising it. */
 ui_RenderContext* ui_RenderContext_Alloc(void);
+
+/* Allocate a ui_$2$22 without initialising it. */
+ui_$2$22* ui_$2$22_Alloc(void);
+
+void* ui_$2$22_val_apply_oo(ui_$2$22* self, void* p1);
+
+void* ui_$2$22_box_apply_oo(ui_$2$22* self, void* p1);
+
+void* ui_$2$22_ref_apply_oo(ui_$2$22* self, void* p1);
 
 bool ISize_box_le_zb(ssize_t self, ssize_t y);
 
@@ -1799,6 +2026,8 @@ ssize_t ISize_val_shr_Zz(ssize_t self, size_t y);
 ui_BufferedGeometry* ui_BufferedGeometry_Alloc(void);
 
 ui_Geometry* ui_BufferedGeometry_ref_next_o(ui_BufferedGeometry* self);
+
+ui_BufferedGeometry* ui_BufferedGeometry_ref_create_o(ui_BufferedGeometry* self);
 
 String* I32_ref_string_o(int32_t self);
 
@@ -1903,9 +2132,9 @@ None* None_val_create_o(None* self);
 /* Allocate a ui_RenderEngine without initialising it. */
 ui_RenderEngine* ui_RenderEngine_Alloc(void);
 
-None* ui_RenderEngine_tag_getNodeByName_ooo__send(ui_RenderEngine* self, String* nodeName, ui_$2$19* callback);
+None* ui_RenderEngine_tag_getNodeByName_ooo__send(ui_RenderEngine* self, String* nodeName, ui_$2$22* callback);
 
-None* ui_RenderEngine_tag_getNodeByID_Zoo__send(ui_RenderEngine* self, size_t id, ui_$2$19* callback);
+None* ui_RenderEngine_tag_getNodeByID_Zoo__send(ui_RenderEngine* self, size_t id, ui_$2$22* callback);
 
 None* ui_RenderEngine_tag_addNode_oo__send(ui_RenderEngine* self, ui_YogaNode* yoga);
 
@@ -1958,6 +2187,11 @@ None* ui_RenderEngine_tag_setNeedsLayout_o__send(ui_RenderEngine* self);
 None* ui_RenderEngine_tag_updateBounds_ffffffo__send(ui_RenderEngine* self, float w, float h, float safeTop, float safeLeft, float safeBottom, float safeRight);
 
 ui_RenderEngine* ui_RenderEngine_tag_create_o__send(ui_RenderEngine* self);
+
+/* Allocate a ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_val without initialising it. */
+ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_val* ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_val_Alloc(void);
+
+ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_val* ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_val_ref_create_oZo(ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_val* self, Array_ui_Viewable_tag* array, size_t offset);
 
 /* Allocate a PonyPlatform without initialising it. */
 PonyPlatform* PonyPlatform_Alloc(void);
@@ -2380,6 +2614,11 @@ size_t String_ref_offset_to_index_zZ(String* self, ssize_t i);
 /* Allocate a t2_F32_val_F32_val without initialising it. */
 t2_F32_val_F32_val* t2_F32_val_F32_val_Alloc(void);
 
+/* Allocate a ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_box without initialising it. */
+ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_box* ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_box_Alloc(void);
+
+ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_box* ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_box_ref_create_oZo(ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_box* self, Array_ui_Viewable_tag* array, size_t offset);
+
 /* Allocate a ui_Controllerable without initialising it. */
 ui_Controllerable* ui_Controllerable_Alloc(void);
 
@@ -2691,6 +2930,17 @@ ui_TouchEvent* ui_TouchEvent_Alloc(void);
 
 ui_TouchEvent* ui_TouchEvent_val_create_Zbffo(ui_TouchEvent* self, size_t id_, bool pressed_, float x, float y);
 
+/* Allocate a ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref without initialising it. */
+ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref* ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref_Alloc(void);
+
+ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref* ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref_ref_create_oZo(ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref* self, Array_ui_Viewable_tag* array, size_t offset);
+
+bool ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref_box_has_next_b(ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref* self);
+
+bool ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref_ref_has_next_b(ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref* self);
+
+bool ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref_val_has_next_b(ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref* self);
+
 /* Allocate a $0$9_U32_val without initialising it. */
 $0$9_U32_val* $0$9_U32_val_Alloc(void);
 
@@ -2721,6 +2971,31 @@ None* ui_RenderPrimitive_val_startFinished_oo(ui_RenderPrimitive* self, ui_Frame
 None* ui_RenderPrimitive_tag_startFinished_oo(ui_RenderPrimitive* self, ui_FrameContext* frameContext);
 
 None* ui_RenderPrimitive_box_startFinished_oo(ui_RenderPrimitive* self, ui_FrameContext* frameContext);
+
+/*
+Space for len instances of A.
+*/
+ui_Viewable** Pointer_ui_Viewable_tag_ref__alloc_Zo(ui_Viewable** self, size_t len);
+
+/*
+A null pointer.
+*/
+ui_Viewable** Pointer_ui_Viewable_tag_ref_create_o(ui_Viewable** self);
+
+/*
+Retrieve index i.
+*/
+ui_Viewable* Pointer_ui_Viewable_tag_box__apply_Zo(ui_Viewable** self, size_t i);
+
+/*
+Retrieve index i.
+*/
+ui_Viewable* Pointer_ui_Viewable_tag_val__apply_Zo(ui_Viewable** self, size_t i);
+
+/*
+Retrieve index i.
+*/
+ui_Viewable* Pointer_ui_Viewable_tag_ref__apply_Zo(ui_Viewable** self, size_t i);
 
 bool Bool_box_op_and_bb(bool self, bool y);
 
@@ -2767,6 +3042,19 @@ None* u2_String_box_Array_U8_val_box_box__copy_to_oZZZo(void* self, char* ptr, s
 /* Allocate a t2_ISize_val_Bool_val without initialising it. */
 t2_ISize_val_Bool_val* t2_ISize_val_Bool_val_Alloc(void);
 
+/* Allocate a collections_Range_USize_val without initialising it. */
+collections_Range_USize_val* collections_Range_USize_val_Alloc(void);
+
+size_t collections_Range_USize_val_ref_next_Z(collections_Range_USize_val* self);
+
+collections_Range_USize_val* collections_Range_USize_val_ref_create_ZZZo(collections_Range_USize_val* self, size_t min, size_t max, size_t inc);
+
+bool collections_Range_USize_val_box_has_next_b(collections_Range_USize_val* self);
+
+bool collections_Range_USize_val_ref_has_next_b(collections_Range_USize_val* self);
+
+bool collections_Range_USize_val_val_has_next_b(collections_Range_USize_val* self);
+
 /* Allocate a stringext_StringExt without initialising it. */
 stringext_StringExt* stringext_StringExt_Alloc(void);
 
@@ -2781,6 +3069,30 @@ u2_AmbientAuth_val_None_val* u2_AmbientAuth_val_None_val_Alloc(void);
 
 /* Allocate a Array_ui_Geometry_ref without initialising it. */
 Array_ui_Geometry_ref* Array_ui_Geometry_ref_Alloc(void);
+
+/*
+Reserve space for len elements, including whatever elements are already in
+the array. Array space grows geometrically.
+*/
+None* Array_ui_Geometry_ref_ref_reserve_Zo(Array_ui_Geometry_ref* self, size_t len);
+
+size_t Array_ui_Geometry_ref_ref_next_growth_size_ZZ(Array_ui_Geometry_ref* self, size_t s);
+
+size_t Array_ui_Geometry_ref_val_next_growth_size_ZZ(Array_ui_Geometry_ref* self, size_t s);
+
+size_t Array_ui_Geometry_ref_box_next_growth_size_ZZ(Array_ui_Geometry_ref* self, size_t s);
+
+size_t Array_ui_Geometry_ref_tag_next_growth_size_ZZ(Array_ui_Geometry_ref* self, size_t s);
+
+/*
+Add an element to the end of the array.
+*/
+None* Array_ui_Geometry_ref_ref_push_oo(Array_ui_Geometry_ref* self, ui_Geometry* value);
+
+/*
+Create an array with zero elements, but space for len elements.
+*/
+Array_ui_Geometry_ref* Array_ui_Geometry_ref_ref_create_Zo(Array_ui_Geometry_ref* self, size_t len);
 
 /* Allocate a linal_R4fun without initialising it. */
 linal_R4fun* linal_R4fun_Alloc(void);
