@@ -331,7 +331,10 @@ static CVReturn DispatchRenderLoop(CVDisplayLinkRef displayLink,
 - (void)scrollWheel:(NSEvent *)event
 {
     NSPoint p = [self convertPoint:[event locationInWindow] fromView:NULL];
-    RenderEngineInternal_scrollEvent(nil, 0, [event deltaX], [event deltaY], p.x, -(self.bounds.size.height - p.y));
+    CGFloat mul = [event hasPreciseScrollingDeltas] ? 0.1f : 1.0f;
+    if([event momentumPhase] == NSEventPhaseBegan || [event momentumPhase] == NSEventPhaseNone){
+        RenderEngineInternal_scrollEvent(nil, 0, [event scrollingDeltaX] * mul, [event scrollingDeltaY] * mul, p.x, -(self.bounds.size.height - p.y));
+    }
 }
 
 - (void)mouseEntered:(NSEvent *)event
