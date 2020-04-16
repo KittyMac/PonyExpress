@@ -56,8 +56,6 @@ class FontRender
 
   var bufferedGeometry:BufferedGeometry = BufferedGeometry
   
-  var needs_rendered:Bool = false
-  
   var glyphRenderData:Array[GlyphRenderData] = Array[GlyphRenderData]
   
   new empty() =>
@@ -75,7 +73,7 @@ class FontRender
     bufferedGeometry.invalidate()
   
   
-  fun ref measureNextTextLine(text:String, start_index:USize, start_pen:V2, bounds_xmax:F32, skipRenderData:Bool):(F32,USize) =>
+  fun ref measureNextTextLine(text:String, start_index:USize, start_pen:V2, bounds_xmax:F32, createRenderData:Bool):(F32,USize) =>
     var i:USize = start_index
     var pen_x:F32 = start_pen._1
     var pen_y:F32 = start_pen._2
@@ -103,7 +101,7 @@ class FontRender
           end_of_word_pen_x = pen_x
           localWrap = fontWrap
           start_of_word_index = i
-          if skipRenderData == false then 
+          if createRenderData then 
             glyphRenderData.push(zeroGlyph)
           end
           break
@@ -112,7 +110,7 @@ class FontRender
           pen_x = pen_x + space_advance
           localWrap = fontWrap
           start_of_word_index = i
-          if skipRenderData == false then 
+          if createRenderData then 
             glyphRenderData.push(zeroGlyph)
           end
           continue
@@ -120,7 +118,7 @@ class FontRender
           pen_x = pen_x + (space_advance * 2)
           localWrap = fontWrap
           start_of_word_index = i
-          if skipRenderData == false then 
+          if createRenderData then 
             glyphRenderData.push(zeroGlyph)
           end
           continue
@@ -132,7 +130,7 @@ class FontRender
           end_of_word_pen_x = pen_x
           localWrap = fontWrap
           start_of_word_index = i
-          if skipRenderData == false then 
+          if createRenderData then 
             glyphRenderData.push(zeroGlyph)
           end
           continue
@@ -157,7 +155,7 @@ class FontRender
           break
         end
         
-        if skipRenderData == false then
+        if createRenderData then
           let g_height = glyph.bbox_height * fontSize
           let g_bearing_y = glyph.bearing_y * fontSize
           var y = pen_y - g_bearing_y
@@ -187,7 +185,7 @@ class FontRender
       i = start_index + 1
     end
     
-    if skipRenderData == false then
+    if createRenderData then
       glyphRenderData.truncate(i)
     end
     
@@ -206,13 +204,13 @@ class FontRender
     var pen:V2 = V2fun(0, fontSize)
     
     while start_index < end_index do
-      (let _, let next_index) = measureNextTextLine(text, start_index, pen, width, true)
+      (let _, let next_index) = measureNextTextLine(text, start_index, pen, width, false)
       
       pen = V2fun(pen._1, pen._2 + advance_y)
       
       start_index = start_index + next_index
     end
-    
+        
     (pen._2 - fontSize)
   
   fun ref geometry( frameContext:FrameContext val, 
@@ -229,8 +227,6 @@ class FontRender
     if geom.check(frameContext, bounds) then
       return geom
     end
-    
-    needs_rendered = false
     
     let vertices = geom.vertices
     
@@ -252,7 +248,6 @@ class FontRender
     let bounds_ymin = R4fun.y_min(bounds)
     let bounds_ymax = R4fun.y_max(bounds)
     
-    let visbounds_xmin = R4fun.x_min(frameContext.clipBounds)
     let visbounds_xmax = R4fun.x_max(frameContext.clipBounds)
     let visbounds_ymin = R4fun.y_min(frameContext.clipBounds) - ((R4fun.height(bounds) - R4fun.height(frameContext.clipBounds)) / 2)
     let visbounds_ymax = R4fun.y_max(frameContext.clipBounds) - ((R4fun.height(bounds) - R4fun.height(frameContext.clipBounds)) / 2)
@@ -260,7 +255,14 @@ class FontRender
     let end_index:USize = text.size()
     var start_index:USize = 0
     var pen:V2 = V2fun(bounds_xmin, bounds_ymin + fontSize)
-        
+    
+    var vis_ymin = bounds_ymin
+    var vis_ymax = bounds_ymax
+    if visbounds_xmax < 999999 then
+      vis_ymin = visbounds_ymin
+      vis_ymax = visbounds_ymax
+    end
+    
     // measure out all lines of text (each character saved to glyphRenderData)
     while start_index < end_index do
       
@@ -268,9 +270,11 @@ class FontRender
         break
       end
       
+      var line_is_visible = (pen._2 >= vis_ymin) and ((pen._2 - advance_y) <= vis_ymax)
+      
       let start_glyph_idx = glyphRenderData.size()
       
-      (let renderWidth, let next_index) = measureNextTextLine(text, start_index, pen, bounds_xmax, false)
+      (let renderWidth, let next_index) = measureNextTextLine(text, start_index, pen, bounds_xmax, line_is_visible)
       
       let x_off:F32 = (match fontAlignment
       | Alignment.left => 0
@@ -298,7 +302,7 @@ class FontRender
     | VerticalAlignment.middle => ((bounds_ymax - bounds_ymin) - renderHeight) / 2.0
     | VerticalAlignment.bottom => ((bounds_ymax - bounds_ymin) - renderHeight)
     else 0.0 end).max(0.0)
-            
+        
     // commit all glyphs in glyphRenderData to geometry
     for g in glyphRenderData.values() do
     
@@ -336,19 +340,15 @@ class FontRender
       st_x_max = g.tx + (g.tw * w_mod)
       st_y_max = g.ty + (g.th * h_mod)
       
-      if (x_max > x_min) and (y_max > y_min) then
-        if (visbounds_xmax > 999999) or (((x_min > visbounds_xmax) or (x_max < visbounds_xmin) or (y_min > visbounds_ymax) or (y_max < visbounds_ymin)) == false) then
-          RenderPrimitive.quadVT(frameContext,    vertices,   
-                                  V3fun(x_min,  y_min, 0.0), 
-                                  V3fun(x_max,  y_min, 0.0),
-                                  V3fun(x_max,  y_max, 0.0),
-                                  V3fun(x_min,  y_max, 0.0),
-                                  V2fun(st_x_min, 1.0 - st_y_min),
-                                  V2fun(st_x_max, 1.0 - st_y_min),
-                                  V2fun(st_x_max, 1.0 - st_y_max),
-                                  V2fun(st_x_min, 1.0 - st_y_max) )
-        end
-      end
+      RenderPrimitive.quadVT(frameContext,    vertices,   
+                              V3fun(x_min,  y_min, 0.0), 
+                              V3fun(x_max,  y_min, 0.0),
+                              V3fun(x_max,  y_max, 0.0),
+                              V3fun(x_min,  y_max, 0.0),
+                              V2fun(st_x_min, 1.0 - st_y_min),
+                              V2fun(st_x_max, 1.0 - st_y_min),
+                              V2fun(st_x_max, 1.0 - st_y_max),
+                              V2fun(st_x_min, 1.0 - st_y_max) )
     end
         
     geom

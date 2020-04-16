@@ -329,6 +329,8 @@ bool RenderEngineInternal_gatherAllRenderUnitsForNextFrame(HALRenderContext * co
         // We should only expect a new frame of data IF we asked for it. So if we didn't, then we shouldn't wait for nothing
         return false;
     }
+    
+    RenderEngineInternal_Poll();
         
     // reset the binary tree
     context->unit_tree_root = NULL;
@@ -371,8 +373,6 @@ bool RenderEngineInternal_gatherAllRenderUnitsForNextFrame(HALRenderContext * co
         }
         
         if(didReceiveCompleteFrame == false) {
-            RenderEngineInternal_Poll();
-            
             if (RenderEngineInternal_hasRenderUnits(context) == false) {
                 scaling_sleep += 50;
                 if(scaling_sleep > 500) {

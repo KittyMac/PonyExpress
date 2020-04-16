@@ -10,7 +10,6 @@ actor Main
     PlatformOSX(env)
     
     PonyApp(env, renderEngine)
-    
         
 
   fun @runtime_override_defaults(rto: RuntimeOptions) =>
