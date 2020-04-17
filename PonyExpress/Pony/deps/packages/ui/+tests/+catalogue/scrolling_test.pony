@@ -5,9 +5,7 @@ actor ScrollTest is Controllerable
 	fun ref mainNode():YogaNode iso^ =>
     let font:Font = Font(TestFontJson())
     recover iso 
-      YogaNode.>alignItems(YGAlign.flexstart)
-              .>flexDirection(YGFlexDirection.row)
-              .>padding(YGEdge.all, 0)
+      YogaNode.>rows().>itemsStart().>paddingAll(12)
               .>view( Color.>color(RGBA(0.98,0.98,0.98,1)) )
               .>addChildren( [
                                                 
@@ -15,8 +13,7 @@ actor ScrollTest is Controllerable
                     .>clips(true)
                     .>addChild(
                       
-                      YogaNode.>widthPercent(100)
-                              .>view( Label(LoremText(), font).>size(24).>sizeToFit() )
+                      YogaNode.>view( Label(LoremText(), font).>size(24).>sizeToFit() )
                       
               )
              

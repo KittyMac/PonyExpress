@@ -32,6 +32,7 @@ Pony Express is a UI toolkit for building fully concurrent applications written 
 * [ ] load textures from image memory in pony
 * [ ] expose bundle path conversion to pony
 * [ ] fix quick window resize on mac where metal drawable doesn't match the window size
+* [ ] fix "out of screen" geometry culling to handle views which are wider than screen
 
 ## misc
 

@@ -254,20 +254,20 @@ class YogaNode
     n
   
   
-  fun ref pushClips(frameContext:FrameContext val, bounds:R4) =>
+  fun ref pushClips(frameContext:FrameContext val, local_bounds:R4) =>
   
     let geom = _clippingGeometry.next()
     _pushedClippingVertices = geom.vertices
   
-    if geom.check(frameContext, bounds) == false then
+    if geom.check(frameContext, local_bounds) == false then
   
       _pushedClippingVertices.reserve(6 * 7)
       _pushedClippingVertices.clear()
   
-      let x_min = R4fun.x_min(bounds)
-      let y_min = R4fun.y_min(bounds)
-      let x_max = R4fun.x_max(bounds)
-      let y_max = R4fun.y_max(bounds)
+      let x_min = R4fun.x_min(local_bounds)
+      let y_min = R4fun.y_min(local_bounds)
+      let x_max = R4fun.x_max(local_bounds)
+      let y_max = R4fun.y_max(local_bounds)
   
       RenderPrimitive.quadVC(frameContext,    _pushedClippingVertices,   
                              V3fun(x_min,  y_min, 0.0), 
@@ -285,7 +285,7 @@ class YogaNode
                             _pushedClippingVertices.allocSize().u32())
     RenderPrimitive.renderFinished(frameContext)
 
-  fun ref popClips(frameContext:FrameContext val, bounds:R4) =>
+  fun ref popClips(frameContext:FrameContext val, local_bounds:R4) =>
     @RenderEngine_popClips(frameContext.renderContext,
                            frameContext.frameNumber, 
                            frameContext.calcRenderNumber(frameContext, 0, 9),
@@ -305,10 +305,37 @@ class YogaNode
   fun ref clips(_clips':Bool) =>
     _clips = _clips'
   
+  
+  // Helper functions for more declaratively defining layouts
+  
   fun ref fill() =>
     widthPercent(100)
     heightPercent(100)
   
+  fun ref fit() =>
+    widthAuto()
+    heightAuto()
+  
+  fun ref center() =>
+    @YGNodeStyleSetJustifyContent(node, YGJustify.center)
+    @YGNodeStyleSetAlignItems(node, YGAlign.center)
+  
+  fun ref size(w:F32, h:F32) =>
+    @YGNodeStyleSetWidth(node, w)
+    @YGNodeStyleSetHeight(node, h)
+  
+  fun ref sizePercent(w:F32, h:F32) =>
+    @YGNodeStyleSetWidthPercent(node, w)
+    @YGNodeStyleSetHeightPercent(node, h)
+  
+  fun ref bounds(x:F32, y:F32, w:F32, h:F32) =>
+    @YGNodeStyleSetPosition(node, YGEdge.left, x)
+    @YGNodeStyleSetPosition(node, YGEdge.top, y)
+    @YGNodeStyleSetWidth(node, w)
+    @YGNodeStyleSetHeight(node, h)
+  
+  fun ref grow(v:F32 = 1.0) => @YGNodeStyleSetFlexGrow(node, v)
+  fun ref shrink(v:F32 = 1.0) => @YGNodeStyleSetFlexShrink(node, v)
   
   fun ref safeTop(v:Bool=true) => _safeTop = v
   fun ref safeLeft(v:Bool=true) => _safeLeft = v
@@ -320,6 +347,62 @@ class YogaNode
   fun ref rotateZ(v:F32) => _rotation = V3fun(_rotation._1, _rotation._2, v)
   fun ref rotate(v:V3) => _rotation = v
   
+  fun ref rows() => @YGNodeStyleSetFlexDirection(node, YGFlexDirection.row)
+  fun ref columns() => @YGNodeStyleSetFlexDirection(node, YGFlexDirection.column)
+  
+  fun ref rightToLeft() => @YGNodeStyleSetDirection(node, YGDirection.rtl)
+  fun ref leftToRight() => @YGNodeStyleSetDirection(node, YGDirection.ltr)
+  
+  fun ref justifyStart() => @YGNodeStyleSetJustifyContent(node, YGJustify.flexstart)
+  fun ref justifyCenter() => @YGNodeStyleSetJustifyContent(node, YGJustify.center)
+  fun ref justifyEnd() => @YGNodeStyleSetJustifyContent(node, YGJustify.flexend)
+  fun ref justifyBetween() => @YGNodeStyleSetJustifyContent(node, YGJustify.spacebetween)
+  fun ref justifyAround() => @YGNodeStyleSetJustifyContent(node, YGJustify.spacearound)
+  fun ref justifyEvenly() => @YGNodeStyleSetJustifyContent(node, YGJustify.spaceevenly)  
+  
+  fun ref nowrap() => @YGNodeStyleSetFlexWrap(node, YGWrap.nowrap)
+  fun ref wrap() => @YGNodeStyleSetFlexWrap(node, YGWrap.wrap)
+  
+  fun ref itemsAuto() => @YGNodeStyleSetAlignItems(node, YGAlign.auto)
+  fun ref itemsStart() => @YGNodeStyleSetAlignItems(node, YGAlign.flexstart)
+  fun ref itemsCenter() => @YGNodeStyleSetAlignItems(node, YGAlign.center)
+  fun ref itemsEnd() => @YGNodeStyleSetAlignItems(node, YGAlign.flexend)
+  fun ref itemsBetween() => @YGNodeStyleSetAlignItems(node, YGAlign.spacebetween)
+  fun ref itemsAround() => @YGNodeStyleSetAlignItems(node, YGAlign.spacearound)
+  fun ref itemsBaseline() => @YGNodeStyleSetAlignItems(node, YGAlign.baseline)  
+  fun ref itemsStretch() => @YGNodeStyleSetAlignItems(node, YGAlign.stretch)  
+  
+  fun ref absolute() => @YGNodeStyleSetPositionType(node, YGPositionType.absolute)
+  fun ref relative() => @YGNodeStyleSetPositionType(node, YGPositionType.relative)
+  
+  fun ref origin(x:F32, y:F32) => @YGNodeStyleSetPosition(node, YGEdge.left, x); @YGNodeStyleSetPosition(node, YGEdge.top, y)
+  fun ref originPercent(x:F32, y:F32) => @YGNodeStyleSetPositionPercent(node, YGEdge.left, x); @YGNodeStyleSetPositionPercent(node, YGEdge.top, y)
+  
+  fun ref top(p:F32) => @YGNodeStyleSetPosition(node, YGEdge.top, p)
+  fun ref left(p:F32) => @YGNodeStyleSetPosition(node, YGEdge.left, p)
+  fun ref bottom(p:F32) => @YGNodeStyleSetPosition(node, YGEdge.bottom, p)
+  fun ref right(p:F32) => @YGNodeStyleSetPosition(node, YGEdge.right, p)
+  
+  fun ref topPercent(p:F32) => @YGNodeStyleSetPositionPercent(node, YGEdge.top, p)
+  fun ref leftPercent(p:F32) => @YGNodeStyleSetPositionPercent(node, YGEdge.left, p)
+  fun ref bottomPercent(p:F32) => @YGNodeStyleSetPositionPercent(node, YGEdge.bottom, p)
+  fun ref rightPercent(p:F32) => @YGNodeStyleSetPositionPercent(node, YGEdge.right, p)
+  
+  fun ref paddingAll(v2:F32) => @YGNodeStyleSetPadding(node, YGEdge.all, v2)
+  fun ref paddingTop(v2:F32) => @YGNodeStyleSetPadding(node, YGEdge.top, v2)
+  fun ref paddingLeft(v2:F32) => @YGNodeStyleSetPadding(node, YGEdge.left, v2)
+  fun ref paddingBottom(v2:F32) => @YGNodeStyleSetPadding(node, YGEdge.bottom, v2)
+  fun ref paddingRight(v2:F32) => @YGNodeStyleSetPadding(node, YGEdge.right, v2)
+  
+  fun ref marginAll(v2:F32) => @YGNodeStyleSetMargin(node, YGEdge.all, v2)
+  fun ref marginTop(v2:F32) => @YGNodeStyleSetMargin(node, YGEdge.top, v2)
+  fun ref marginLeft(v2:F32) => @YGNodeStyleSetMargin(node, YGEdge.left, v2)
+  fun ref marginBottom(v2:F32) => @YGNodeStyleSetMargin(node, YGEdge.bottom, v2)
+  fun ref marginRight(v2:F32) => @YGNodeStyleSetMargin(node, YGEdge.right, v2)
+  
+  
+  // These are direct calls to the Yoga methods (most of which require parameters)
+  
   fun ref direction(v:U32) => @YGNodeStyleSetDirection(node, v)
   fun ref flexDirection(v:U32) => @YGNodeStyleSetFlexDirection(node, v)
   
@@ -330,8 +413,6 @@ class YogaNode
   fun ref alignSelf(v:U32) => @YGNodeStyleSetAlignSelf(node, v)
   
   fun ref positionType(v:U32) => @YGNodeStyleSetPositionType(node, v)
-  fun ref absolute() => @YGNodeStyleSetPositionType(node, YGPositionType.absolute)
-  fun ref relative() => @YGNodeStyleSetPositionType(node, YGPositionType.relative)
   
   fun ref overflow(v:U32) => @YGNodeStyleSetOverflow(node, v)
   fun ref display(v:U32) => @YGNodeStyleSetDisplay(node, v)
@@ -343,22 +424,6 @@ class YogaNode
   fun ref flexBasis(v:F32) => @YGNodeStyleSetFlexBasis(node, v)
   fun ref flexBasisPercent(v:F32) => @YGNodeStyleSetFlexBasisPercent(node, v)
   fun ref flexAuto() => @YGNodeStyleSetFlexBasisAuto(node)
-  
-  fun ref origin(x:F32, y:F32) => @YGNodeStyleSetPosition(node, YGEdge.left, x); @YGNodeStyleSetPosition(node, YGEdge.top, y)
-  
-  fun ref top(p:F32) => @YGNodeStyleSetPosition(node, YGEdge.top, p)
-  fun ref left(p:F32) => @YGNodeStyleSetPosition(node, YGEdge.left, p)
-  fun ref bottom(p:F32) => @YGNodeStyleSetPosition(node, YGEdge.bottom, p)
-  fun ref right(p:F32) => @YGNodeStyleSetPosition(node, YGEdge.right, p)
-  
-  
-  fun ref originPercent(x:F32, y:F32) => @YGNodeStyleSetPositionPercent(node, YGEdge.left, x); @YGNodeStyleSetPositionPercent(node, YGEdge.top, y)
-  
-  fun ref topPercent(p:F32) => @YGNodeStyleSetPositionPercent(node, YGEdge.top, p)
-  fun ref leftPercent(p:F32) => @YGNodeStyleSetPositionPercent(node, YGEdge.left, p)
-  fun ref bottomPercent(p:F32) => @YGNodeStyleSetPositionPercent(node, YGEdge.bottom, p)
-  fun ref rightPercent(p:F32) => @YGNodeStyleSetPositionPercent(node, YGEdge.right, p)
-  
   
   fun ref position(v1:U32, v2:F32) => @YGNodeStyleSetPosition(node, v1, v2)
   fun ref positionPercent(v1:U32, v2:F32) => @YGNodeStyleSetPositionPercent(node, v1, v2)

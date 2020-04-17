@@ -73,7 +73,8 @@ class FontRender
     bufferedGeometry.invalidate()
   
   
-  fun ref measureNextTextLine(text:String, start_index:USize, start_pen:V2, bounds_xmax:F32, createRenderData:Bool):(F32,USize) =>
+  fun ref measureNextTextLine(text:String, start_index:USize, start_pen:V2, bounds_xmax:F32, createRenderData:Bool):(F32,USize,Bool) =>
+    var glyphRenderDataStartIndex:USize = glyphRenderData.size()
     var i:USize = start_index
     var pen_x:F32 = start_pen._1
     var pen_y:F32 = start_pen._2
@@ -85,10 +86,12 @@ class FontRender
     var start_of_word_index:USize = start_index
     var end_of_word_pen_x:F32 = pen_x
         
-    let space_advance = fontAtlas.space_advance * fontSize
+    let space_advance = (fontAtlas.space_advance * fontSize).floor()
     var localWrap = FontWrap.character
     
     let zeroGlyph = GlyphRenderData.zero()
+    
+    var wrapped:Bool = false
         
     try
       
@@ -146,6 +149,7 @@ class FontRender
         
         // if drawing this glyph will exceed the width of our draw box...
         if (x + w) >= bounds_xmax then
+          wrapped = true
           if localWrap == FontWrap.word then
             pen_x = end_of_word_pen_x
             i = start_of_word_index
@@ -186,32 +190,40 @@ class FontRender
     end
     
     if createRenderData then
-      glyphRenderData.truncate(i)
+      glyphRenderData.truncate(glyphRenderDataStartIndex + (i - start_index))
     end
     
-    (pen_x - start_pen._1, i - start_index)
+    (pen_x - start_pen._1, i - start_index, wrapped)
   
   
-  fun ref measureHeight(frameContext:FrameContext val,
-                        text:String,
-                        width:F32):F32 =>
+  fun ref measure(frameContext:FrameContext val,
+                          text:String,
+                         width:F32):(F32,F32) =>
     // Find the minimum height needed in order to contain this text given the width provided
     let fontAtlas = font.fontAtlas
     let advance_y = (fontAtlas.height * fontSize).floor()
+    //let space_advance = (fontAtlas.space_advance * fontSize).floor()
     
     let end_index:USize = text.size()
     var start_index:USize = 0
     var pen:V2 = V2fun(0, fontSize)
+    var renderMaxWidth:F32 = 0
     
     while start_index < end_index do
-      (let _, let next_index) = measureNextTextLine(text, start_index, pen, width, false)
+      (let w, let next_index, let wrapped) = measureNextTextLine(text, start_index, pen, width, false)
       
       pen = V2fun(pen._1, pen._2 + advance_y)
       
       start_index = start_index + next_index
+      
+      if wrapped then
+        renderMaxWidth = width
+      else
+        renderMaxWidth = w.max(renderMaxWidth)
+      end
     end
         
-    (pen._2 - fontSize)
+    (renderMaxWidth, (pen._2 - fontSize))
   
   fun ref geometry( frameContext:FrameContext val, 
                     text:String, 
@@ -282,15 +294,14 @@ class FontRender
       
       let start_glyph_idx = glyphRenderData.size()
       
-      (let renderWidth, let next_index) = measureNextTextLine(text, start_index, pen, bounds_xmax, line_is_visible)
-      
+      (let renderWidth, let next_index, let _) = measureNextTextLine(text, start_index, pen, bounds_xmax, line_is_visible)
+            
       let x_off:F32 = (match fontAlignment
       | Alignment.left => 0
       | Alignment.center => ((bounds_xmax - bounds_xmin) - renderWidth) / 2.0
       | Alignment.right => ((bounds_xmax - bounds_xmin) - renderWidth)
       else 0.0 end).max(0.0)
 
-      
       // update each glyph in this line with the x_off
       if x_off != 0 then
         for g in glyphRenderData.valuesAfter(start_glyph_idx) do

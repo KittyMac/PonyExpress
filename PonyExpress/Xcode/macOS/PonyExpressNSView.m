@@ -47,6 +47,7 @@ Customized view for macOS
         
     self.metalLayer.maximumDrawableCount = 3;
     self.metalLayer.framebufferOnly = true;
+    self.metalLayer.opaque = true;
 
 #if ANIMATION_RENDERING
     [self setupCVDisplayLinkForScreen:self.window.screen];

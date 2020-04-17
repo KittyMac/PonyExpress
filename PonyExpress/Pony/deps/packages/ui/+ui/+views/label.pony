@@ -52,12 +52,12 @@ actor Label is (Viewable & Colorable)
   fun ref resizeToFit(frameContext:FrameContext val, isStart:Bool):F32 =>
     if _sizedAtWidth != frameContext.nodeSize._1 then
       _sizedAtWidth = frameContext.nodeSize._1
-          
-      let height = fontRender.measureHeight(frameContext, value, _sizedAtWidth)
+      
+      (let _, let height) = fontRender.measure(frameContext, value, _sizedAtWidth)
       if height != frameContext.nodeSize._2 then
         frameContext.engine.getNodeByID(frameContext.nodeID, { (node) =>
             if node as YogaNode then
-              node.>height(height).>widthPercent(100)
+              node.>height(height)
             end
             if isStart then
               RenderPrimitive.startFinished(frameContext)

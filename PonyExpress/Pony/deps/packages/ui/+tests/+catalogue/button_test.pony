@@ -7,16 +7,12 @@ actor ButtonTest is Controllerable
   
 	fun ref mainNode():YogaNode iso^ =>
     recover iso 
-      YogaNode.>alignItems(YGAlign.flexstart)
-              .>flexDirection(YGFlexDirection.row)
-              .>flexWrap(YGWrap.wrap)
-              .>padding(YGEdge.all, 12)
+      YogaNode.>rows().>justifyStart().>itemsStart().>wrap().>paddingAll(12)
               .>view( Color.>color(RGBA(0.98,0.98,0.98,1)) )
               .>addChildren( [
                                                       
           // the big, red button
-          YogaNode.>width(100)
-                  .>height(100)
+          YogaNode.>size(100, 100)
                   .>view( Button.empty().>onClick({ () => @printf("clicked 1!\n".cstring()) }) )
                   .>addChildren([
               YogaNode.>view( Color.>red() )
@@ -24,8 +20,7 @@ actor ButtonTest is Controllerable
           ])
           
           // clear tap area
-          YogaNode.>width(200)
-                  .>height(60)
+          YogaNode.>size(200, 60)
                   .>view( ClearButton.empty().>onClick({ () => @printf("clicked 2!\n".cstring()) }) )
                   .>addChildren([
                 YogaNode.>view( Color.>gray() )
@@ -38,8 +33,7 @@ actor ButtonTest is Controllerable
           
           
           // button with a stretchable image
-          YogaNode.>width(300)
-                  .>height(80)
+          YogaNode.>size(300, 80)
                   .>view( ImageButton( "stretch_button", "stretch_button" ).>stretch(32,32,32,32)
                                                                            .>pressedColor(RGBA(0.8, 0.8, 1.0, 1.0))
                                                                            .>onClick({ () => @printf("clicked 4!\n".cstring()) }) )

@@ -19,27 +19,21 @@ actor AnimationTest is Controllerable
   
 	fun ref mainNode():YogaNode iso^ =>    
     recover iso 
-      YogaNode.>alignItems(YGAlign.center)
-              .>justifyContent(YGJustify.center)
-              .>flexDirection(YGFlexDirection.row)
-              .>padding(YGEdge.all, 12)
+      YogaNode.>rows().>itemsCenter().>justifyCenter().>paddingAll(12)
               .>view( Color.>color(RGBA(0.98,0.98,0.98,1)).>animation(this) )
               .>addChildren( [
             
             YogaNode.>name("Progress")
+                    .>size(400,40)
                     .>view( progressView )
-                    .>width(400)
-                    .>height(40)
             
             YogaNode.>name("Square")
+                    .>size(200,200)
                     .>view( Color.>red() )
-                    .>width(200)
-                    .>height(200)
             
             YogaNode.>name("Rainbow")
+                    .>size(50,200)
                     .>view( SampleRainbow )
-                    .>width(50)
-                    .>height(200)
           ])
       end
   

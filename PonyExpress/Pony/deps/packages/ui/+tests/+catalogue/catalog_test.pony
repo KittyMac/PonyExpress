@@ -9,8 +9,9 @@ primitive SwitchToFonts2 is Action
 primitive SwitchToClips is Action
 primitive SwitchToScroll is Action
 primitive SwitchToAnimation is Action
+primitive SwitchToTextField is Action
 
-type CatalogAction is (SwitchToColors | SwitchToButtons | SwitchToImages | SwitchToFonts | SwitchToFonts2 | SwitchToClips | SwitchToScroll | SwitchToAnimation)
+type CatalogAction is (SwitchToColors | SwitchToButtons | SwitchToImages | SwitchToFonts | SwitchToFonts2 | SwitchToClips | SwitchToScroll | SwitchToAnimation | SwitchToTextField)
   
 
 actor Catalog is Controllerable
@@ -20,26 +21,17 @@ actor Catalog is Controllerable
   
   fun ref mainNode():YogaNode iso^ =>
     let main = recover iso
-      YogaNode.>alignItems(YGAlign.flexstart)
-              .>direction(YGDirection.rtl)
-              .>flexDirection(YGFlexDirection.row)
+      YogaNode.>rows().>itemsStart().>rightToLeft()
               .>view( Color.>color(RGBA(0.98,0.98,0.98,1)) )
               .>addChildren( [
           
           // Panel
-          YogaNode.>name("Panel")
+          YogaNode.>leftToRight().>safeTop().>flexGrow(1.0).>flexShrink(1.0)
+                  .>name("Panel")
                   .>view( Clear )
-                  .>direction(YGDirection.ltr)
-                  .>safeTop()
-                  .>flexGrow(1.0)
-                  .>flexShrink(1.0)
-                  .>fill()
           
           // Sidebar
-          YogaNode.>width(110)
-                  .>heightPercent(100)
-                  .>safeTop()
-                  .>direction(YGDirection.ltr)
+          YogaNode.>leftToRight().>width(110).>safeTop()
                   .>view( Image("sidebar").>stretch(10,10,10,10) )
                   .>addChildren([
               menuButton("Colors", font, SwitchToColors)
@@ -50,6 +42,7 @@ actor Catalog is Controllerable
               menuButton("Clip", font, SwitchToClips)
               menuButton("Scroll", font, SwitchToScroll)
               menuButton("Animation", font, SwitchToAnimation)
+              menuButton("Text Field", font, SwitchToTextField)
           ])
           
         ]
@@ -81,6 +74,7 @@ actor Catalog is Controllerable
         | SwitchToClips => ClipTest.load(engine, "Panel")
         | SwitchToScroll => ScrollTest.load(engine, "Panel")
         | SwitchToAnimation => AnimationTest.load(engine, "Panel")
+        | SwitchToTextField => TextFieldTest.load(engine, "Panel")
         end
     end
     
