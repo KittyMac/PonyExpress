@@ -2696,14 +2696,6 @@ float ui_SafeEdges_box_top_f(ui_SafeEdges* self);
 
 ui_SafeEdges* ui_SafeEdges_val_create_o(ui_SafeEdges* self);
 
-bool F32_val_le_fb(float self, float y);
-
-bool F32_box_le_fb(float self, float y);
-
-bool F32_box_ge_fb(float self, float y);
-
-bool F32_val_ge_fb(float self, float y);
-
 float F32_val_sqrt_f(float self);
 
 float F32_box_sqrt_f(float self);
@@ -2764,6 +2756,10 @@ float F32_val_create_ff(float self, float value);
 bool F32_box_lt_fb(float self, float y);
 
 bool F32_val_lt_fb(float self, float y);
+
+bool F32_box_gt_fb(float self, float y);
+
+bool F32_val_gt_fb(float self, float y);
 
 /* Allocate a linal_Q4fun without initialising it. */
 linal_Q4fun* linal_Q4fun_Alloc(void);

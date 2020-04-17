@@ -59,14 +59,19 @@ primitive RenderPrimitive
     let v1 = M4fun.mul_v3_point_3x4(frameContext.matrix, p1)
     let v2 = M4fun.mul_v3_point_3x4(frameContext.matrix, p2)
     let v3 = M4fun.mul_v3_point_3x4(frameContext.matrix, p3)
-    if  ((r._1._1 <= v0._1) and ((r._1._1 + r._2) >= v0._1) and (r._1._2 <= v0._2) and ((r._1._2 + r._3) >= v0._2)) or
-        ((r._1._1 <= v1._1) and ((r._1._1 + r._2) >= v1._1) and (r._1._2 <= v1._2) and ((r._1._2 + r._3) >= v1._2)) or
-        ((r._1._1 <= v2._1) and ((r._1._1 + r._2) >= v2._1) and (r._1._2 <= v2._2) and ((r._1._2 + r._3) >= v2._2)) or
-        ((r._1._1 <= v3._1) and ((r._1._1 + r._2) >= v3._1) and (r._1._2 <= v3._2) and ((r._1._2 + r._3) >= v3._2)) then
-      vertices.pushQuadVCT(v0, v1, v2, v3, c.r, c.g, c.b, c.a, st0, st1, st2, st3)
-      return true
-    end
-    false
+    
+    let xmin = r._1._1
+    let ymin = r._1._2
+    let xmax = r._1._1 + r._2
+    let ymax = r._1._2 + r._3
+    
+    if (v0._1 < xmin) and (v1._1 < xmin) and (v2._1 < xmin) and (v3._1 < xmin) then return false end
+    if (v0._1 > xmax) and (v1._1 > xmax) and (v2._1 > xmax) and (v3._1 > xmax) then return false end
+    if (v0._2 < ymin) and (v1._2 < ymin) and (v2._2 < ymin) and (v3._2 < ymin) then return false end
+    if (v0._2 > ymax) and (v1._2 > ymax) and (v2._2 > ymax) and (v3._2 > ymax) then return false end
+    
+    vertices.pushQuadVCT(v0, v1, v2, v3, c.r, c.g, c.b, c.a, st0, st1, st2, st3)
+    true
    
   fun tag quadVC(frameContext:FrameContext val, vertices:FloatAlignedArray, p0:V3, p1:V3, p2:V3, p3:V3, c:RGBA):Bool =>
     let r = frameContext.screenBounds
@@ -74,14 +79,19 @@ primitive RenderPrimitive
     let v1 = M4fun.mul_v3_point_3x4(frameContext.matrix, p1)
     let v2 = M4fun.mul_v3_point_3x4(frameContext.matrix, p2)
     let v3 = M4fun.mul_v3_point_3x4(frameContext.matrix, p3)
-    if  ((r._1._1 <= v0._1) and ((r._1._1 + r._2) >= v0._1) and (r._1._2 <= v0._2) and ((r._1._2 + r._3) >= v0._2)) or
-        ((r._1._1 <= v1._1) and ((r._1._1 + r._2) >= v1._1) and (r._1._2 <= v1._2) and ((r._1._2 + r._3) >= v1._2)) or
-        ((r._1._1 <= v2._1) and ((r._1._1 + r._2) >= v2._1) and (r._1._2 <= v2._2) and ((r._1._2 + r._3) >= v2._2)) or
-        ((r._1._1 <= v3._1) and ((r._1._1 + r._2) >= v3._1) and (r._1._2 <= v3._2) and ((r._1._2 + r._3) >= v3._2)) then
-      vertices.pushQuadVC(v0, v1, v2, v3, c.r, c.g, c.b, c.a)
-      return true
-    end
-    false
+    
+    let xmin = r._1._1
+    let ymin = r._1._2
+    let xmax = r._1._1 + r._2
+    let ymax = r._1._2 + r._3
+    
+    if (v0._1 < xmin) and (v1._1 < xmin) and (v2._1 < xmin) and (v3._1 < xmin) then return false end
+    if (v0._1 > xmax) and (v1._1 > xmax) and (v2._1 > xmax) and (v3._1 > xmax) then return false end
+    if (v0._2 < ymin) and (v1._2 < ymin) and (v2._2 < ymin) and (v3._2 < ymin) then return false end
+    if (v0._2 > ymax) and (v1._2 > ymax) and (v2._2 > ymax) and (v3._2 > ymax) then return false end
+    
+    vertices.pushQuadVC(v0, v1, v2, v3, c.r, c.g, c.b, c.a)
+    true
   
   fun tag quadVT(frameContext:FrameContext val, vertices:FloatAlignedArray, p0:V3, p1:V3, p2:V3, p3:V3, st0:V2, st1:V2, st2:V2, st3:V2):Bool =>
     let r = frameContext.screenBounds
@@ -89,14 +99,19 @@ primitive RenderPrimitive
     let v1 = M4fun.mul_v3_point_3x4(frameContext.matrix, p1)
     let v2 = M4fun.mul_v3_point_3x4(frameContext.matrix, p2)
     let v3 = M4fun.mul_v3_point_3x4(frameContext.matrix, p3)
-    if  ((r._1._1 <= v0._1) and ((r._1._1 + r._2) >= v0._1) and (r._1._2 <= v0._2) and ((r._1._2 + r._3) >= v0._2)) or
-        ((r._1._1 <= v1._1) and ((r._1._1 + r._2) >= v1._1) and (r._1._2 <= v1._2) and ((r._1._2 + r._3) >= v1._2)) or
-        ((r._1._1 <= v2._1) and ((r._1._1 + r._2) >= v2._1) and (r._1._2 <= v2._2) and ((r._1._2 + r._3) >= v2._2)) or
-        ((r._1._1 <= v3._1) and ((r._1._1 + r._2) >= v3._1) and (r._1._2 <= v3._2) and ((r._1._2 + r._3) >= v3._2)) then
-      vertices.pushQuadVT(v0, v1, v2, v3, st0, st1, st2, st3)
-      return true
-    end
-    false
+    
+    let xmin = r._1._1
+    let ymin = r._1._2
+    let xmax = r._1._1 + r._2
+    let ymax = r._1._2 + r._3
+    
+    if (v0._1 < xmin) and (v1._1 < xmin) and (v2._1 < xmin) and (v3._1 < xmin) then return false end
+    if (v0._1 > xmax) and (v1._1 > xmax) and (v2._1 > xmax) and (v3._1 > xmax) then return false end
+    if (v0._2 < ymin) and (v1._2 < ymin) and (v2._2 < ymin) and (v3._2 < ymin) then return false end
+    if (v0._2 > ymax) and (v1._2 > ymax) and (v2._2 > ymax) and (v3._2 > ymax) then return false end
+    
+    vertices.pushQuadVT(v0, v1, v2, v3, st0, st1, st2, st3)
+    true
     
   
   fun tag buildVCT(frameContext:FrameContext val, vertices:FloatAlignedArray, v:V3, c:RGBA, st:V2) =>
