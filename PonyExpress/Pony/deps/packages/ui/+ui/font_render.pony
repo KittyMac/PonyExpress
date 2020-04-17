@@ -139,7 +139,7 @@ class FontRender
         
         let g_width = glyph.bbox_width * fontSize
         let g_bearing_x = glyph.bearing_x * fontSize
-        let g_advance_x = glyph.advance_x * fontSize
+        let g_advance_x = (glyph.advance_x * fontSize).floor()
 
         var x = pen_x + g_bearing_x
         let w = g_width
@@ -197,7 +197,7 @@ class FontRender
                         width:F32):F32 =>
     // Find the minimum height needed in order to contain this text given the width provided
     let fontAtlas = font.fontAtlas
-    let advance_y = fontAtlas.height * fontSize
+    let advance_y = (fontAtlas.height * fontSize).floor()
     
     let end_index:USize = text.size()
     var start_index:USize = 0
@@ -229,6 +229,8 @@ class FontRender
                               R4fun.width(bounds),
                               R4fun.height(bounds))
     
+    let local_height = R4fun.height(bounds)
+    
     let geom = bufferedGeometry.next()
     if geom.check(frameContext, local_bounds) then
       return geom
@@ -244,7 +246,7 @@ class FontRender
     glyphRenderData.clear()
     
     let fontAtlas = font.fontAtlas
-    let advance_y = fontAtlas.height * fontSize
+    let advance_y = (fontAtlas.height * fontSize).floor()
     
     // Take the interactions of the clip bounds and our bounds, only generate geometry for
     // the visible region. The "clipBounds" is essentially the size of the parent
@@ -303,11 +305,19 @@ class FontRender
     
     let renderHeight = pen._2 - (bounds_ymin + fontSize)
     
-    let y_off:F32 = (match fontVerticalAlignment
+    var y_off:F32 = (match fontVerticalAlignment
     | VerticalAlignment.top => 0
-    | VerticalAlignment.middle => ((bounds_ymax - bounds_ymin) - renderHeight) / 2.0
-    | VerticalAlignment.bottom => ((bounds_ymax - bounds_ymin) - renderHeight)
+    | VerticalAlignment.middle => (local_height - renderHeight) / 2.0
+    | VerticalAlignment.bottom => (local_height - renderHeight)
     else 0.0 end).max(0.0)
+    
+    
+    // So, the interesting bit is that if we're a label that sizes to fit, then
+    // vertical alignment is meaningless (as our size will match our render)
+    // size.
+    if topOffset != 0 then
+      y_off = (local_height - renderHeight) / 2.0
+    end
         
     // commit all glyphs in glyphRenderData to geometry
     for g in glyphRenderData.values() do
