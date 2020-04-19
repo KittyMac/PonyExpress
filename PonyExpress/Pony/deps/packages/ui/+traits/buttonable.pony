@@ -72,10 +72,15 @@ trait Buttonable is (Viewable & Actionable)
       elseif (buttonPressed == false) and (insideTouches.size() != 0) then
         buttonPressed = true
         updateButton(true)
+      end
+      
+      if (buttonPressed == true) and (insideTouches.size() > 0) then
         if engine as RenderEngine then
           engine.requestFocus(nodeID)
         end
       end
+      
+      
       
     else
       None

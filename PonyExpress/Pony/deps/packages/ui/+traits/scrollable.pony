@@ -118,9 +118,7 @@ trait Scrollable is (Viewable & Actionable)
         setScrollState(ScrollState.dragging)
         oneShotScrollingPush(0)
         
-        if engine as RenderEngine then
-          engine.setNeedsRendered()
-        end
+        setNeedsRendered()
       end
     
     | let e:TouchEvent val =>
@@ -186,9 +184,7 @@ trait Scrollable is (Viewable & Actionable)
       
       if shouldRender then
         previousPosition = touchPosition
-        if engine as RenderEngine then
-          engine.setNeedsRendered()
-        end
+        setNeedsRendered()
       end
       
       

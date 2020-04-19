@@ -181,13 +181,23 @@ actor@ RenderEngine
     | RenderNeeded => renderNeeded = true
     end
   
+  fun ref invalidateNodeByID(id:YogaNodeID) =>
+    let otherNode = node.getNodeByID(id)
+    if otherNode as YogaNode then
+      let frameContext = FrameContext(this, renderContext, node.id(), focusedNodeID, 0, 0, M4fun.id(), V2fun.zero(), node.nodeSize(), node.contentSize(), R4fun.big(), screenBounds, last_animation_delta)
+      otherNode.invalidate(frameContext)
+    end
+  
   be requestFocus(id:YogaNodeID) =>
+    invalidateNodeByID(focusedNodeID)
+    invalidateNodeByID(id)
     focusedNodeID = id
     renderNeeded = true
   
   be releaseFocus(id:YogaNodeID) =>
     if focusedNodeID == id then
-      focusedNodeID = 0
+      focusedNodeID = 0      
+      invalidateNodeByID(id)
       renderNeeded = true
     end
   
@@ -289,10 +299,20 @@ actor@ RenderEngine
     @RenderEngine_render(renderContext, frameNumber, U64.max_value(), ShaderType.abort, 0, UnsafePointer[F32], 0, 1.0, 1.0, 1.0, 1.0, Pointer[U8])
   
   be touchEvent(id:USize, pressed:Bool, x:F32, y:F32) =>
+    // Tapping outside of the focused item should result in it no longer having focus, so we
+    // proactively clear it here and if the touch is in it (or another focusable item) it will be reset
+    if pressed and (focusedNodeID != 0) then
+      releaseFocus(focusedNodeID)
+    end
+    
     let frameContext = FrameContext(this, renderContext, node.id(), focusedNodeID, 0, 0, M4fun.id(), V2fun.zero(), node.nodeSize(), node.contentSize(), R4fun.big(), screenBounds, last_animation_delta)
     node.event(frameContext, TouchEvent(id, pressed, x, y))
   
   be scrollEvent(id:USize, dx:F32, dy:F32, px:F32, py:F32) =>
     let frameContext = FrameContext(this, renderContext, node.id(), focusedNodeID, 0, 0, M4fun.id(), V2fun.zero(), node.nodeSize(), node.contentSize(), R4fun.big(), screenBounds, last_animation_delta)
     node.event(frameContext, ScrollEvent(id, dx, dy, px, py))
+  
+  be keyEvent(pressed:Bool, keyCode:U16, charactersPtr:Pointer[U8] val, x:F32, y:F32) =>
+    let frameContext = FrameContext(this, renderContext, node.id(), focusedNodeID, 0, 0, M4fun.id(), V2fun.zero(), node.nodeSize(), node.contentSize(), R4fun.big(), screenBounds, last_animation_delta)
+    node.event(frameContext, KeyEvent(pressed, keyCode, recover String.copy_cstring(charactersPtr) end, x, y))
   

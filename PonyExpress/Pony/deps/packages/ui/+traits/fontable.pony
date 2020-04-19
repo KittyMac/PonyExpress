@@ -6,9 +6,18 @@ trait Fontable is (Colorable & Viewable)
   var _sizedAtWidth:F32 = 0
   
   var _value:String = ""
+  var _placeholder:String = ""
+  
+  var _placeholderColor:RGBA = RGBA.gray()
+  
+  var _secure:Bool = false
   
   var fontRender:FontRender = FontRender.empty()
-      
+  
+  
+  be secure(b:Bool = true) =>
+    _secure = b
+  
   be fontColor(color:RGBA) =>
     fontRender.fontColor = color
     
@@ -23,6 +32,9 @@ trait Fontable is (Colorable & Viewable)
   
   be value(value':String) =>
     _value = value'
+  
+  be placeholder(placeholder':String val) =>
+    _placeholder = placeholder'
   
   be sizeToFit() =>
     _sizeToFit = true
@@ -41,12 +53,33 @@ trait Fontable is (Colorable & Viewable)
     fontRender.fontVerticalAlignment = VerticalAlignment.middle
   be bottom() =>
     fontRender.fontVerticalAlignment = VerticalAlignment.bottom
-    
+  
+  fun actualValue(frameContext:FrameContext val):String =>
+    if hasFocus(frameContext) or (_value.size() > 0) then 
+      _value
+    else
+      _placeholder
+    end
+  
+  fun actualColor(frameContext:FrameContext val):RGBA =>
+    if hasFocus(frameContext) or (_value.size() > 0) then 
+      _color
+    else
+      _placeholderColor
+    end
+  
+  fun actualSecure(frameContext:FrameContext val):Bool =>
+    if hasFocus(frameContext) or (_value.size() > 0) then 
+      _secure
+    else
+      false
+    end
+  
   fun ref resizeToFit(frameContext:FrameContext val, isStart:Bool):F32 =>
     if _sizedAtWidth != frameContext.nodeSize._1 then
       _sizedAtWidth = frameContext.nodeSize._1
       
-      (let width, let height) = fontRender.measure(frameContext, _value, _sizedAtWidth)
+      (let width, let height) = fontRender.measure(frameContext, actualValue(frameContext), _sizedAtWidth)
       if height != frameContext.nodeSize._2 then
         frameContext.engine.getNodeByID(frameContext.nodeID, { (node) =>
             if node as YogaNode then
@@ -63,7 +96,8 @@ trait Fontable is (Colorable & Viewable)
     else
       frameContext.nodeSize._2
     end
-  
+
+
   fun ref fontable_start(frameContext:FrameContext val) =>
     if _sizeToFit then
       resizeToFit(frameContext, true)
@@ -84,11 +118,20 @@ trait Fontable is (Colorable & Viewable)
         topOffset = -((old_height - real_height) / 2).round()
       end
     end
-  
-    fontRender.fontColor = _color
-    let geom = fontRender.geometry(frameContext, _value, bounds, topOffset)
+    
+    fontRender.secure = actualSecure(frameContext)
+    fontRender.fontColor = actualColor(frameContext)
+    let geom = fontRender.geometry(frameContext, actualValue(frameContext), bounds, topOffset)
     RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.sdf, geom.vertices, fontRender.fontColor, fontRender.font.name.cpointer())
 	
+  fun ref fontable_invalidate(frameContext:FrameContext val) =>
+    fontRender.invalidate()
+  
+  
+  
+  fun ref invalidate(frameContext:FrameContext val) =>
+    fontable_invalidate(frameContext)
+  
   fun ref start(frameContext:FrameContext val) =>
     fontable_start(frameContext)
 

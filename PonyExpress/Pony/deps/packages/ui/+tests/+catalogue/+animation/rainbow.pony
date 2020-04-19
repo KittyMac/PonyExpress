@@ -14,9 +14,7 @@ actor SampleRainbow is Viewable
     _animationGreen = _animationGreen + (delta * 0.1 * 7)
     _animationBlue = _animationBlue + (delta * 0.1 * 3)
     bufferedGeometry.invalidate()
-    if engine as RenderEngine then
-      engine.setNeedsRendered()
-    end
+    setNeedsRendered()
   
   fun ref render(frameContext:FrameContext val, bounds:R4) =>
     let geom = bufferedGeometry.next()

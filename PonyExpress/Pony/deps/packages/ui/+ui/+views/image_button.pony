@@ -49,9 +49,7 @@ actor ImageButton is (Imageable & Buttonable)
       _color = _unpressedColor
     end
     bufferedGeometry.invalidate()
-    if engine as RenderEngine then
-        engine.setNeedsRendered()
-    end
+    setNeedsRendered()
 
   fun ref event(frameContext:FrameContext val, anyEvent:AnyEvent val, bounds:R4) =>
     buttonable_event(frameContext, anyEvent, bounds)

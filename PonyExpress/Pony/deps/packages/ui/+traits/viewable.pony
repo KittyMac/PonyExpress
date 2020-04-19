@@ -4,13 +4,23 @@ use "utility"
 trait tag Viewable is Animatable
   var engine:(RenderEngine|None) = None
   var nodeID:YogaNodeID = 0
-  var insets:V4 = V4fun.zero()
   
-  be inset(top:F32, left:F32, bottom:F32, right:F32) =>
-    insets = V4fun(top, left, bottom, right)
+  var renderInsets:V4 = V4fun.zero()
+  var eventInsets:V4 = V4fun.zero()
   
-  be insetAll(v:F32) =>
-    insets = V4fun(v, v, v, v)
+  be renderInset(top:F32, left:F32, bottom:F32, right:F32) =>
+    renderInsets = V4fun(top, left, bottom, right)
+  
+  be renderInsetAll(v:F32) =>
+    renderInsets = V4fun(v, v, v, v)
+  
+  be eventInset(top:F32, left:F32, bottom:F32, right:F32) =>
+    eventInsets = V4fun(top, left, bottom, right)
+
+  be eventInsetAll(v:F32) =>
+    eventInsets = V4fun(v, v, v, v)
+  
+  
   
   // convert point from local coordinates to global coordinates
   fun transformPoint(frameContext:FrameContext val, point:V2):V2 =>
@@ -31,6 +41,31 @@ trait tag Viewable is Animatable
   
   
   
+  
+  
+  
+  fun hasFocus(frameContext:FrameContext val):Bool =>
+    (nodeID == frameContext.focusedNodeID)
+  
+  fun setNeedsRendered() =>
+    if engine as RenderEngine then
+      engine.setNeedsRendered()
+    end
+  
+  fun setNeedsLayout() =>
+    if engine as RenderEngine then
+      engine.setNeedsLayout()
+    end
+  
+  
+  
+  
+  fun ref invalidate(frameContext:FrameContext val) =>
+    None
+  
+  be viewable_invalidate(frameContext:FrameContext val) =>
+    invalidate(frameContext)
+  
     
   fun ref event(frameContext:FrameContext val, anyEvent:AnyEvent val, bounds:R4) =>
     None
@@ -38,7 +73,7 @@ trait tag Viewable is Animatable
   be viewable_event(frameContext:FrameContext val, anyEvent:AnyEvent val, bounds:R4) =>
     engine = frameContext.engine
     nodeID = frameContext.nodeID
-    let local_bounds = R4fun(bounds._1._1 + insets._2, bounds._1._2 + insets._1, bounds._2 - (insets._4 + insets._2), bounds._3 - (insets._3 + insets._1))
+    let local_bounds = R4fun(bounds._1._1 + eventInsets._2, bounds._1._2 + eventInsets._1, bounds._2 - (eventInsets._4 + eventInsets._2), bounds._3 - (eventInsets._3 + eventInsets._1))
     event(frameContext, anyEvent, local_bounds)
   
   fun ref start(frameContext:FrameContext val) =>
@@ -55,7 +90,7 @@ trait tag Viewable is Animatable
   be viewable_render(frameContext:FrameContext val, bounds:R4) =>
     engine = frameContext.engine
     nodeID = frameContext.nodeID
-    let local_bounds = R4fun(bounds._1._1 + insets._2, bounds._1._2 + insets._1, bounds._2 - (insets._4 + insets._2), bounds._3 - (insets._3 + insets._1))
+    let local_bounds = R4fun(bounds._1._1 + renderInsets._2, bounds._1._2 + renderInsets._1, bounds._2 - (renderInsets._4 + renderInsets._2), bounds._3 - (renderInsets._3 + renderInsets._1))
     render(frameContext, local_bounds)
     RenderPrimitive.renderFinished(frameContext)
     performAnimation(frameContext)

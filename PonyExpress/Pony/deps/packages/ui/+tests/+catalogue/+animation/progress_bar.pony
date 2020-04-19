@@ -17,9 +17,7 @@ actor SampleProgressBar is Viewable
   be progress(p:F32) =>
     _progress = p.max(0.0).min(1.0)
     bufferedGeometry.invalidate()
-    if engine as RenderEngine then
-      engine.setNeedsRendered()
-    end
+    setNeedsRendered()
   
   fun ref render(frameContext:FrameContext val, bounds:R4) =>
     let geom = bufferedGeometry.next()

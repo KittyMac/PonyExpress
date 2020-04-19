@@ -9,7 +9,7 @@ class Geometry
   data if nothing has changed
   """
   var vertices:FloatAlignedArray = FloatAlignedArray
-  var extra:I32 = 0
+  var extra:USize = 0
   var screenBounds:R4 = R4fun.zero()
   var bounds:R4 = R4fun.zero()
   var matrix:M4 = M4fun.id()
@@ -17,7 +17,7 @@ class Geometry
   fun ref invalidate() =>
     bounds = R4fun.zero()
   
-  fun ref check(frameContext:FrameContext box, new_bounds:R4, new_extra:I32 = 0):Bool =>
+  fun ref check(frameContext:FrameContext box, new_bounds:R4, new_extra:USize = 0):Bool =>
     if R4fun.eq(bounds, new_bounds) and R4fun.eq(screenBounds, frameContext.screenBounds) and M4fun.eq(matrix, frameContext.matrix) and (extra == new_extra) then
       return true
     end

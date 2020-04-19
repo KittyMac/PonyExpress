@@ -148,7 +148,7 @@ trait Imageable is (Viewable & Colorable)
                               
     end
     
-    if (nodeID == frameContext.focusedNodeID) and (_focusTextureName.size() > 0) then
+    if hasFocus(frameContext) and (_focusTextureName.size() > 0) then
       RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.textured, vertices, RGBA.white(), _focusTextureName.cpointer())
     else
       RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.textured, vertices, RGBA.white(), _textureName.cpointer())
@@ -255,7 +255,7 @@ trait Imageable is (Viewable & Colorable)
                               V2fun(s_min, t_max) )
     end
     
-    if (nodeID == frameContext.focusedNodeID) and (_focusTextureName.size() > 0) then
+    if hasFocus(frameContext) and (_focusTextureName.size() > 0) then
       RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.textured, vertices, RGBA.white(), _focusTextureName.cpointer())
     else
       RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.textured, vertices, RGBA.white(), _textureName.cpointer())

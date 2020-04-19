@@ -53,6 +53,8 @@ class FontRender
   var fontWrap:FontWrapType = FontWrap.word
   var fontAlignment:AlignmentType = Alignment.left
   var fontVerticalAlignment:VerticalAlignmentType = VerticalAlignment.middle
+  
+  var secure:Bool = false
 
   var bufferedGeometry:BufferedGeometry = BufferedGeometry
   
@@ -97,7 +99,7 @@ class FontRender
       
       let text_size = text.size()
       while i < text_size do
-        let c = text(i)?
+        let c = if secure then '*' else text(i)? end
         i = i + 1
         
         if c == '\n' then
@@ -248,7 +250,7 @@ class FontRender
     let local_height = R4fun.height(bounds)
     
     let geom = bufferedGeometry.next()
-    if geom.check(frameContext, local_bounds) then
+    if geom.check(frameContext, local_bounds, text.size()) then
       return geom
     end
     

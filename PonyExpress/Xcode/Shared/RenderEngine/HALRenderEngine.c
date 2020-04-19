@@ -442,3 +442,9 @@ void RenderEngineInternal_scrollEvent(HALRenderContext * context, size_t touchID
     
     ui_RenderEngine_tag_scrollEvent_Zffffo__send(context->ponyRenderEngine, touchID, sx, sy, mx, my);
 }
+
+void RenderEngineInternal_keyEvent(HALRenderContext * context, bool pressed, uint16_t keyCode, const char * charactersPtr, float x, float y) {
+    RESOLVE_CONTEXT();
+    
+    ui_RenderEngine_tag_keyEvent_bSoffo__send(context->ponyRenderEngine, pressed, keyCode, (char *)charactersPtr, x, y);
+}

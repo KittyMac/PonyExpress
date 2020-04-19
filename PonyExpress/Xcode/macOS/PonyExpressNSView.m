@@ -289,12 +289,14 @@ static CVReturn DispatchRenderLoop(CVDisplayLinkRef displayLink,
 
 - (void)keyUp:(NSEvent *)event
 {
-    //[delegate Event:event];
+    NSPoint p = [self convertPoint:[event locationInWindow] fromView:NULL];
+    RenderEngineInternal_keyEvent(nil, false, [event keyCode], [[event characters] UTF8String], p.x, -(self.bounds.size.height - p.y));
 }
 
 - (void)keyDown:(NSEvent *)event
 {
-    //[delegate Event:event];
+    NSPoint p = [self convertPoint:[event locationInWindow] fromView:NULL];
+    RenderEngineInternal_keyEvent(nil, true, [event keyCode], [[event characters] UTF8String], p.x, -(self.bounds.size.height - p.y));
 }
 
 - (void)rightMouseDown:(NSEvent *)event

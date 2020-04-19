@@ -107,6 +107,9 @@ class YogaNode
     None
   
   fun ref getNodeByID(nodeID:YogaNodeID):(YogaNode|None) =>
+    if nodeID == 0 then
+      return None
+    end
     if id() == nodeID then
       return this
     end
@@ -173,6 +176,22 @@ class YogaNode
       frameContext.renderNumber = n
     end
     n
+  
+  fun ref invalidate(frameContext:FrameContext) =>
+    var n:U64 = frameContext.renderNumber
+    
+    for local_view in _views.values() do
+      n = frameContext.renderNumber + 1
+    
+      frameContext.renderNumber = n
+      frameContext.matrix = last_matrix
+      frameContext.nodeID = id()
+      frameContext.contentSize = contentSize()
+      frameContext.nodeSize = nodeSize()
+  
+      local_view.viewable_invalidate( frameContext.clone())
+    end
+    
   
   // Called when the render engine hierarchy needs to... render
   fun ref render(frameContext:FrameContext):U64 =>
