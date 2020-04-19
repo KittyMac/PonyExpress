@@ -13,7 +13,7 @@ actor ButtonTest is Controllerable
                                                       
           // the big, red button
           YogaNode.>size(100, 100)
-                  .>view( Button.empty().>onClick({ () => @printf("clicked 1!\n".cstring()) }) )
+                  .>view( Button.>onClick({ () => @printf("clicked 1!\n".cstring()) }) )
                   .>addChildren([
               YogaNode.>view( Color.>red() )
               YogaNode.>view( Color.>blue() )
@@ -21,10 +21,10 @@ actor ButtonTest is Controllerable
           
           // clear tap area
           YogaNode.>size(200, 60)
-                  .>view( ClearButton.empty().>onClick({ () => @printf("clicked 2!\n".cstring()) }) )
+                  .>view( ClearButton.>onClick({ () => @printf("clicked 2!\n".cstring()) }) )
                   .>addChildren([
                 YogaNode.>view( Color.>gray() )
-                        .>addChild( YogaNode.>view( Label("Clear Tap Area", font).>center().>blue() ) )
+                        .>addChild( YogaNode.>view( Label.>value("Clear Tap Area").>font(font).>center().>blue() ) )
           ])
           
           // button with images for up and down states
@@ -37,7 +37,7 @@ actor ButtonTest is Controllerable
                   .>view( ImageButton( "stretch_button", "stretch_button" ).>stretchAll(32)
                                                                            .>pressedColor(RGBA(0.8, 0.8, 1.0, 1.0))
                                                                            .>onClick({ () => @printf("clicked 4!\n".cstring()) }) )
-                  .>addChild( YogaNode.>view( Label("Click me!", font, 28).>center() ) )
+                  .>addChild( YogaNode.>view( Label.>value("Click me!").>font(font, 28).>center() ) )
           
         ]
       )

@@ -36,6 +36,8 @@ trait tag Viewable is Animatable
     None
   
   be viewable_event(frameContext:FrameContext val, anyEvent:AnyEvent val, bounds:R4) =>
+    engine = frameContext.engine
+    nodeID = frameContext.nodeID
     let local_bounds = R4fun(bounds._1._1 + insets._2, bounds._1._2 + insets._1, bounds._2 - (insets._4 + insets._2), bounds._3 - (insets._3 + insets._1))
     event(frameContext, anyEvent, local_bounds)
   
@@ -51,6 +53,8 @@ trait tag Viewable is Animatable
     None
   
   be viewable_render(frameContext:FrameContext val, bounds:R4) =>
+    engine = frameContext.engine
+    nodeID = frameContext.nodeID
     let local_bounds = R4fun(bounds._1._1 + insets._2, bounds._1._2 + insets._1, bounds._2 - (insets._4 + insets._2), bounds._3 - (insets._3 + insets._1))
     render(frameContext, local_bounds)
     RenderPrimitive.renderFinished(frameContext)

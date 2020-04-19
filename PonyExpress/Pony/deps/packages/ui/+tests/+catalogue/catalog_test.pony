@@ -61,7 +61,7 @@ actor Catalog is Controllerable
             .>view( ImageButton( "white", "white").>pressedColor(RGBA.u32( 0x98cbf3ff ))
                                                   .>color(RGBA.u32( 0xffffff00 ))
                                                   .>action(this, evt) )
-            .>addChild( YogaNode.>view( Label(title, font', 18).>left() ) )
+            .>addChild( YogaNode.>view( Label.>value(title).>font(font', 18).>left() ) )
   
   be action(evt:Action) =>
     if engine as RenderEngine then

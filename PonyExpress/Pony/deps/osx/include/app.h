@@ -2154,11 +2154,15 @@ None* ui_RenderEngine_tag_renderAbort_o__send(ui_RenderEngine* self);
 
 None* ui_RenderEngine_ref_layout_o(ui_RenderEngine* self);
 
+None* ui_RenderEngine_tag_requestFocus_Zo__send(ui_RenderEngine* self, size_t id);
+
 None* ui_RenderEngine_box__final_o(ui_RenderEngine* self);
 
 None* ui_RenderEngine_tag_renderFinished_o__send(ui_RenderEngine* self);
 
 None* ui_RenderEngine_tag_startFinished_o__send(ui_RenderEngine* self);
+
+None* ui_RenderEngine_tag_releaseFocus_Zo__send(ui_RenderEngine* self, size_t id);
 
 uint32_t ui_RenderEngine_box__tag_I(ui_RenderEngine* self);
 

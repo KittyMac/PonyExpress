@@ -20,13 +20,7 @@ actor ImageButton is (Imageable & Buttonable)
   
   var _pressedColor:RGBA
   var _unpressedColor:RGBA
-  
-  new empty() =>
-    unpressedImage = ""
-    pressedImage = ""
-    _pressedColor = RGBA.white()
-    _unpressedColor = RGBA.white()
-  
+    
 	new create(unpressedImage':String, pressedImage':String, pressedColor':RGBA = RGBA.white()) =>
     unpressedImage = unpressedImage'
     pressedImage = pressedImage'

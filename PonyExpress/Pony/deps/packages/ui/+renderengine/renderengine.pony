@@ -43,14 +43,16 @@ class FrameContext
   var contentSize:V2
   var nodeSize:V2
   var nodeID:YogaNodeID
+  var focusedNodeID:YogaNodeID
   
-  new ref create(engine':RenderEngine tag, renderContext':RenderContextRef tag, nodeID':YogaNodeID, frameNumber':U64, renderNumber':U64, matrix':M4, parentContentOffset':V2, nodeSize':V2, contentSize':V2, clipBounds':R4, screenBounds':R4, animation_delta':F32) =>
+  new ref create(engine':RenderEngine tag, renderContext':RenderContextRef tag, nodeID':YogaNodeID, focusedNodeID':YogaNodeID, frameNumber':U64, renderNumber':U64, matrix':M4, parentContentOffset':V2, nodeSize':V2, contentSize':V2, clipBounds':R4, screenBounds':R4, animation_delta':F32) =>
     engine = engine'
     renderContext = renderContext'
     frameNumber = frameNumber'
     renderNumber = renderNumber'
     matrix = matrix'
     nodeID = nodeID'
+    focusedNodeID = focusedNodeID'
     clipBounds = clipBounds'
     screenBounds = screenBounds'
     animation_delta = animation_delta'
@@ -66,7 +68,7 @@ class FrameContext
   
   fun clone():FrameContext val =>
     recover val
-      FrameContext(engine, renderContext, nodeID, frameNumber, renderNumber, matrix, parentContentOffset, nodeSize, contentSize, clipBounds, screenBounds, animation_delta)
+      FrameContext(engine, renderContext, nodeID, focusedNodeID, frameNumber, renderNumber, matrix, parentContentOffset, nodeSize, contentSize, clipBounds, screenBounds, animation_delta)
     end
 
 actor@ RenderEngine
@@ -109,6 +111,8 @@ actor@ RenderEngine
   """
   let renderContext:RenderContextRef tag
 	let node:YogaNode
+  
+  var focusedNodeID:YogaNodeID = 0
   
   var layoutNeeded:Bool = false
   var renderNeeded:Bool = false
@@ -177,6 +181,16 @@ actor@ RenderEngine
     | RenderNeeded => renderNeeded = true
     end
   
+  be requestFocus(id:YogaNodeID) =>
+    focusedNodeID = id
+    renderNeeded = true
+  
+  be releaseFocus(id:YogaNodeID) =>
+    if focusedNodeID == id then
+      focusedNodeID = 0
+      renderNeeded = true
+    end
+  
   be updateBounds(w:F32, h:F32, safeTop:F32, safeLeft:F32, safeBottom:F32, safeRight:F32) =>
     // update the size of my node to match the window, then relayout everything
     screenBounds = R4fun(0,0,w,h)
@@ -207,7 +221,7 @@ actor@ RenderEngine
         // we will need to layout again once the starts are done
         node.layout()
         
-        let frameContext = FrameContext(this, renderContext, node.id(), 0, 0, M4fun.id(), V2fun.zero(), node.nodeSize(), node.contentSize(), R4fun.big(), screenBounds, last_animation_delta)
+        let frameContext = FrameContext(this, renderContext, node.id(), focusedNodeID, 0, 0, M4fun.id(), V2fun.zero(), node.nodeSize(), node.contentSize(), R4fun.big(), screenBounds, last_animation_delta)
         waitingOnViewsToStart = node.start(frameContext)
         startNeeded = false
         layoutNeeded = false
@@ -229,7 +243,7 @@ actor@ RenderEngine
             
         frameNumber = frameNumber + 1
       
-        let frameContext = FrameContext(this, renderContext, node.id(), frameNumber, 0, M4fun.id(), V2fun.zero(), node.nodeSize(), node.contentSize(), R4fun.big(), screenBounds, last_animation_delta)
+        let frameContext = FrameContext(this, renderContext, node.id(), focusedNodeID, frameNumber, 0, M4fun.id(), V2fun.zero(), node.nodeSize(), node.contentSize(), R4fun.big(), screenBounds, last_animation_delta)
         waitingOnViewsToRender = node.render(frameContext)
       else
         Log.println("renderNeeded required but waitingOnViewsToRender is not 0 (is it %s) \n", waitingOnViewsToRender)
@@ -275,10 +289,10 @@ actor@ RenderEngine
     @RenderEngine_render(renderContext, frameNumber, U64.max_value(), ShaderType.abort, 0, UnsafePointer[F32], 0, 1.0, 1.0, 1.0, 1.0, Pointer[U8])
   
   be touchEvent(id:USize, pressed:Bool, x:F32, y:F32) =>
-    let frameContext = FrameContext(this, renderContext, node.id(), 0, 0, M4fun.id(), V2fun.zero(), node.nodeSize(), node.contentSize(), R4fun.big(), screenBounds, last_animation_delta)
+    let frameContext = FrameContext(this, renderContext, node.id(), focusedNodeID, 0, 0, M4fun.id(), V2fun.zero(), node.nodeSize(), node.contentSize(), R4fun.big(), screenBounds, last_animation_delta)
     node.event(frameContext, TouchEvent(id, pressed, x, y))
   
   be scrollEvent(id:USize, dx:F32, dy:F32, px:F32, py:F32) =>
-    let frameContext = FrameContext(this, renderContext, node.id(), 0, 0, M4fun.id(), V2fun.zero(), node.nodeSize(), node.contentSize(), R4fun.big(), screenBounds, last_animation_delta)
+    let frameContext = FrameContext(this, renderContext, node.id(), focusedNodeID, 0, 0, M4fun.id(), V2fun.zero(), node.nodeSize(), node.contentSize(), R4fun.big(), screenBounds, last_animation_delta)
     node.event(frameContext, ScrollEvent(id, dx, dy, px, py))
   

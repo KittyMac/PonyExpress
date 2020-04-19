@@ -13,7 +13,7 @@ actor ScrollTest is Controllerable
                     .>clips(true)
                     .>addChild(
                       
-                      YogaNode.>view( Label(LoremText(), font).>size(24).>sizeToFit() )
+                      YogaNode.>view( Label.>value(LoremText()).>font(font, 24).>sizeToFit() )
                       
               )
              

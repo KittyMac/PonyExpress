@@ -11,18 +11,12 @@ actor Button is Buttonable
   
   YogaNode.>width(100)
           .>height(100)
-          .>view( Button.empty().>onClick({ () => @printf("clicked!\n".cstring()) }) )
+          .>view( Button.>onClick({ () => @printf("clicked!\n".cstring()) }) )
           .>addChildren([
             YogaNode( Color.>red() )  // Red when not pressed
             YogaNode( Color.>blue() ) // Blue when pressed
           ])
   """
-
-  new empty() =>
-    None
-
-  new create() =>
-    None
   
   fun ref event(frameContext:FrameContext val, anyEvent:AnyEvent val, bounds:R4) =>
     buttonable_event(frameContext, anyEvent, bounds)

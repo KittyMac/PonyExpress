@@ -1,5 +1,5 @@
 use "linal"
-
+use "utility"
 
 type ImageModeType is U32
 
@@ -11,6 +11,7 @@ primitive ImageMode
 
 trait Imageable is (Viewable & Colorable)
   var _textureName:String = ""
+  var _focusTextureName:String = ""
   var _mode:ImageModeType = ImageMode.fill
   var _sizeToFit:Bool = false
   var stretch_insets:V4 = V4fun.zero()
@@ -19,6 +20,9 @@ trait Imageable is (Viewable & Colorable)
   
   be path(textureName:String val) =>
     _textureName = textureName
+  
+  be pathFocused(textureName:String val) =>
+    _focusTextureName = textureName
   
   be sizeToFit() =>
     _sizeToFit = true
@@ -144,7 +148,11 @@ trait Imageable is (Viewable & Colorable)
                               
     end
     
-    RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.textured, vertices, RGBA.white(), _textureName.cpointer())
+    if (nodeID == frameContext.focusedNodeID) and (_focusTextureName.size() > 0) then
+      RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.textured, vertices, RGBA.white(), _focusTextureName.cpointer())
+    else
+      RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.textured, vertices, RGBA.white(), _textureName.cpointer())
+    end
 
 
   fun ref imageable_render_stretch(frameContext:FrameContext val, bounds:R4) =>
@@ -247,5 +255,10 @@ trait Imageable is (Viewable & Colorable)
                               V2fun(s_min, t_max) )
     end
     
-    RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.textured, vertices, RGBA.white(), _textureName.cpointer())
+    if (nodeID == frameContext.focusedNodeID) and (_focusTextureName.size() > 0) then
+      RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.textured, vertices, RGBA.white(), _focusTextureName.cpointer())
+    else
+      RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.textured, vertices, RGBA.white(), _textureName.cpointer())
+    end
+    
     
