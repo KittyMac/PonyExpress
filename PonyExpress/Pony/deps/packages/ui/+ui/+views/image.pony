@@ -1,10 +1,7 @@
 use "linal"
 
 actor Image is Imageable
-  new empty() =>
+  
+  new create() =>
     _mode = ImageMode.aspectFit
     _textureName = ""
-  
-  new create(textureName:String) =>
-    _mode = ImageMode.aspectFit
-    _textureName = textureName

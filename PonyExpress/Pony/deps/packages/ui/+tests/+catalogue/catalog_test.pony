@@ -32,7 +32,7 @@ actor Catalog is Controllerable
           
           // Sidebar
           YogaNode.>leftToRight().>width(110).>safeTop()
-                  .>view( Image("sidebar").>stretch(10,10,10,10) )
+                  .>view( Image.>path("sidebar").>stretchAll(10) )
                   .>addChildren([
               menuButton("Colors", font, SwitchToColors)
               menuButton("Buttons", font, SwitchToButtons)

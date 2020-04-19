@@ -199,6 +199,10 @@ class FontRender
   fun ref measure(frameContext:FrameContext val,
                           text:String,
                          width:F32):(F32,F32) =>
+     if width <= 0 then
+       return (0,0)
+     end
+     
     // Find the minimum height needed in order to contain this text given the width provided
     let fontAtlas = font.fontAtlas
     let advance_y = (fontAtlas.height * fontSize).floor()
@@ -256,6 +260,10 @@ class FontRender
     
     glyphRenderData.reserve(text.size() * 2)
     glyphRenderData.clear()
+    
+    if (R4fun.width(bounds) <= 0) or (R4fun.height(bounds) <= 0) then
+      return geom
+    end
     
     let fontAtlas = font.fontAtlas
     let advance_y = (fontAtlas.height * fontSize).floor()

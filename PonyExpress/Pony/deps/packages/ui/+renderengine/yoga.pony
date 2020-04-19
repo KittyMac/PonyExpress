@@ -186,69 +186,73 @@ class YogaNode
     let local_width:F32 = @YGNodeLayoutGetWidth(node)
     let local_height:F32 = @YGNodeLayoutGetHeight(node)
     
-    var local_matrix:M4 = M4fun.mul_m4(
-        parent_matrix,
-        M4fun.trans_v3(V3fun(local_left, local_top, 0))
-      )
+    if (local_width > 0) and (local_height > 0) then
     
-    local_matrix = M4fun.mul_m4(
-            local_matrix,
-            M4fun.trans_v3(V3fun(local_width/2, local_height/2, 0))
-          )
+      var local_matrix:M4 = M4fun.mul_m4(
+          parent_matrix,
+          M4fun.trans_v3(V3fun(local_left, local_top, 0))
+        )
     
-    if (_rotation._1 != 0) or (_rotation._2 != 0) or (_rotation._3 != 0) then
       local_matrix = M4fun.mul_m4(
               local_matrix,
-              M4fun.rot(Q4fun.from_euler(_rotation))
+              M4fun.trans_v3(V3fun(local_width/2, local_height/2, 0))
             )
-    end
     
-    frameContext.matrix = local_matrix
-    frameContext.nodeID = id()
-    frameContext.contentSize = contentSize()
-    frameContext.nodeSize = nodeSize()
-    frameContext.parentContentOffset = parentContentOffset
+      if (_rotation._1 != 0) or (_rotation._2 != 0) or (_rotation._3 != 0) then
+        local_matrix = M4fun.mul_m4(
+                local_matrix,
+                M4fun.rot(Q4fun.from_euler(_rotation))
+              )
+      end
     
-    last_bounds = R4fun( (-local_width/2)+parentContentOffset._1, (-local_height/2)-parentContentOffset._2, local_width, local_height)
-    last_matrix = local_matrix
+      frameContext.matrix = local_matrix
+      frameContext.nodeID = id()
+      frameContext.contentSize = contentSize()
+      frameContext.nodeSize = nodeSize()
+      frameContext.parentContentOffset = parentContentOffset
     
-    let savedClipBounds = frameContext.clipBounds
+      last_bounds = R4fun( (-local_width/2)+parentContentOffset._1, (-local_height/2)-parentContentOffset._2, local_width, local_height)
+      last_matrix = local_matrix
     
-    if _clips then
-      n = frameContext.renderNumber + 1
-      frameContext.renderNumber = n
+      let savedClipBounds = frameContext.clipBounds
+    
+      if _clips then
+        n = frameContext.renderNumber + 1
+        frameContext.renderNumber = n
       
-      pushClips( frameContext.clone(), last_bounds )
-    end
+        pushClips( frameContext.clone(), last_bounds )
+      end
     
-    for local_view in _views.values() do
-      n = frameContext.renderNumber + 1
-      frameContext.renderNumber = n      
+      for local_view in _views.values() do
+        n = frameContext.renderNumber + 1
+        frameContext.renderNumber = n      
     
-      local_view.viewable_render( frameContext.clone(), last_bounds )
-    end
+        local_view.viewable_render( frameContext.clone(), last_bounds )
+      end
     
-    local_matrix = M4fun.mul_m4(
-            local_matrix,
-            M4fun.trans_v3(V3fun(-local_width/2, -local_height/2, 0))
-          )
+      local_matrix = M4fun.mul_m4(
+              local_matrix,
+              M4fun.trans_v3(V3fun(-local_width/2, -local_height/2, 0))
+            )
     
-    if _clips then
-      frameContext.clipBounds = last_bounds
-    end
+      if _clips then
+        frameContext.clipBounds = last_bounds
+      end
     
-    for child in children.values() do
-      n = child._renderRecursive(frameContext, _content_offset, local_matrix)
-      frameContext.renderNumber = n
-    end
+      for child in children.values() do
+        n = child._renderRecursive(frameContext, _content_offset, local_matrix)
+        frameContext.renderNumber = n
+      end
     
-    if _clips then
-      frameContext.clipBounds = savedClipBounds
+      if _clips then
+        frameContext.clipBounds = savedClipBounds
       
-      n = n + 1
-      frameContext.renderNumber = n
+        n = n + 1
+        frameContext.renderNumber = n
       
-      popClips( frameContext.clone(), last_bounds )
+        popClips( frameContext.clone(), last_bounds )
+      end
+    
     end
     
     n

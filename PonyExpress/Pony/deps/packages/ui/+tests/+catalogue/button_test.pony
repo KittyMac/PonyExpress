@@ -34,7 +34,7 @@ actor ButtonTest is Controllerable
           
           // button with a stretchable image
           YogaNode.>size(300, 80)
-                  .>view( ImageButton( "stretch_button", "stretch_button" ).>stretch(32,32,32,32)
+                  .>view( ImageButton( "stretch_button", "stretch_button" ).>stretchAll(32)
                                                                            .>pressedColor(RGBA(0.8, 0.8, 1.0, 1.0))
                                                                            .>onClick({ () => @printf("clicked 4!\n".cstring()) }) )
                   .>addChild( YogaNode.>view( Label("Click me!", font, 28).>center() ) )

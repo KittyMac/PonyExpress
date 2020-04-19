@@ -17,6 +17,8 @@ trait Imageable is (Viewable & Colorable)
   
   var bufferedGeometry:BufferedGeometry = BufferedGeometry
   
+  be path(textureName:String val) =>
+    _textureName = textureName
   
   be sizeToFit() =>
     _sizeToFit = true
@@ -37,6 +39,11 @@ trait Imageable is (Viewable & Colorable)
   be stretch(top:F32, left:F32, bottom:F32, right:F32) =>
     _mode = ImageMode.stretch
     stretch_insets = V4fun(top, left, bottom, right)
+    bufferedGeometry.invalidate()
+  
+  be stretchAll(v:F32) =>
+    _mode = ImageMode.stretch
+    stretch_insets = V4fun(v, v, v, v)
     bufferedGeometry.invalidate()
     
   fun ref imageable_start(frameContext:FrameContext val) =>
