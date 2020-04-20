@@ -14,11 +14,11 @@ actor TextFieldTest is Controllerable
 	fun ref mainNode():YogaNode iso^ =>
     
     recover iso 
-      YogaNode.>center()
+      YogaNode.>center().>paddingAll(6).>safeBottom()
               .>view( Color.>color(RGBA(0.98,0.98,0.98,1)) )
               .>addChildren( [
                                                 
-            YogaNode.>fit().>width(500).>columns().>center().>paddingAll(40)
+            YogaNode.>heightAuto().>maxWidth(600).>minWidth(260).>columns().>center().>paddingAll(40)
                     .>view( Image.>path("dialog_background").>stretchAll(12) )
                     .>addChildren( [
                       

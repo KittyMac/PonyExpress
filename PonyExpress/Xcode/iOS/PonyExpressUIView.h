@@ -33,6 +33,9 @@ Customized view for iOS & tvOS
 // on the Password Rules documentation guide.
 @property(nullable,nonatomic,copy) UITextInputPasswordRules *passwordRules API_AVAILABLE(ios(12.0)); // default is nil
 
+@property (nonatomic, retain) NSTimer * _Nullable keyboardAnimationTimer;
+
+@property (nonatomic, retain) NSMutableArray * _Nullable trackingTouches;
 
 - (void)showKeyboard;
 - (void)hideKeyboard;

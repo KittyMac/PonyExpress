@@ -101,7 +101,7 @@ class FontRender
       while i < text_size do
         let c = if secure then '*' else text(i)? end
         i = i + 1
-                
+        
         if c == '\n' then
           end_of_word_pen_x = pen_x
           localWrap = fontWrap

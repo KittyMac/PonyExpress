@@ -67,6 +67,7 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
     private var sdfUniformsBuffer: MTLBuffer!
     
     private var projectedSize:CGSize = CGSize(width:128, height:128)
+    private var projectedKeyboardHeight:CGFloat = 0
     
     private var stencilValueCount:Int = 0
     private var stencilValueMax:Int = 255
@@ -307,8 +308,9 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             local_size.height /= scale
         }
                 
-        if local_size != projectedSize {
+        if local_size != projectedSize || aaplView.keyboardHeight != projectedKeyboardHeight {
             projectedSize = local_size
+            projectedKeyboardHeight = aaplView.keyboardHeight
             
             let aspect = fabsf(Float(projectedSize.width) / Float(projectedSize.height))
             
@@ -329,10 +331,10 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             RenderEngineInternal_updateBounds(nil,
                                               Float(projectedSize.width),
                                               Float(projectedSize.height),
-                                              Float(insets.origin.x),
-                                              Float(insets.origin.y),
-                                              Float(insets.size.width),
-                                              Float(insets.size.height))
+                                              Float(insets.origin.x),                                   // top
+                                              Float(insets.origin.y),                                   // left
+                                              Float(insets.size.width + projectedKeyboardHeight),       // bottom
+                                              Float(insets.size.height))                                // right
             
             //print("\(projectedSize.width) x \(projectedSize.height)")
         }
@@ -404,6 +406,11 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             modelViewMatrix = GLKMatrix4Translate(modelViewMatrix, Float(projectedSize.width * -0.5), Float(projectedSize.height * 0.5), -500.0)
             modelViewMatrix = GLKMatrix4RotateX(modelViewMatrix, Float.pi)
             sceneMatrices.modelviewMatrix = modelViewMatrix
+            
+            // TODO: Support being "focused" on an area of the scene when the iOS keyboard is present.  To do this, we should:
+            // 1. allow Pony to specify some translated vertices
+            // 2. ensure here that those vertices are all zoomed into and visible in the top portion of the screen
+            //    (exact visible area should be retrieved using the appropriate APIs).
             
             renderEncoder.setVertexBytes(&sceneMatrices, length: MemoryLayout<SceneMatrices>.stride, index: 1)
             renderEncoder.setFragmentBytes(&sdfUniforms, length: MemoryLayout<SDFUniforms>.stride, index: 0)

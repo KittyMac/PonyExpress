@@ -19,20 +19,22 @@ actor TextField is (Fontable & Buttonable & Actionable & Syncable)
             _value = _value.trim(0, _value.size()-1)
           elseif e.enter() then
             performAction()
+            releaseFocus()
           elseif e.tab() then
             advanceFocus()
           else
             _value = _value + (e.characters)
           end
           
-          Log.println("%s (%s)", e.keyCode, e.characters)
           setNeedsRendered()
           
           updateSync(_value)
         end
       end
     end
-    
+  
+  fun ref performClick() =>
+    clickedCallback()
 
   fun ref render(frameContext:FrameContext val, bounds:R4) =>
     fontable_render(frameContext, bounds)

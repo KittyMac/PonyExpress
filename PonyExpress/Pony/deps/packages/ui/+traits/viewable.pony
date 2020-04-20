@@ -42,6 +42,16 @@ trait tag Viewable is Animatable
   
   
   
+  fun requestFocus() =>
+    if engine as RenderEngine then
+      engine.requestFocus(nodeID)
+    end
+  
+  fun releaseFocus() =>
+    if engine as RenderEngine then
+      engine.releaseFocus(nodeID)
+    end
+  
   fun advanceFocus() =>
     if engine as RenderEngine then
       engine.advanceFocus()

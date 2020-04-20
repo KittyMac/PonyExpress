@@ -9,6 +9,13 @@ Customized view for iOS & tvOS
 #import "PonyExpressConfig.h"
 #import "HALRenderEngine.h"
 
+extern uint64_t ponyint_cpu_tick(void);
+
+static CGFloat QuadraticEaseOut(CGFloat p)
+{
+    return -(p * (p - 2));
+}
+
 @implementation PonyExpressUIView
 {
     
@@ -35,6 +42,11 @@ Customized view for iOS & tvOS
 - (void)didMoveToWindow
 {
     [super didMoveToWindow];
+    
+    _trackingTouches = [NSMutableArray array];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateSafeBottom:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateSafeBottom:) name:UIKeyboardWillHideNotification object:nil];
     
     [self setMultipleTouchEnabled:true];
     
@@ -205,6 +217,9 @@ Customized view for iOS & tvOS
     for (UITouch * touch in touches) {
         CGPoint p = [touch locationInView:self];
         RenderEngineInternal_touchEvent(nil, (size_t)touch, true, p.x, -p.y);
+        if([_trackingTouches containsObject:touch] == false) {
+            [_trackingTouches addObject:touch];
+        }
     }
 }
 
@@ -212,13 +227,16 @@ Customized view for iOS & tvOS
     for (UITouch * touch in touches) {
         CGPoint p = [touch locationInView:self];
         RenderEngineInternal_touchEvent(nil, (size_t)touch, false, p.x, -p.y);
+        [_trackingTouches removeObject:touch];
     }
 }
 
 - (void) touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     for (UITouch * touch in touches) {
-        CGPoint p = [touch locationInView:self];
-        RenderEngineInternal_touchEvent(nil, (size_t)touch, true, p.x, -p.y);
+        if([_trackingTouches containsObject:touch]) {
+            CGPoint p = [touch locationInView:self];
+            RenderEngineInternal_touchEvent(nil, (size_t)touch, true, p.x, -p.y);
+        }
     }
 }
 
@@ -226,6 +244,7 @@ Customized view for iOS & tvOS
     for (UITouch * touch in touches) {
         CGPoint p = [touch locationInView:self];
         RenderEngineInternal_touchEvent(nil, (size_t)touch, false, p.x, -p.y);
+        [_trackingTouches removeObject:touch];
     }
 }
 
@@ -238,6 +257,9 @@ Customized view for iOS & tvOS
 }
 
 - (void)showKeyboard {
+    
+    // Stop tracking all touches; this is because the screen might move while we're opening the keyboard
+    [_trackingTouches removeAllObjects];
     
     _returnKeyType = UIReturnKeyDone;
     _smartQuotesType = UITextSmartQuotesTypeNo;
@@ -258,6 +280,9 @@ Customized view for iOS & tvOS
 }
 
 - (void)hideKeyboard {
+    // Stop tracking all touches; this is because the screen might move while we're opening the keyboard
+    [_trackingTouches removeAllObjects];
+    
     dispatch_async(dispatch_get_main_queue(), ^{
         [self resignFirstResponder];
     });
@@ -276,6 +301,38 @@ Customized view for iOS & tvOS
     RenderEngineInternal_keyEvent(nil, true, keyCode, utf8, 0, 0);
 }
 
+- (void)updateSafeBottom:(NSNotification *)notification
+{
+    NSValue * beginFrameValue = [notification.userInfo objectForKey:UIKeyboardFrameBeginUserInfoKey];
+    NSValue * endFrameValue = [notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey];
+    NSNumber *duration = [notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];
+    //NSNumber *curve = [notification.userInfo objectForKey: UIKeyboardAnimationCurveUserInfoKey];
+    
+    CGFloat fromHeight = self.frame.size.height - [beginFrameValue CGRectValue].origin.y;
+    CGFloat toHeight = self.frame.size.height - [endFrameValue CGRectValue].origin.y;
+    
+    super.keyboardHeight = fromHeight;
+    [self resizeDrawable:self.window.screen.nativeScale];
+        
+    [_keyboardAnimationTimer invalidate];
+    
+    __block uint64_t animationStartNano = ponyint_cpu_tick();
+    __block CGFloat animationDuration = [duration floatValue];
+    _keyboardAnimationTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 / 60.0 repeats:true block:^(NSTimer * _Nonnull timer) {
+        // this is wrong, we need to actually time the difference
+        float animationValue = ((CGFloat)(ponyint_cpu_tick() - animationStartNano) / 1000000000.0) * (1.0 / animationDuration);
+
+        if (animationValue < 1.0) {
+            super.keyboardHeight = fromHeight + (toHeight - fromHeight) * QuadraticEaseOut(animationValue);
+        } else {
+            super.keyboardHeight = toHeight;
+            [timer invalidate];
+        }
+        
+        [self resizeDrawable:self.window.screen.nativeScale];
+    }];
+
+}
 
 
 

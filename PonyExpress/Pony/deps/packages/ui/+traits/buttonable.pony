@@ -77,8 +77,8 @@ trait Buttonable is (Viewable & Actionable)
       end
       
       if (buttonPressed == true) and (insideTouches.size() > 0) then
-        if focusable and (engine as RenderEngine) then
-          engine.requestFocus(nodeID)
+        if focusable then
+          requestFocus()
         end
       end
       

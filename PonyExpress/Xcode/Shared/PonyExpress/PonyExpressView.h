@@ -46,6 +46,8 @@ Custom view base class
 @property (nonatomic, assign) CGSize drawableSize;
 @property (nonatomic, assign) CGFloat drawableContentScale;
 
+@property (nonatomic, assign) CGFloat keyboardHeight;
+
 - (nonnull instancetype)initCommon;
 
 #if AUTOMATICALLY_RESIZE
