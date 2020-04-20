@@ -28,6 +28,8 @@ class val Font
         try
           let code = glyph.charcode(0)?
           glyphData(code.usize())? = glyph.clone()?
+        else
+          Log.println("failed to import glyph from font: %s\n%s", glyph, Utility.errorLoc()) 
         end
       end
     end

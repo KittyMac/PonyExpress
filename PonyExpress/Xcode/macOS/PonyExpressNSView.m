@@ -290,13 +290,15 @@ static CVReturn DispatchRenderLoop(CVDisplayLinkRef displayLink,
 - (void)keyUp:(NSEvent *)event
 {
     NSPoint p = [self convertPoint:[event locationInWindow] fromView:NULL];
-    RenderEngineInternal_keyEvent(nil, false, [event keyCode], [[event characters] UTF8String], p.x, -(self.bounds.size.height - p.y));
+    const char * utf8 = [[event characters] UTF8String];
+    RenderEngineInternal_keyEvent(nil, false, utf8[0], utf8, p.x, -(self.bounds.size.height - p.y));
 }
 
 - (void)keyDown:(NSEvent *)event
 {
     NSPoint p = [self convertPoint:[event locationInWindow] fromView:NULL];
-    RenderEngineInternal_keyEvent(nil, true, [event keyCode], [[event characters] UTF8String], p.x, -(self.bounds.size.height - p.y));
+    const char * utf8 = [[event characters] UTF8String];
+    RenderEngineInternal_keyEvent(nil, true, utf8[0], utf8, p.x, -(self.bounds.size.height - p.y));
 }
 
 - (void)rightMouseDown:(NSEvent *)event
@@ -359,5 +361,13 @@ static CVReturn DispatchRenderLoop(CVDisplayLinkRef displayLink,
 }
 
 
+
+- (void)showKeyboard {
+    
+}
+
+- (void)hideKeyboard {
+    
+}
 
 @end

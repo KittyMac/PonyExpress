@@ -21,6 +21,8 @@ typedef struct ui_NullEvent ui_NullEvent;
 
 typedef struct ui_RGBA ui_RGBA;
 
+typedef struct StringEncoding StringEncoding;
+
 /*
 Contiguous, resizable memory to store elements of type A.
 
@@ -289,6 +291,8 @@ typedef struct ui_RenderNeeded ui_RenderNeeded;
 
 typedef struct _UnsignedPartialArithmetic _UnsignedPartialArithmetic;
 
+typedef struct ui_$2$25 ui_$2$25;
+
 /*
 Things that can be turned into a String.
 */
@@ -435,16 +439,16 @@ included in a union or intersection, or be a subtype of any interface. Most
 functions on a Pointer[A] are private to maintain memory safety.
 */
 /*
+A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
+included in a union or intersection, or be a subtype of any interface. Most
+functions on a Pointer[A] are private to maintain memory safety.
+*/
+/*
 One unit of geometry. Hash needs to uniquely represent the buffered content in order to allow for reuse of geometric
 data if nothing has changed
 */
 typedef struct ui_Geometry ui_Geometry;
 
-/*
-A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
-included in a union or intersection, or be a subtype of any interface. Most
-functions on a Pointer[A] are private to maintain memory safety.
-*/
 typedef struct utility_Log utility_Log;
 
 typedef struct None None;
@@ -542,6 +546,8 @@ actor Main
 typedef struct String String;
 
 typedef struct t2_F32_val_F32_val t2_F32_val_F32_val;
+
+typedef struct ui_$2$24 ui_$2$24;
 
 typedef struct ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_box ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_box;
 
@@ -758,8 +764,6 @@ A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
 included in a union or intersection, or be a subtype of any interface. Most
 functions on a Pointer[A] are private to maintain memory safety.
 */
-typedef struct ui_$2$23 ui_$2$23;
-
 typedef struct u4_ui_NullEvent_val_ui_TouchEvent_val_ui_ScrollEvent_val_ui_KeyEvent_val u4_ui_NullEvent_val_ui_TouchEvent_val_ui_ScrollEvent_val_ui_KeyEvent_val;
 
 /*
@@ -954,6 +958,15 @@ string format a vector*/
 String* ui_RGBA_box_string_o(ui_RGBA* self);
 
 ui_RGBA* ui_RGBA_val_white_o(ui_RGBA* self);
+
+/* Allocate a StringEncoding without initialising it. */
+StringEncoding* StringEncoding_Alloc(void);
+
+StringEncoding* StringEncoding_val_create_o(StringEncoding* self);
+
+uint32_t StringEncoding_val_utf8_I(StringEncoding* self);
+
+uint32_t StringEncoding_box_utf8_I(StringEncoding* self);
 
 /* Allocate a Array_String_val without initialising it. */
 Array_String_val* Array_String_val_Alloc(void);
@@ -1195,6 +1208,18 @@ None* ui_Viewable_ref_animate_fo(ui_Viewable* self, float delta);
 u2_ui_YogaNode_ref_None_val* u2_ui_YogaNode_ref_None_val_Alloc(void);
 
 None* u2_ui_YogaNode_ref_None_val_ref_invalidate_oo(void* self, ui_FrameContext* frameContext);
+
+ssize_t u2_ui_YogaNode_ref_None_val_val_getFocusIdx_z(void* self);
+
+ssize_t u2_ui_YogaNode_ref_None_val_box_getFocusIdx_z(void* self);
+
+ssize_t u2_ui_YogaNode_ref_None_val_ref_getFocusIdx_z(void* self);
+
+size_t u2_ui_YogaNode_ref_None_val_val_id_Z(void* self);
+
+size_t u2_ui_YogaNode_ref_None_val_box_id_Z(void* self);
+
+size_t u2_ui_YogaNode_ref_None_val_ref_id_Z(void* self);
 
 uint64_t U32_val_u64_W(uint32_t self);
 
@@ -1601,6 +1626,15 @@ _UnsignedPartialArithmetic* _UnsignedPartialArithmetic_Alloc(void);
 
 _UnsignedPartialArithmetic* _UnsignedPartialArithmetic_val_create_o(_UnsignedPartialArithmetic* self);
 
+/* Allocate a ui_$2$25 without initialising it. */
+ui_$2$25* ui_$2$25_Alloc(void);
+
+None* ui_$2$25_val_apply_oo(ui_$2$25* self, ui_RenderEngine* p1);
+
+None* ui_$2$25_box_apply_oo(ui_$2$25* self, ui_RenderEngine* p1);
+
+None* ui_$2$25_ref_apply_oo(ui_$2$25* self, ui_RenderEngine* p1);
+
 /* Allocate a Stringable without initialising it. */
 Stringable* Stringable_Alloc(void);
 
@@ -1717,6 +1751,10 @@ uint64_t U64_box_div_WW(uint64_t self, uint64_t y);
 uint64_t U64_val_div_WW(uint64_t self, uint64_t y);
 
 uint64_t U64_val_create_WW(uint64_t self, uint64_t value);
+
+bool U64_box_gt_Wb(uint64_t self, uint64_t y);
+
+bool U64_val_gt_Wb(uint64_t self, uint64_t y);
 
 /* Allocate a u2_ui_RenderEngine_tag_None_val without initialising it. */
 u2_ui_RenderEngine_tag_None_val* u2_ui_RenderEngine_tag_None_val_Alloc(void);
@@ -1965,11 +2003,11 @@ bool ISize_box_ne_zb(ssize_t self, ssize_t y);
 
 ssize_t ISize_val_max_value_z(ssize_t self);
 
-String* ISize_box_string_o(ssize_t self);
+String* ISize_ref_string_o(ssize_t self);
 
 String* ISize_val_string_o(ssize_t self);
 
-String* ISize_ref_string_o(ssize_t self);
+String* ISize_box_string_o(ssize_t self);
 
 ssize_t ISize_box_add_zz(ssize_t self, ssize_t y);
 
@@ -2100,6 +2138,11 @@ A null pointer.
 */
 ui_YogaNode** Pointer_ui_YogaNode_ref_ref_create_o(ui_YogaNode** self);
 
+/*
+A null pointer.
+*/
+None** Pointer_None_val_ref_create_o(None** self);
+
 /* Allocate a ui_Geometry without initialising it. */
 ui_Geometry* ui_Geometry_Alloc(void);
 
@@ -2138,9 +2181,15 @@ None* None_val_create_o(None* self);
 /* Allocate a ui_RenderEngine without initialising it. */
 ui_RenderEngine* ui_RenderEngine_Alloc(void);
 
-None* ui_RenderEngine_tag_getNodeByName_ooo__send(ui_RenderEngine* self, String* nodeName, ui_$2$23* callback);
+None* ui_RenderEngine_tag_getNodeByName_ooo__send(ui_RenderEngine* self, String* nodeName, ui_$2$24* callback);
 
-None* ui_RenderEngine_tag_getNodeByID_Zoo__send(ui_RenderEngine* self, size_t id, ui_$2$23* callback);
+float ui_RenderEngine_ref_nanoToSec_Wf(ui_RenderEngine* self, uint64_t nano);
+
+float ui_RenderEngine_box_nanoToSec_Wf(ui_RenderEngine* self, uint64_t nano);
+
+float ui_RenderEngine_val_nanoToSec_Wf(ui_RenderEngine* self, uint64_t nano);
+
+None* ui_RenderEngine_tag_getNodeByID_Zoo__send(ui_RenderEngine* self, size_t id, ui_$2$24* callback);
 
 None* ui_RenderEngine_ref_invalidateNodeByID_Zo(ui_RenderEngine* self, size_t id);
 
@@ -2176,6 +2225,8 @@ uint32_t ui_RenderEngine_box__batch_I(ui_RenderEngine* self);
 
 None* ui_RenderEngine_tag_setNeedsRendered_o__send(ui_RenderEngine* self);
 
+None* ui_RenderEngine_tag_run_oo__send(ui_RenderEngine* self, ui_$2$25* callback);
+
 None* ui_RenderEngine_ref_markRenderFinished_o(ui_RenderEngine* self);
 
 None* ui_RenderEngine_tag_renderAbort_o__send(ui_RenderEngine* self);
@@ -2201,6 +2252,8 @@ None* ui_RenderEngine_tag_setNeedsLayout_o__send(ui_RenderEngine* self);
 None* ui_RenderEngine_tag_updateBounds_ffffffo__send(ui_RenderEngine* self, float w, float h, float safeTop, float safeLeft, float safeBottom, float safeRight);
 
 ui_RenderEngine* ui_RenderEngine_tag_create_o__send(ui_RenderEngine* self);
+
+None* ui_RenderEngine_tag_advanceFocus_o__send(ui_RenderEngine* self);
 
 /* Allocate a ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_val without initialising it. */
 ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_val* ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_val_Alloc(void);
@@ -2636,6 +2689,15 @@ size_t String_ref_offset_to_index_zZ(String* self, ssize_t i);
 /* Allocate a t2_F32_val_F32_val without initialising it. */
 t2_F32_val_F32_val* t2_F32_val_F32_val_Alloc(void);
 
+/* Allocate a ui_$2$24 without initialising it. */
+ui_$2$24* ui_$2$24_Alloc(void);
+
+void* ui_$2$24_val_apply_oo(ui_$2$24* self, void* p1);
+
+void* ui_$2$24_box_apply_oo(ui_$2$24* self, void* p1);
+
+void* ui_$2$24_ref_apply_oo(ui_$2$24* self, void* p1);
+
 /* Allocate a ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_box without initialising it. */
 ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_box* ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_box_Alloc(void);
 
@@ -2913,6 +2975,12 @@ size_t ui_YogaNode_box_id_Z(ui_YogaNode* self);
 
 size_t ui_YogaNode_ref_id_Z(ui_YogaNode* self);
 
+ssize_t ui_YogaNode_val_getFocusIdx_z(ui_YogaNode* self);
+
+ssize_t ui_YogaNode_box_getFocusIdx_z(ui_YogaNode* self);
+
+ssize_t ui_YogaNode_ref_getFocusIdx_z(ui_YogaNode* self);
+
 None* ui_YogaNode_ref_removeChildren_o(ui_YogaNode* self);
 
 uint64_t ui_YogaNode_ref_event_ooW(ui_YogaNode* self, ui_FrameContext* frameContext, void* anyEvent);
@@ -2936,6 +3004,8 @@ None* ui_YogaNode_ref_layout_o(ui_YogaNode* self);
 uint64_t ui_YogaNode_ref_render_oW(ui_YogaNode* self, ui_FrameContext* frameContext);
 
 None* ui_YogaNode_box__final_o(ui_YogaNode* self);
+
+void* ui_YogaNode_ref_getNodeByFocusIdx_zo(ui_YogaNode* self, ssize_t idx);
 
 None* ui_YogaNode_ref_width_fo(ui_YogaNode* self, float v);
 
@@ -2996,15 +3066,6 @@ None* ui_RenderPrimitive_box_startFinished_oo(ui_RenderPrimitive* self, ui_Frame
 ui_KeyEvent* ui_KeyEvent_Alloc(void);
 
 ui_KeyEvent* ui_KeyEvent_val_create_bSoffo(ui_KeyEvent* self, bool pressed_, uint16_t keyCode_, String* characters_, float x, float y);
-
-/* Allocate a ui_$2$23 without initialising it. */
-ui_$2$23* ui_$2$23_Alloc(void);
-
-void* ui_$2$23_val_apply_oo(ui_$2$23* self, void* p1);
-
-void* ui_$2$23_box_apply_oo(ui_$2$23* self, void* p1);
-
-void* ui_$2$23_ref_apply_oo(ui_$2$23* self, void* p1);
 
 /* Allocate a u4_ui_NullEvent_val_ui_TouchEvent_val_ui_ScrollEvent_val_ui_KeyEvent_val without initialising it. */
 u4_ui_NullEvent_val_ui_TouchEvent_val_ui_ScrollEvent_val_ui_KeyEvent_val* u4_ui_NullEvent_val_ui_TouchEvent_val_ui_ScrollEvent_val_ui_KeyEvent_val_Alloc(void);

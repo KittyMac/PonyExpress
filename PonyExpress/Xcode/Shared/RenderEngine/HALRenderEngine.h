@@ -81,6 +81,8 @@ typedef struct
 
 
 typedef void (*REAPI_getTextureInfo)(void *, const char *, float *, float *);
+typedef void (*REAPI_beginKeyboard)(void *);
+typedef void (*REAPI_endKeyboard)(void *);
 
 
 typedef struct {
@@ -95,6 +97,8 @@ typedef struct {
     
     void * classPtr;
     REAPI_getTextureInfo _getTextureInfo;
+    REAPI_beginKeyboard _beginKeyboard;
+    REAPI_endKeyboard _endKeyboard;
 } HALRenderContext;
 
 
@@ -109,6 +113,9 @@ HALRenderContext * RenderEngine_init(ui_RenderEngine * ponyRenderEngine);
 void RenderEngine_destroy(HALRenderContext * ctx);
 
 void RenderEngine_textureInfo(HALRenderContext * ctx, const char * textureName, float * width, float * height);
+
+void RenderEngine_beginKeyboardInput(HALRenderContext * ctx);
+void RenderEngine_endKeyboardInput(HALRenderContext * ctx);
 
 void RenderEngine_pushClips(HALRenderContext * ctx,
                             uint64_t frameNumber,
@@ -144,7 +151,9 @@ float RenderEngine_safeRight(void);
 
 void RenderEngineInternal_registerAPICallbacks(HALRenderContext * context,
                                                void * classPtr,
-                                               REAPI_getTextureInfo _getTextureInfo);
+                                               REAPI_getTextureInfo _getTextureInfo,
+                                               REAPI_beginKeyboard _beginKeyboard,
+                                               REAPI_endKeyboard _endKeyboard);
 
 void RenderEngineInternal_renderAll(HALRenderContext * context);
 void RenderEngineInternal_updateBounds(HALRenderContext * context, float width, float height, float topInset, float leftInset, float bottomInset, float rightInset);

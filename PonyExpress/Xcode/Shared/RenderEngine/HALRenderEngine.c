@@ -124,6 +124,18 @@ void RenderEngine_textureInfo(HALRenderContext * ctx, const char * textureName, 
     ctx->_getTextureInfo(ctx->classPtr, textureName, width, height);
 }
 
+void RenderEngine_beginKeyboardInput(HALRenderContext * ctx) {
+    FENCE_FOR_RENDERER();
+    
+    ctx->_beginKeyboard(ctx->classPtr);
+}
+
+void RenderEngine_endKeyboardInput(HALRenderContext * ctx) {
+    FENCE_FOR_RENDERER();
+    
+    ctx->_endKeyboard(ctx->classPtr);
+}
+
 void RenderEngine_pushClips(HALRenderContext * ctx,
                             uint64_t frameNumber,
                             uint64_t renderNumber,
@@ -248,13 +260,18 @@ float RenderEngine_safeRight() {
 
 void RenderEngineInternal_registerAPICallbacks(HALRenderContext * context,
                                                void * classPtr,
-                                               REAPI_getTextureInfo _getTextureInfo) {
+                                               REAPI_getTextureInfo _getTextureInfo,
+                                               REAPI_beginKeyboard _beginKeyboard,
+                                               REAPI_endKeyboard _endKeyboard) {
     RESOLVE_CONTEXT();
     
     context->classPtr = classPtr;
     
     // Method for retrieving texture information given a texture name
     context->_getTextureInfo = _getTextureInfo;
+    
+    context->_beginKeyboard = _beginKeyboard;
+    context->_endKeyboard = _endKeyboard;
 }
 
 #pragma mark - Used either internally in C RenderEngine or called by Swift code

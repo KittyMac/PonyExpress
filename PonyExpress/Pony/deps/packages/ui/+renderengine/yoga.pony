@@ -28,6 +28,8 @@ class YogaNode
   var _safeBottom:Bool = false
   var _safeRight:Bool = false
   
+  var _focusIdx:ISize = -1
+  
   fun _final() =>
     //@printf("_final called on yoga node [%d]\n".cstring(), node)
     @YGNodeFree(node)
@@ -93,7 +95,7 @@ class YogaNode
   fun print() =>
     @YGNodePrint(node, YGPrintOptions.layout or YGPrintOptions.style or YGPrintOptions.children)
     @printf("\n".cstring())
-  
+    
   fun ref getNodeByName(nodeName:String val):(YogaNode|None) =>
     if _name == nodeName then
       return this
@@ -115,6 +117,21 @@ class YogaNode
     end
     for child in children.values() do
       let result = child.getNodeByID(nodeID)
+      if result as YogaNode then
+        return result
+      end
+    end
+    None
+  
+  fun ref getNodeByFocusIdx(idx:ISize):(YogaNode|None) =>
+    if idx < 0 then
+      return None
+    end
+    if _focusIdx == idx then
+      return this
+    end
+    for child in children.values() do
+      let result = child.getNodeByFocusIdx(idx)
       if result as YogaNode then
         return result
       end
@@ -328,6 +345,12 @@ class YogaNode
   fun ref clips(_clips':Bool) =>
     _clips = _clips'
   
+  
+  fun getFocusIdx():ISize =>
+    _focusIdx
+  
+  fun ref focusIdx(idx:ISize) =>
+    _focusIdx = idx.max(-1)
   
   // Helper functions for more declaratively defining layouts
   

@@ -1,8 +1,9 @@
 use "linal"
 use "utility"
 
-actor TextField is (Fontable & Buttonable)
+actor TextField is (Fontable & Buttonable & Actionable & Syncable)
 	var _color:RGBA val = RGBA.black()
+  var focusable:Bool = true
   
   fun ref start(frameContext:FrameContext val) =>
     fontable_start(frameContext)
@@ -16,12 +17,18 @@ actor TextField is (Fontable & Buttonable)
         if e.pressed then
           if e.delete() then
             _value = _value.trim(0, _value.size()-1)
+          elseif e.enter() then
+            performAction()
+          elseif e.tab() then
+            advanceFocus()
           else
             _value = _value + (e.characters)
           end
           
           Log.println("%s (%s)", e.keyCode, e.characters)
           setNeedsRendered()
+          
+          updateSync(_value)
         end
       end
     end

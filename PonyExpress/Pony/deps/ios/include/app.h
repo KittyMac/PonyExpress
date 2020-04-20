@@ -131,8 +131,6 @@ typedef struct u2_ui_YogaNode_ref_None_val u2_ui_YogaNode_ref_None_val;
 
 typedef struct PlatformOSX PlatformOSX;
 
-typedef struct u3_ui_NullEvent_val_ui_TouchEvent_val_ui_ScrollEvent_val u3_ui_NullEvent_val_ui_TouchEvent_val_ui_ScrollEvent_val;
-
 /*
 This type represents the root capability. When a Pony program starts, the
 Env passed to the Main actor contains an instance of the root capability.
@@ -293,6 +291,8 @@ typedef struct ui_RenderNeeded ui_RenderNeeded;
 
 typedef struct _UnsignedPartialArithmetic _UnsignedPartialArithmetic;
 
+typedef struct ui_$2$25 ui_$2$25;
+
 /*
 Things that can be turned into a String.
 */
@@ -423,8 +423,6 @@ typedef struct yoga_YGNode yoga_YGNode;
 
 typedef struct ui_RenderContext ui_RenderContext;
 
-typedef struct ui_$2$22 ui_$2$22;
-
 /*
 Memory allocations for large amounts of geometry can get expensive. So the ideal circumstance is we allocate it once and it can be
 used by the native renderer without any copying required. To do this and allow multiple frames to be rendered simultaneously (ie
@@ -548,6 +546,8 @@ actor Main
 typedef struct String String;
 
 typedef struct t2_F32_val_F32_val t2_F32_val_F32_val;
+
+typedef struct ui_$2$24 ui_$2$24;
 
 typedef struct ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_box ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_box;
 
@@ -757,11 +757,15 @@ Rendering actors can call this concurrently safely to submit geometry to the pla
 */
 typedef struct ui_RenderPrimitive ui_RenderPrimitive;
 
+typedef struct ui_KeyEvent ui_KeyEvent;
+
 /*
 A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
 included in a union or intersection, or be a subtype of any interface. Most
 functions on a Pointer[A] are private to maintain memory safety.
 */
+typedef struct u4_ui_NullEvent_val_ui_TouchEvent_val_ui_ScrollEvent_val_ui_KeyEvent_val u4_ui_NullEvent_val_ui_TouchEvent_val_ui_ScrollEvent_val_ui_KeyEvent_val;
+
 /*
 A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
 included in a union or intersection, or be a subtype of any interface. Most
@@ -1104,6 +1108,26 @@ Retrieve index i.
 char Pointer_U8_val_box__apply_ZC(char* self, size_t i);
 
 /*
+Return true for a null pointer, false for anything else.
+*/
+bool Pointer_U8_val_ref_is_null_b(char* self);
+
+/*
+Return true for a null pointer, false for anything else.
+*/
+bool Pointer_U8_val_box_is_null_b(char* self);
+
+/*
+Return true for a null pointer, false for anything else.
+*/
+bool Pointer_U8_val_tag_is_null_b(char* self);
+
+/*
+Return true for a null pointer, false for anything else.
+*/
+bool Pointer_U8_val_val_is_null_b(char* self);
+
+/*
 Return a pointer to the n-th element.
 */
 char* Pointer_U8_val_val__offset_Zo(char* self, size_t n);
@@ -1170,14 +1194,32 @@ ui_Viewable* ui_Viewable_Alloc(void);
 
 None* ui_Viewable_tag_viewable_start_oo(ui_Viewable* self, ui_FrameContext* frameContext);
 
+None* ui_Viewable_tag_viewable_invalidate_oo(ui_Viewable* self, ui_FrameContext* frameContext);
+
 None* ui_Viewable_ref_start_oo(ui_Viewable* self, ui_FrameContext* frameContext);
 
 None* ui_Viewable_ref_performAnimation_oo(ui_Viewable* self, ui_FrameContext* frameContext);
+
+None* ui_Viewable_ref_invalidate_oo(ui_Viewable* self, ui_FrameContext* frameContext);
 
 None* ui_Viewable_ref_animate_fo(ui_Viewable* self, float delta);
 
 /* Allocate a u2_ui_YogaNode_ref_None_val without initialising it. */
 u2_ui_YogaNode_ref_None_val* u2_ui_YogaNode_ref_None_val_Alloc(void);
+
+None* u2_ui_YogaNode_ref_None_val_ref_invalidate_oo(void* self, ui_FrameContext* frameContext);
+
+ssize_t u2_ui_YogaNode_ref_None_val_val_getFocusIdx_z(void* self);
+
+ssize_t u2_ui_YogaNode_ref_None_val_box_getFocusIdx_z(void* self);
+
+ssize_t u2_ui_YogaNode_ref_None_val_ref_getFocusIdx_z(void* self);
+
+size_t u2_ui_YogaNode_ref_None_val_val_id_Z(void* self);
+
+size_t u2_ui_YogaNode_ref_None_val_box_id_Z(void* self);
+
+size_t u2_ui_YogaNode_ref_None_val_ref_id_Z(void* self);
 
 uint64_t U32_val_u64_W(uint32_t self);
 
@@ -1213,9 +1255,6 @@ None* PlatformOSX_val_poll_o(PlatformOSX* self);
 None* PlatformOSX_ref_register_oo(PlatformOSX* self, PonyPlatform* platform);
 
 bool PlatformOSX_box__use_main_thread_b(PlatformOSX* self);
-
-/* Allocate a u3_ui_NullEvent_val_ui_TouchEvent_val_ui_ScrollEvent_val without initialising it. */
-u3_ui_NullEvent_val_ui_TouchEvent_val_ui_ScrollEvent_val* u3_ui_NullEvent_val_ui_TouchEvent_val_ui_ScrollEvent_val_Alloc(void);
 
 /* Allocate a AmbientAuth without initialising it. */
 AmbientAuth* AmbientAuth_Alloc(void);
@@ -1587,6 +1626,15 @@ _UnsignedPartialArithmetic* _UnsignedPartialArithmetic_Alloc(void);
 
 _UnsignedPartialArithmetic* _UnsignedPartialArithmetic_val_create_o(_UnsignedPartialArithmetic* self);
 
+/* Allocate a ui_$2$25 without initialising it. */
+ui_$2$25* ui_$2$25_Alloc(void);
+
+None* ui_$2$25_val_apply_oo(ui_$2$25* self, ui_RenderEngine* p1);
+
+None* ui_$2$25_box_apply_oo(ui_$2$25* self, ui_RenderEngine* p1);
+
+None* ui_$2$25_ref_apply_oo(ui_$2$25* self, ui_RenderEngine* p1);
+
 /* Allocate a Stringable without initialising it. */
 Stringable* Stringable_Alloc(void);
 
@@ -1703,6 +1751,10 @@ uint64_t U64_box_div_WW(uint64_t self, uint64_t y);
 uint64_t U64_val_div_WW(uint64_t self, uint64_t y);
 
 uint64_t U64_val_create_WW(uint64_t self, uint64_t value);
+
+bool U64_box_gt_Wb(uint64_t self, uint64_t y);
+
+bool U64_val_gt_Wb(uint64_t self, uint64_t y);
 
 /* Allocate a u2_ui_RenderEngine_tag_None_val without initialising it. */
 u2_ui_RenderEngine_tag_None_val* u2_ui_RenderEngine_tag_None_val_Alloc(void);
@@ -1925,15 +1977,6 @@ yoga_YGNode* yoga_YGNode_Alloc(void);
 /* Allocate a ui_RenderContext without initialising it. */
 ui_RenderContext* ui_RenderContext_Alloc(void);
 
-/* Allocate a ui_$2$22 without initialising it. */
-ui_$2$22* ui_$2$22_Alloc(void);
-
-void* ui_$2$22_val_apply_oo(ui_$2$22* self, void* p1);
-
-void* ui_$2$22_box_apply_oo(ui_$2$22* self, void* p1);
-
-void* ui_$2$22_ref_apply_oo(ui_$2$22* self, void* p1);
-
 bool ISize_box_le_zb(ssize_t self, ssize_t y);
 
 bool ISize_val_le_zb(ssize_t self, ssize_t y);
@@ -1960,11 +2003,11 @@ bool ISize_box_ne_zb(ssize_t self, ssize_t y);
 
 ssize_t ISize_val_max_value_z(ssize_t self);
 
-String* ISize_box_string_o(ssize_t self);
+String* ISize_ref_string_o(ssize_t self);
 
 String* ISize_val_string_o(ssize_t self);
 
-String* ISize_ref_string_o(ssize_t self);
+String* ISize_box_string_o(ssize_t self);
 
 ssize_t ISize_box_add_zz(ssize_t self, ssize_t y);
 
@@ -2114,6 +2157,16 @@ None* utility_Log_val_println_oooooooooooooooooooooo(utility_Log* self, String* 
 
 None* utility_Log_box_println_oooooooooooooooooooooo(utility_Log* self, String* fmt, Stringable* arg0, Stringable* arg1, Stringable* arg2, Stringable* arg3, Stringable* arg4, Stringable* arg5, Stringable* arg6, Stringable* arg7, Stringable* arg8, Stringable* arg9, Stringable* arg10, Stringable* arg11, Stringable* arg12, Stringable* arg13, Stringable* arg14, Stringable* arg15, Stringable* arg16, Stringable* arg17, Stringable* arg18, Stringable* arg19);
 
+String* U16_box_string_o(uint16_t self);
+
+String* U16_val_string_o(uint16_t self);
+
+String* U16_ref_string_o(uint16_t self);
+
+uint64_t U16_val_u64_W(uint16_t self);
+
+uint64_t U16_box_u64_W(uint16_t self);
+
 /* Allocate a None without initialising it. */
 None* None_Alloc(void);
 
@@ -2128,9 +2181,17 @@ None* None_val_create_o(None* self);
 /* Allocate a ui_RenderEngine without initialising it. */
 ui_RenderEngine* ui_RenderEngine_Alloc(void);
 
-None* ui_RenderEngine_tag_getNodeByName_ooo__send(ui_RenderEngine* self, String* nodeName, ui_$2$22* callback);
+None* ui_RenderEngine_tag_getNodeByName_ooo__send(ui_RenderEngine* self, String* nodeName, ui_$2$24* callback);
 
-None* ui_RenderEngine_tag_getNodeByID_Zoo__send(ui_RenderEngine* self, size_t id, ui_$2$22* callback);
+float ui_RenderEngine_ref_nanoToSec_Wf(ui_RenderEngine* self, uint64_t nano);
+
+float ui_RenderEngine_box_nanoToSec_Wf(ui_RenderEngine* self, uint64_t nano);
+
+float ui_RenderEngine_val_nanoToSec_Wf(ui_RenderEngine* self, uint64_t nano);
+
+None* ui_RenderEngine_tag_getNodeByID_Zoo__send(ui_RenderEngine* self, size_t id, ui_$2$24* callback);
+
+None* ui_RenderEngine_ref_invalidateNodeByID_Zo(ui_RenderEngine* self, size_t id);
 
 None* ui_RenderEngine_tag_addNode_oo__send(ui_RenderEngine* self, ui_YogaNode* yoga);
 
@@ -2164,17 +2225,25 @@ uint32_t ui_RenderEngine_box__batch_I(ui_RenderEngine* self);
 
 None* ui_RenderEngine_tag_setNeedsRendered_o__send(ui_RenderEngine* self);
 
+None* ui_RenderEngine_tag_run_oo__send(ui_RenderEngine* self, ui_$2$25* callback);
+
 None* ui_RenderEngine_ref_markRenderFinished_o(ui_RenderEngine* self);
 
 None* ui_RenderEngine_tag_renderAbort_o__send(ui_RenderEngine* self);
 
+None* ui_RenderEngine_tag_keyEvent_bSoffo__send(ui_RenderEngine* self, bool pressed, uint16_t keyCode, char* charactersPtr, float x, float y);
+
 None* ui_RenderEngine_ref_layout_o(ui_RenderEngine* self);
+
+None* ui_RenderEngine_tag_requestFocus_Zo__send(ui_RenderEngine* self, size_t id);
 
 None* ui_RenderEngine_box__final_o(ui_RenderEngine* self);
 
 None* ui_RenderEngine_tag_renderFinished_o__send(ui_RenderEngine* self);
 
 None* ui_RenderEngine_tag_startFinished_o__send(ui_RenderEngine* self);
+
+None* ui_RenderEngine_tag_releaseFocus_Zo__send(ui_RenderEngine* self, size_t id);
 
 uint32_t ui_RenderEngine_box__tag_I(ui_RenderEngine* self);
 
@@ -2183,6 +2252,8 @@ None* ui_RenderEngine_tag_setNeedsLayout_o__send(ui_RenderEngine* self);
 None* ui_RenderEngine_tag_updateBounds_ffffffo__send(ui_RenderEngine* self, float w, float h, float safeTop, float safeLeft, float safeBottom, float safeRight);
 
 ui_RenderEngine* ui_RenderEngine_tag_create_o__send(ui_RenderEngine* self);
+
+None* ui_RenderEngine_tag_advanceFocus_o__send(ui_RenderEngine* self);
 
 /* Allocate a ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_val without initialising it. */
 ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_val* ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_val_Alloc(void);
@@ -2281,6 +2352,14 @@ None* String_ref_reserve_Zo(String* self, size_t len);
 Add a byte to the end of the string.
 */
 None* String_ref_push_Co(String* self, char value);
+
+/*
+Create a string by copying a null-terminated C string. Note that
+the scan is unbounded; the pointed to data must be null-terminated
+within the allocated array to preserve memory safety. If a null
+pointer is given then an empty string is returned.
+*/
+String* String_ref_copy_cstring_oo(String* self, char* str);
 
 /*
 Return an iterator over the codepoints in the string.
@@ -2610,6 +2689,15 @@ size_t String_ref_offset_to_index_zZ(String* self, ssize_t i);
 /* Allocate a t2_F32_val_F32_val without initialising it. */
 t2_F32_val_F32_val* t2_F32_val_F32_val_Alloc(void);
 
+/* Allocate a ui_$2$24 without initialising it. */
+ui_$2$24* ui_$2$24_Alloc(void);
+
+void* ui_$2$24_val_apply_oo(ui_$2$24* self, void* p1);
+
+void* ui_$2$24_box_apply_oo(ui_$2$24* self, void* p1);
+
+void* ui_$2$24_ref_apply_oo(ui_$2$24* self, void* p1);
+
 /* Allocate a ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_box without initialising it. */
 ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_box* ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_box_Alloc(void);
 
@@ -2712,14 +2800,6 @@ float ui_SafeEdges_box_top_f(ui_SafeEdges* self);
 
 ui_SafeEdges* ui_SafeEdges_val_create_o(ui_SafeEdges* self);
 
-bool F32_val_le_fb(float self, float y);
-
-bool F32_box_le_fb(float self, float y);
-
-bool F32_box_ge_fb(float self, float y);
-
-bool F32_val_ge_fb(float self, float y);
-
 float F32_val_sqrt_f(float self);
 
 float F32_box_sqrt_f(float self);
@@ -2780,6 +2860,10 @@ float F32_val_create_ff(float self, float value);
 bool F32_box_lt_fb(float self, float y);
 
 bool F32_val_lt_fb(float self, float y);
+
+bool F32_box_gt_fb(float self, float y);
+
+bool F32_val_gt_fb(float self, float y);
 
 /* Allocate a linal_Q4fun without initialising it. */
 linal_Q4fun* linal_Q4fun_Alloc(void);
@@ -2891,6 +2975,12 @@ size_t ui_YogaNode_box_id_Z(ui_YogaNode* self);
 
 size_t ui_YogaNode_ref_id_Z(ui_YogaNode* self);
 
+ssize_t ui_YogaNode_val_getFocusIdx_z(ui_YogaNode* self);
+
+ssize_t ui_YogaNode_box_getFocusIdx_z(ui_YogaNode* self);
+
+ssize_t ui_YogaNode_ref_getFocusIdx_z(ui_YogaNode* self);
+
 None* ui_YogaNode_ref_removeChildren_o(ui_YogaNode* self);
 
 uint64_t ui_YogaNode_ref_event_ooW(ui_YogaNode* self, ui_FrameContext* frameContext, void* anyEvent);
@@ -2907,11 +2997,15 @@ None* ui_YogaNode_ref_preLayout_o(ui_YogaNode* self);
 
 None* ui_YogaNode_ref_heightPercent_fo(ui_YogaNode* self, float v);
 
+None* ui_YogaNode_ref_invalidate_oo(ui_YogaNode* self, ui_FrameContext* frameContext);
+
 None* ui_YogaNode_ref_layout_o(ui_YogaNode* self);
 
 uint64_t ui_YogaNode_ref_render_oW(ui_YogaNode* self, ui_FrameContext* frameContext);
 
 None* ui_YogaNode_box__final_o(ui_YogaNode* self);
+
+void* ui_YogaNode_ref_getNodeByFocusIdx_zo(ui_YogaNode* self, ssize_t idx);
 
 None* ui_YogaNode_ref_width_fo(ui_YogaNode* self, float v);
 
@@ -2967,6 +3061,14 @@ None* ui_RenderPrimitive_val_startFinished_oo(ui_RenderPrimitive* self, ui_Frame
 None* ui_RenderPrimitive_tag_startFinished_oo(ui_RenderPrimitive* self, ui_FrameContext* frameContext);
 
 None* ui_RenderPrimitive_box_startFinished_oo(ui_RenderPrimitive* self, ui_FrameContext* frameContext);
+
+/* Allocate a ui_KeyEvent without initialising it. */
+ui_KeyEvent* ui_KeyEvent_Alloc(void);
+
+ui_KeyEvent* ui_KeyEvent_val_create_bSoffo(ui_KeyEvent* self, bool pressed_, uint16_t keyCode_, String* characters_, float x, float y);
+
+/* Allocate a u4_ui_NullEvent_val_ui_TouchEvent_val_ui_ScrollEvent_val_ui_KeyEvent_val without initialising it. */
+u4_ui_NullEvent_val_ui_TouchEvent_val_ui_ScrollEvent_val_ui_KeyEvent_val* u4_ui_NullEvent_val_ui_TouchEvent_val_ui_ScrollEvent_val_ui_KeyEvent_val_Alloc(void);
 
 /*
 Space for len instances of A.

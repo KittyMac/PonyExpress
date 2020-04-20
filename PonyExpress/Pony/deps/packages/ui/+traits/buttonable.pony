@@ -13,6 +13,8 @@ trait Buttonable is (Viewable & Actionable)
   var outsideTouches:Array[USize] = Array[USize](32)
   var buttonPressed:Bool = false
   
+  var focusable:Bool = false
+  
   fun ref performClick() =>
     performAction()
     clickedCallback()
@@ -75,7 +77,7 @@ trait Buttonable is (Viewable & Actionable)
       end
       
       if (buttonPressed == true) and (insideTouches.size() > 0) then
-        if engine as RenderEngine then
+        if focusable and (engine as RenderEngine) then
           engine.requestFocus(nodeID)
         end
       end

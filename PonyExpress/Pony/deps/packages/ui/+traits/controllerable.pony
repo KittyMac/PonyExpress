@@ -3,10 +3,13 @@ use "yoga"
 use "linal"
 use "stringext"
 use "utility"
+use "collections"
 
 trait Controllerable
   var engine:(RenderEngine tag|None) = None
-  var nodeNamed:String = "Root"    
+  var nodeNamed:String = "Root"
+  
+  var syncData:Map[String,SyncType] = Map[String,SyncType](32)
   
   fun ref mainNode():YogaNode iso^ =>
     recover iso YogaNode end
@@ -26,3 +29,6 @@ trait Controllerable
   
   be action(evt:Action) =>
     None
+  
+  be sync(key:String val, value:SyncType val) =>
+    syncData(key)? = value

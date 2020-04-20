@@ -11,4 +11,7 @@ Customized view for macOS
 
 @interface PonyExpressNSView : PonyExpressView
 
+- (void)showKeyboard;
+- (void)hideKeyboard;
+
 @end

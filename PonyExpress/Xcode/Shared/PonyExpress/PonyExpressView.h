@@ -58,6 +58,9 @@ Custom view base class
 
 - (void)render;
 
+- (void)showKeyboard;
+- (void)hideKeyboard;
+
 @end
 
 #endif

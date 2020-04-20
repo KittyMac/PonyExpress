@@ -266,6 +266,8 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
         
         RenderEngineInternal_registerAPICallbacks(nil,
                                                   bridge(self),
+                                                  
+                                                  // getTexture
                                                   { (observer, namePtr, widthPtr, heightPtr) -> Void in
                                                         let mySelf = Unmanaged<Renderer>.fromOpaque(observer!).takeUnretainedValue()
                                                     if let texture = mySelf.getTexture(namePtr: namePtr) {
@@ -276,7 +278,19 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
                                                                 heightPtr.initialize(to: Float(texture.height))
                                                             }
                                                         }
-                                                    }
+                                                    },
+                                                  
+                                                  // beginKeyboard
+                                                  { (observer) -> Void in
+                                                    let mySelf = Unmanaged<Renderer>.fromOpaque(observer!).takeUnretainedValue()
+                                                    mySelf.aaplView.showKeyboard()
+                                                  },
+                                                  
+                                                  // endKeyboard
+                                                  { (observer) -> Void in
+                                                    let mySelf = Unmanaged<Renderer>.fromOpaque(observer!).takeUnretainedValue()
+                                                    mySelf.aaplView.hideKeyboard()
+                                                  }
         )
     }
     

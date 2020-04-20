@@ -11,6 +11,7 @@ Customized view for iOS & tvOS
 
 @implementation PonyExpressUIView
 {
+    
     CADisplayLink *_displayLink;
 
 #if !RENDER_ON_MAIN_THREAD
@@ -227,6 +228,54 @@ Customized view for iOS & tvOS
         RenderEngineInternal_touchEvent(nil, (size_t)touch, false, p.x, -p.y);
     }
 }
+
+
+
+@synthesize hasText;
+
+- (BOOL) canBecomeFirstResponder {
+    return true;
+}
+
+- (void)showKeyboard {
+    
+    _returnKeyType = UIReturnKeyDone;
+    _smartQuotesType = UITextSmartQuotesTypeNo;
+    _smartDashesType = UITextSmartDashesTypeNo;
+    _smartInsertDeleteType = UITextSmartInsertDeleteTypeNo;
+    _keyboardType = UIKeyboardTypeASCIICapable;
+    
+    // Since we don't put any text in this view directly, this will not work
+    _enablesReturnKeyAutomatically = NO;
+    
+    // TODO: set this from Pony?  Doesn't seem necessary, as the view doesn't display anything
+    // we just snarf the key events from it!
+    _secureTextEntry = YES;
+        
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self becomeFirstResponder];
+    });
+}
+
+- (void)hideKeyboard {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self resignFirstResponder];
+    });
+}
+
+- (void)deleteBackward {
+    RenderEngineInternal_keyEvent(nil, true, 127, "", 0, 0);
+    RenderEngineInternal_keyEvent(nil, false, 127, "", 0, 0);
+}
+
+- (void)insertText:(nonnull NSString *)text {
+    const char * utf8 = [text UTF8String];
+    unsigned char keyCode = utf8[0];
+    
+    RenderEngineInternal_keyEvent(nil, false, keyCode, utf8, 0, 0);
+    RenderEngineInternal_keyEvent(nil, true, keyCode, utf8, 0, 0);
+}
+
 
 
 

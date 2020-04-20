@@ -42,7 +42,10 @@ trait tag Viewable is Animatable
   
   
   
-  
+  fun advanceFocus() =>
+    if engine as RenderEngine then
+      engine.advanceFocus()
+    end
   
   fun hasFocus(frameContext:FrameContext val):Bool =>
     (nodeID == frameContext.focusedNodeID)

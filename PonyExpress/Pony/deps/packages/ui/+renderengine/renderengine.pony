@@ -7,6 +7,9 @@ use "utility"
 use @RenderEngine_init[RenderContextRef](engine:RenderEngine tag)
 use @RenderEngine_destroy[None](ctx:RenderContextRef tag)
 
+use @RenderEngine_beginKeyboardInput[None](ctx:RenderContextRef tag)
+use @RenderEngine_endKeyboardInput[None](ctx:RenderContextRef tag)
+
 use @RenderEngine_safeTop[F32]()
 use @RenderEngine_safeLeft[F32]()
 use @RenderEngine_safeBottom[F32]()
@@ -20,6 +23,8 @@ primitive RenderNeeded
 type RenderEngineCommandReturn is (None | LayoutNeeded | RenderNeeded)
 
 type GetYogaNodeCallback is {((YogaNode ref | None)):RenderEngineCommandReturn} val
+
+type RunCallback is {(RenderEngine ref)} val
 
 primitive SafeEdges
   fun top():F32 => @RenderEngine_safeTop()
@@ -123,7 +128,10 @@ actor@ RenderEngine
   var frameNumber:U64 = 0
   var waitingOnViewsToRender:U64 = 0
   var waitingOnViewsToStart:U64 = 0
-    
+  
+  var last_focus_clear_time:U64 = @ponyint_cpu_tick()
+  var last_focus_request_time:U64 = @ponyint_cpu_tick()
+  
   var last_animation_time:U64 = @ponyint_cpu_tick()
   var last_animation_delta:F32 = 0
   
@@ -169,6 +177,9 @@ actor@ RenderEngine
     node.addChild( consume yoga )
     handleNewNodeAdded()
   
+  be run(callback:RunCallback) =>
+    callback(this)
+  
   be getNodeByName(nodeName:String val, callback:GetYogaNodeCallback) =>
     match callback(node.getNodeByName(nodeName))
     | LayoutNeeded => layoutNeeded = true
@@ -189,16 +200,39 @@ actor@ RenderEngine
     end
   
   be requestFocus(id:YogaNodeID) =>
-    invalidateNodeByID(focusedNodeID)
-    invalidateNodeByID(id)
-    focusedNodeID = id
-    renderNeeded = true
-  
+    last_focus_request_time = @ponyint_cpu_tick()
+    
+    if focusedNodeID != id then
+      invalidateNodeByID(focusedNodeID)
+      invalidateNodeByID(id)
+      focusedNodeID = id
+      renderNeeded = true
+    
+      // If this node required access to the keyboard...
+      if focusedNodeID != 0 then
+        @RenderEngine_beginKeyboardInput(renderContext)
+      end
+    end
+    
   be releaseFocus(id:YogaNodeID) =>
     if focusedNodeID == id then
       focusedNodeID = 0      
       invalidateNodeByID(id)
       renderNeeded = true
+      
+      @RenderEngine_endKeyboardInput(renderContext)
+    end
+  
+  be advanceFocus() =>
+    let focusNode = node.getNodeByID(focusedNodeID)
+    if focusNode as YogaNode then
+      let nextNode = node.getNodeByFocusIdx(focusNode.getFocusIdx() + 1)
+      releaseFocus(focusedNodeID)
+      if nextNode as YogaNode then
+        requestFocus(nextNode.id())
+      end
+    else
+      releaseFocus(focusedNodeID)
     end
   
   be updateBounds(w:F32, h:F32, safeTop:F32, safeLeft:F32, safeBottom:F32, safeRight:F32) =>
@@ -215,14 +249,23 @@ actor@ RenderEngine
   
   fun ref markRenderFinished() =>
     @RenderEngine_render(renderContext, frameNumber, U64.max_value(), ShaderType.finished, 0, UnsafePointer[F32], 0, 1.0, 1.0, 1.0, 1.0, Pointer[U8])
-    
+  
+  fun nanoToSec(nano:U64):F32 =>
+    nano.f32() / 1_000_000_000.0
+  
   be renderAll() =>
     // run through all yoga nodes and render their associated views
     // keep track of how many views were told to render so we can know when they're all done
     
     let now = @ponyint_cpu_tick()
-    last_animation_delta = (now - last_animation_time).f32() / 1_000_000_000.0
+    last_animation_delta = nanoToSec(now - last_animation_time)
     last_animation_time = now
+    
+    // Check if we need to clear focus: has it been sufficient time since the last request to
+    // clear focus event
+    if (focusedNodeID != 0) and (last_focus_clear_time > last_focus_request_time) and (nanoToSec(last_animation_time - last_focus_clear_time) > 0.125) then
+      releaseFocus(focusedNodeID)
+    end
         
     if startNeeded then
       if (waitingOnViewsToStart == 0) then
@@ -299,10 +342,11 @@ actor@ RenderEngine
     @RenderEngine_render(renderContext, frameNumber, U64.max_value(), ShaderType.abort, 0, UnsafePointer[F32], 0, 1.0, 1.0, 1.0, 1.0, Pointer[U8])
   
   be touchEvent(id:USize, pressed:Bool, x:F32, y:F32) =>
-    // Tapping outside of the focused item should result in it no longer having focus, so we
-    // proactively clear it here and if the touch is in it (or another focusable item) it will be reset
+    // Tapping outside of the focused item should result in it no longer having focus, but we can't really know
+    // if/when no one else will respond to this event saying they want the focus. So we set a flag to check
+    // in the future, if no one responds requesting the focus in that time then we clear the focus
     if pressed and (focusedNodeID != 0) then
-      releaseFocus(focusedNodeID)
+      last_focus_clear_time = @ponyint_cpu_tick()
     end
     
     let frameContext = FrameContext(this, renderContext, node.id(), focusedNodeID, 0, 0, M4fun.id(), V2fun.zero(), node.nodeSize(), node.contentSize(), R4fun.big(), screenBounds, last_animation_delta)

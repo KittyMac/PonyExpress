@@ -171,4 +171,14 @@ Custom view base class
 #endif
 }
 
+
+// stubs to be overridden by their macOS and iOS counterparts
+- (void)showKeyboard {
+    
+}
+
+- (void)hideKeyboard {
+    
+}
+
 @end
