@@ -24,8 +24,8 @@ Pony Express is a UI toolkit for building fully concurrent applications written 
 
 * [x] ~~scroll view~~
 * [x] ~~stencil cropping by view bounds~~
-* [ ] input fields
-* [ ] On iOS, zoom and center the input field while the keyboard is up and the field has focus
+* [x] ~~input fields~~
+* [x] ~~on iOS, safeBottom is modified to account for keyboard size (need to check on iPhone X~~
 
 ## renderengine
 

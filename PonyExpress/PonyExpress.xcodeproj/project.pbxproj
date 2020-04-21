@@ -38,6 +38,8 @@
 		462036DC243EC874006F1FA2 /* PonyExpressNSView.m in Sources */ = {isa = PBXBuildFile; fileRef = 46F3A6E6243D202B0030287A /* PonyExpressNSView.m */; };
 		462036DD243EC8D4006F1FA2 /* PonyExpress-Swift.h in Headers */ = {isa = PBXBuildFile; fileRef = 46F3A70B243D5F330030287A /* PonyExpress-Swift.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		462036DE243EC8E9006F1FA2 /* PonyExpressOSX.h in Headers */ = {isa = PBXBuildFile; fileRef = 462036C6243EC625006F1FA2 /* PonyExpressOSX.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		46572F46244E7A8A0086B77A /* RSTimingFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = 46572F44244E7A8A0086B77A /* RSTimingFunction.m */; };
+		46572F47244E7A8A0086B77A /* RSTimingFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 46572F45244E7A8A0086B77A /* RSTimingFunction.h */; };
 		46F3A660243D00180030287A /* PonyExpressiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 46F3A65E243D00180030287A /* PonyExpressiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		46F3A690243D01440030287A /* avl_tree.c in Sources */ = {isa = PBXBuildFile; fileRef = 46F3A679243D01440030287A /* avl_tree.c */; };
 		46F3A691243D01440030287A /* avl_tree.h in Headers */ = {isa = PBXBuildFile; fileRef = 46F3A67A243D01440030287A /* avl_tree.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -79,6 +81,8 @@
 		462036D8243EC744006F1FA2 /* Info-osx.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-osx.plist"; sourceTree = "<group>"; };
 		462036DA243EC749006F1FA2 /* Info-ios.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-ios.plist"; sourceTree = "<group>"; };
 		463CC7EB243D95270055B22A /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; name = module.modulemap; path = Xcode/module.modulemap; sourceTree = "<group>"; };
+		46572F44244E7A8A0086B77A /* RSTimingFunction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSTimingFunction.m; sourceTree = "<group>"; };
+		46572F45244E7A8A0086B77A /* RSTimingFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSTimingFunction.h; sourceTree = "<group>"; };
 		46F3A65B243D00180030287A /* PonyExpressiOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PonyExpressiOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		46F3A65E243D00180030287A /* PonyExpressiOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PonyExpressiOS.h; sourceTree = "<group>"; };
 		46F3A679243D01440030287A /* avl_tree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = avl_tree.c; sourceTree = "<group>"; };
@@ -244,6 +248,8 @@
 				46F3A6FB243D5C040030287A /* libs */,
 				46F3A6E0243D20280030287A /* PonyExpressUIView.h */,
 				46F3A6E1243D20280030287A /* PonyExpressUIView.m */,
+				46572F45244E7A8A0086B77A /* RSTimingFunction.h */,
+				46572F44244E7A8A0086B77A /* RSTimingFunction.m */,
 			);
 			path = iOS;
 			sourceTree = "<group>";
@@ -348,6 +354,7 @@
 				46F3A660243D00180030287A /* PonyExpressiOS.h in Headers */,
 				46F3A693243D01440030287A /* HALRenderEngine.h in Headers */,
 				46F3A6B4243D02750030287A /* PonyPlatform.h in Headers */,
+				46572F47244E7A8A0086B77A /* RSTimingFunction.h in Headers */,
 				46F3A710243D605A0030287A /* app.h in Headers */,
 				46F3A691243D01440030287A /* avl_tree.h in Headers */,
 				46F3A700243D5C040030287A /* pony.h in Headers */,
@@ -519,6 +526,7 @@
 				46F3A6AD243D01D50030287A /* PonyExpressView.m in Sources */,
 				46F3A695243D01440030287A /* Flat.metal in Sources */,
 				46F3A696243D01440030287A /* SDF.metal in Sources */,
+				46572F46244E7A8A0086B77A /* RSTimingFunction.m in Sources */,
 				46F3A6E3243D20280030287A /* PonyExpressUIView.m in Sources */,
 				46F3A692243D01440030287A /* HALRenderEngine.c in Sources */,
 				46F3A6B5243D02750030287A /* PonyPlatform.m in Sources */,

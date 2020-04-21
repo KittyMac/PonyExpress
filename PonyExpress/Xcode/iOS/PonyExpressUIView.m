@@ -8,13 +8,9 @@ Customized view for iOS & tvOS
 #import "PonyExpressUIView.h"
 #import "PonyExpressConfig.h"
 #import "HALRenderEngine.h"
+#import "RSTimingFunction.h"
 
 extern uint64_t ponyint_cpu_tick(void);
-
-static CGFloat QuadraticEaseOut(CGFloat p)
-{
-    return -(p * (p - 2));
-}
 
 @implementation PonyExpressUIView
 {
@@ -313,17 +309,18 @@ static CGFloat QuadraticEaseOut(CGFloat p)
     
     super.keyboardHeight = fromHeight;
     [self resizeDrawable:self.window.screen.nativeScale];
-        
+    
     [_keyboardAnimationTimer invalidate];
+    
+    RSTimingFunction * heavyEaseInTimingFunction = [RSTimingFunction timingFunctionWithName:kRSTimingFunctionEaseOut];
     
     __block uint64_t animationStartNano = ponyint_cpu_tick();
     __block CGFloat animationDuration = [duration floatValue];
     _keyboardAnimationTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 / 60.0 repeats:true block:^(NSTimer * _Nonnull timer) {
-        // this is wrong, we need to actually time the difference
         float animationValue = ((CGFloat)(ponyint_cpu_tick() - animationStartNano) / 1000000000.0) * (1.0 / animationDuration);
 
         if (animationValue < 1.0) {
-            super.keyboardHeight = fromHeight + (toHeight - fromHeight) * QuadraticEaseOut(animationValue);
+            super.keyboardHeight = fromHeight + (toHeight - fromHeight) * [heavyEaseInTimingFunction valueForX:animationValue];
         } else {
             super.keyboardHeight = toHeight;
             [timer invalidate];
