@@ -360,3 +360,5 @@ actor@ RenderEngine
     let frameContext = FrameContext(this, renderContext, node.id(), focusedNodeID, 0, 0, M4fun.id(), V2fun.zero(), node.nodeSize(), node.contentSize(), R4fun.big(), screenBounds, last_animation_delta)
     node.event(frameContext, KeyEvent(pressed, keyCode, recover String.copy_cstring(charactersPtr) end, x, y))
   
+  be createTextureFromBytes(name:Pointer[U8] tag, bytes:Pointer[U8] tag, bytesCount:USize) =>
+    @RenderEngine_createTexture(renderContext, name, bytes, bytesCount)

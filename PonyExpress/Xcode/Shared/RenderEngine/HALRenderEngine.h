@@ -81,6 +81,7 @@ typedef struct
 
 
 typedef void (*REAPI_getTextureInfo)(void *, const char *, float *, float *);
+typedef void (*REAPI_createTextureFromBytes)(void *, const char *, void *, size_t countBytes);
 typedef void (*REAPI_beginKeyboard)(void *);
 typedef void (*REAPI_endKeyboard)(void *);
 
@@ -97,6 +98,7 @@ typedef struct {
     
     void * classPtr;
     REAPI_getTextureInfo _getTextureInfo;
+    REAPI_createTextureFromBytes _createTextureFromBytes;
     REAPI_beginKeyboard _beginKeyboard;
     REAPI_endKeyboard _endKeyboard;
 } HALRenderContext;
@@ -113,6 +115,7 @@ HALRenderContext * RenderEngine_init(ui_RenderEngine * ponyRenderEngine);
 void RenderEngine_destroy(HALRenderContext * ctx);
 
 void RenderEngine_textureInfo(HALRenderContext * ctx, const char * textureName, float * width, float * height);
+void RenderEngine_createTexture(HALRenderContext * ctx, const char * textureName, void * textureBytes, size_t countBytes);
 
 void RenderEngine_beginKeyboardInput(HALRenderContext * ctx);
 void RenderEngine_endKeyboardInput(HALRenderContext * ctx);
@@ -152,6 +155,7 @@ float RenderEngine_safeRight(void);
 void RenderEngineInternal_registerAPICallbacks(HALRenderContext * context,
                                                void * classPtr,
                                                REAPI_getTextureInfo _getTextureInfo,
+                                               REAPI_createTextureFromBytes _createTextureFromBytes,
                                                REAPI_beginKeyboard _beginKeyboard,
                                                REAPI_endKeyboard _endKeyboard);
 

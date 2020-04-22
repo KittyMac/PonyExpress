@@ -77,6 +77,7 @@ actor ImageSearchTest is Controllerable
           // an atomic operation, so we run this code as the RenderEngine (ie we do it in one message
           // instead of many)
           engine.run({ (self) =>
+            let selfTag:RenderEngine tag = self
             let resultsNode = self.node.getNodeByName(resultsView)
             if resultsNode as YogaNode then
               resultsNode.removeChildren()
@@ -91,16 +92,31 @@ actor ImageSearchTest is Controllerable
                     consume temp
                   end
                   
-                  HttpClient.download(fixedMediaURL, {(response:HttpResponseHeader val, content:Array[U8] val) => 
-                    if response.statusCode == 200 then
-                      Log.println("Downloaded image of %s bytes", content.size())
-                    else
-                      Log.println("Failed to download image, status code %s", response.statusCode)
-                    end
-                  })?
+                  // Before we download the image, we can check and see if the texture exists already. If it does, there
+                  // is no need to download it!
+                  var image_width:F32 = 0
+                  var image_height:F32 = 0
+                  @RenderEngine_textureInfo(self.renderContext, fixedMediaURL.cpointer(), addressof image_width, addressof image_height)
+                  
+                  let imageView:Image tag = Image.>aspectFill()
+                  
+                  if (image_width == 0) and (image_height == 0) then
+                    HttpClient.download(fixedMediaURL, {(response:HttpResponseHeader val, content:Array[U8] val) => 
+                      if response.statusCode == 200 then
+                        selfTag.createTextureFromBytes(fixedMediaURL.cpointer(), content.cpointer(), content.size())
+                        imageView.path(fixedMediaURL)
+                        selfTag.setNeedsRendered()
+                      else
+                        Log.println("Failed to download image, status code %s", response.statusCode)
+                      end
+                    })?
+                  else
+                    imageView.path(fixedMediaURL)
+                  end
                   
                   let resultView = YogaNode.>height(200).>widthAuto().>marginAll(2).>aspectRatio(item.thumb_width / item.thumb_height)
-                                           .>view( Color.>red() )
+                                           .>view( Color.>gray() )
+                                           .>view( imageView )
                                            
                   resultsNode.addChild(resultView)
                 end

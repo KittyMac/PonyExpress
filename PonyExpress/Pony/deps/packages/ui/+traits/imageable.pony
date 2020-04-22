@@ -82,14 +82,14 @@ trait Imageable is (Viewable & Colorable)
     let geom = bufferedGeometry.next()
     let vertices = geom.vertices
     
-    if geom.check(frameContext, bounds) == false then
+    var image_width:F32 = 0
+    var image_height:F32 = 0
+    @RenderEngine_textureInfo(frameContext.renderContext, _textureName.cpointer(), addressof image_width, addressof image_height)
+    
+    if geom.check(frameContext, bounds, (image_width + (image_height * 10000)).usize() ) == false then
       
       vertices.reserve(6 * 9)
       vertices.clear()
-            
-      var image_width:F32 = 0
-      var image_height:F32 = 0
-      @RenderEngine_textureInfo(frameContext.renderContext, _textureName.cpointer(), addressof image_width, addressof image_height)
       
       let image_aspect = image_width / image_height
       

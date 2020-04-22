@@ -742,9 +742,9 @@ typedef struct ui_ScrollEvent ui_ScrollEvent;
 
 typedef struct ui_YogaNode ui_YogaNode;
 
-typedef struct ui_$2$34 ui_$2$34;
-
 typedef struct ui_TouchEvent ui_TouchEvent;
+
+typedef struct ui_$2$32 ui_$2$32;
 
 typedef struct ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref;
 
@@ -942,11 +942,11 @@ t3_t2_F32_val_F32_val_F32_val_F32_val* t3_t2_F32_val_F32_val_F32_val_F32_val_All
 /* Allocate a ui_$2$33 without initialising it. */
 ui_$2$33* ui_$2$33_Alloc(void);
 
-void* ui_$2$33_val_apply_oo(ui_$2$33* self, void* p1);
+None* ui_$2$33_val_apply_oo(ui_$2$33* self, ui_RenderEngine* p1);
 
-void* ui_$2$33_box_apply_oo(ui_$2$33* self, void* p1);
+None* ui_$2$33_box_apply_oo(ui_$2$33* self, ui_RenderEngine* p1);
 
-void* ui_$2$33_ref_apply_oo(ui_$2$33* self, void* p1);
+None* ui_$2$33_ref_apply_oo(ui_$2$33* self, ui_RenderEngine* p1);
 
 /* Allocate a ui_NullEvent without initialising it. */
 ui_NullEvent* ui_NullEvent_Alloc(void);
@@ -2181,7 +2181,7 @@ None* None_val_create_o(None* self);
 /* Allocate a ui_RenderEngine without initialising it. */
 ui_RenderEngine* ui_RenderEngine_Alloc(void);
 
-None* ui_RenderEngine_tag_getNodeByName_ooo__send(ui_RenderEngine* self, String* nodeName, ui_$2$33* callback);
+None* ui_RenderEngine_tag_getNodeByName_ooo__send(ui_RenderEngine* self, String* nodeName, ui_$2$32* callback);
 
 float ui_RenderEngine_ref_nanoToSec_Wf(ui_RenderEngine* self, uint64_t nano);
 
@@ -2189,7 +2189,7 @@ float ui_RenderEngine_box_nanoToSec_Wf(ui_RenderEngine* self, uint64_t nano);
 
 float ui_RenderEngine_val_nanoToSec_Wf(ui_RenderEngine* self, uint64_t nano);
 
-None* ui_RenderEngine_tag_getNodeByID_Zoo__send(ui_RenderEngine* self, size_t id, ui_$2$33* callback);
+None* ui_RenderEngine_tag_getNodeByID_Zoo__send(ui_RenderEngine* self, size_t id, ui_$2$32* callback);
 
 None* ui_RenderEngine_ref_invalidateNodeByID_Zo(ui_RenderEngine* self, size_t id);
 
@@ -2213,6 +2213,8 @@ String* ui_RenderEngine_box_root_o(ui_RenderEngine* self);
 
 None* ui_RenderEngine_tag_renderAll_o__send(ui_RenderEngine* self);
 
+None* ui_RenderEngine_tag_createTextureFromBytes_ooZo__send(ui_RenderEngine* self, char* name, char* bytes, size_t bytesCount);
+
 uint32_t ui_RenderEngine_box__prioritiy_I(ui_RenderEngine* self);
 
 uint32_t ui_RenderEngine_val__prioritiy_I(ui_RenderEngine* self);
@@ -2225,7 +2227,7 @@ uint32_t ui_RenderEngine_box__batch_I(ui_RenderEngine* self);
 
 None* ui_RenderEngine_tag_setNeedsRendered_o__send(ui_RenderEngine* self);
 
-None* ui_RenderEngine_tag_run_oo__send(ui_RenderEngine* self, ui_$2$34* callback);
+None* ui_RenderEngine_tag_run_oo__send(ui_RenderEngine* self, ui_$2$33* callback);
 
 None* ui_RenderEngine_ref_markRenderFinished_o(ui_RenderEngine* self);
 
@@ -3006,19 +3008,19 @@ None* ui_YogaNode_ref_padding_Ifo(ui_YogaNode* self, uint32_t v1, float v2);
 
 None* ui_YogaNode_ref_name_oo(ui_YogaNode* self, String* name_);
 
-/* Allocate a ui_$2$34 without initialising it. */
-ui_$2$34* ui_$2$34_Alloc(void);
-
-None* ui_$2$34_val_apply_oo(ui_$2$34* self, ui_RenderEngine* p1);
-
-None* ui_$2$34_box_apply_oo(ui_$2$34* self, ui_RenderEngine* p1);
-
-None* ui_$2$34_ref_apply_oo(ui_$2$34* self, ui_RenderEngine* p1);
-
 /* Allocate a ui_TouchEvent without initialising it. */
 ui_TouchEvent* ui_TouchEvent_Alloc(void);
 
 ui_TouchEvent* ui_TouchEvent_val_create_Zbffo(ui_TouchEvent* self, size_t id_, bool pressed_, float x, float y);
+
+/* Allocate a ui_$2$32 without initialising it. */
+ui_$2$32* ui_$2$32_Alloc(void);
+
+void* ui_$2$32_val_apply_oo(ui_$2$32* self, void* p1);
+
+void* ui_$2$32_box_apply_oo(ui_$2$32* self, void* p1);
+
+void* ui_$2$32_ref_apply_oo(ui_$2$32* self, void* p1);
 
 /* Allocate a ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref without initialising it. */
 ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref* ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref_Alloc(void);

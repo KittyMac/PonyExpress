@@ -281,6 +281,12 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
                                                         }
                                                     },
                                                   
+                                                  // createTextureFromBytes
+                                                  { (observer, namePtr, bytesPtr, bytesCount) -> Void in
+                                                    let mySelf = Unmanaged<Renderer>.fromOpaque(observer!).takeUnretainedValue()
+                                                    mySelf.createTextureFromBytes(namePtr: namePtr, bytesPtr: bytesPtr, bytesCount:bytesCount)
+                                                  },
+                                                  
                                                   // beginKeyboard
                                                   { (observer) -> Void in
                                                     let mySelf = Unmanaged<Renderer>.fromOpaque(observer!).takeUnretainedValue()
@@ -431,7 +437,11 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
                 let shaderType = unit.shaderType
                 
                 if unit.textureName != nil {
-                    renderEncoder.setFragmentTexture(getTexture(namePtr: unit.textureName), index: 0)
+                    let texture = getTexture(namePtr: unit.textureName)
+                    if texture == nil {
+                        continue
+                    }
+                    renderEncoder.setFragmentTexture(texture, index: 0)
                 }
                 
                 if stencilValueCount == stencilValueMax {
@@ -589,6 +599,10 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
                 return texture
             }
             
+            if resolvedName.starts(with: "http://") || resolvedName.starts(with: "https://") {
+                return nil
+            }
+            
             let textureLoaderOptions = [
                 MTKTextureLoader.Option.textureUsage: NSNumber(value: MTLTextureUsage.shaderRead.rawValue),
                 MTKTextureLoader.Option.textureStorageMode: NSNumber(value: MTLStorageMode.`private`.rawValue),
@@ -604,6 +618,42 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             }
         }
         return nil
+    }
+    
+    func createTextureFromBytes(namePtr: UnsafePointer<Int8>?, bytesPtr: UnsafeMutableRawPointer?, bytesCount:size_t) {
+        if let namePtr = namePtr {
+            let name = String(cString: namePtr)
+            if name.count == 0 {
+                return
+            }
+            
+            if let bytesPtr = bytesPtr {
+                
+                // This doesn't like being multi-threaded, because we use dictionary cache. So lock and then check again before loading
+                objc_sync_enter(getTextureLock)
+                defer {
+                    objc_sync_exit(getTextureLock)
+                }
+                
+                var texture = textureCache[name]
+                if texture != nil {
+                    return
+                }
+                
+                let textureLoaderOptions = [
+                    MTKTextureLoader.Option.textureUsage: NSNumber(value: MTLTextureUsage.shaderRead.rawValue),
+                    MTKTextureLoader.Option.textureStorageMode: NSNumber(value: MTLStorageMode.`private`.rawValue),
+                    MTKTextureLoader.Option.SRGB: NSNumber(value: false),
+                    MTKTextureLoader.Option.generateMipmaps: NSNumber(value: false)
+                ]
+                do {
+                    texture = try textureLoader.newTexture(data: Data(bytesNoCopy: bytesPtr, count: bytesCount, deallocator: .none), options: textureLoaderOptions)
+                    textureCache[name] = texture
+                } catch {
+                    print("Texture failed to load: \(error)")
+                }
+            }
+        }
     }
     
     func fileURLFromBundlePath(_ bundlePath:String) -> String {
@@ -627,6 +677,10 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
         var pathString = bundlePath
         
         switch pathComponents[0] {
+        case "http":
+            pathString = bundlePath
+        case "https":
+            pathString = bundlePath
         case "assets":
             if let resourcePath = Bundle.main.resourcePath {
                 pathString = "\(resourcePath)/Assets/\(pathComponents[1])"

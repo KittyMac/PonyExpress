@@ -124,6 +124,12 @@ void RenderEngine_textureInfo(HALRenderContext * ctx, const char * textureName, 
     ctx->_getTextureInfo(ctx->classPtr, textureName, width, height);
 }
 
+void RenderEngine_createTexture(HALRenderContext * ctx, const char * textureName, void * textureBytes, size_t countBytes) {
+    FENCE_FOR_RENDERER();
+    
+    ctx->_createTextureFromBytes(ctx->classPtr, textureName, textureBytes, countBytes);
+}
+
 void RenderEngine_beginKeyboardInput(HALRenderContext * ctx) {
     FENCE_FOR_RENDERER();
     
@@ -261,14 +267,15 @@ float RenderEngine_safeRight() {
 void RenderEngineInternal_registerAPICallbacks(HALRenderContext * context,
                                                void * classPtr,
                                                REAPI_getTextureInfo _getTextureInfo,
+                                               REAPI_createTextureFromBytes _createTextureFromBytes,
                                                REAPI_beginKeyboard _beginKeyboard,
                                                REAPI_endKeyboard _endKeyboard) {
     RESOLVE_CONTEXT();
     
     context->classPtr = classPtr;
     
-    // Method for retrieving texture information given a texture name
     context->_getTextureInfo = _getTextureInfo;
+    context->_createTextureFromBytes = _createTextureFromBytes;
     
     context->_beginKeyboard = _beginKeyboard;
     context->_endKeyboard = _endKeyboard;

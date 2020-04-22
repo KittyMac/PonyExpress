@@ -2197,6 +2197,8 @@ String* ui_RenderEngine_box_root_o(ui_RenderEngine* self);
 
 None* ui_RenderEngine_tag_renderAll_o__send(ui_RenderEngine* self);
 
+None* ui_RenderEngine_tag_createTextureFromBytes_ooZo__send(ui_RenderEngine* self, char* name, char* bytes, size_t bytesCount);
+
 uint32_t ui_RenderEngine_box__prioritiy_I(ui_RenderEngine* self);
 
 uint32_t ui_RenderEngine_val__prioritiy_I(ui_RenderEngine* self);
