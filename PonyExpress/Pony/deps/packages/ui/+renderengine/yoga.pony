@@ -274,10 +274,24 @@ class YogaNode
       if _clips then
         frameContext.clipBounds = last_bounds
       end
+      
+      if (parentContentOffset._1 != 0) or (parentContentOffset._2 != 0) then
+        local_matrix = M4fun.mul_m4(
+            local_matrix,
+            M4fun.trans_v3(V3fun(parentContentOffset._1, -parentContentOffset._2, 0))
+          )
+      end
     
       for child in children.values() do
         n = child._renderRecursive(frameContext, _content_offset, local_matrix)
         frameContext.renderNumber = n
+      end
+      
+      if (parentContentOffset._1 != 0) or (parentContentOffset._2 != 0) then
+        local_matrix = M4fun.mul_m4(
+            local_matrix,
+            M4fun.trans_v3(V3fun(-parentContentOffset._1, parentContentOffset._2, 0))
+          )
       end
     
       if _clips then

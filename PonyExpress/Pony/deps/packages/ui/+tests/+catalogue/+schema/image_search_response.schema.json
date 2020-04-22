@@ -1,0 +1,8 @@
+{
+  "title": "ImageSearchResponse",
+  "type": "object",
+  "properties": {
+    "status": { "type": "string" },
+    "data": { "type": "#object/ImageSearchResponseData" }
+  }
+}

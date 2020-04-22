@@ -573,6 +573,9 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
         // attempt to get it from cache first, if not load it then cache it
         if let namePtr = namePtr {
             let name = String(cString: namePtr)
+            if name.count == 0 {
+                return nil
+            }
             let resolvedName = fileURLFromBundlePath(name)
                         
             // This doesn't like being multi-threaded, because we use dictionary cache. So lock and then check again before loading

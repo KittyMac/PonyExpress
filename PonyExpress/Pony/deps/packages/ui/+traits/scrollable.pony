@@ -104,7 +104,7 @@ trait Scrollable is (Viewable & Actionable)
       end
       
       let inside = pointInBounds(frameContext, bounds, e.position)
-      
+            
       if inside and (scrollState != ScrollState.dragging) then
         if scrollHorizontal then
           velocityX = e.delta._1 * 200.0
@@ -209,7 +209,6 @@ trait Scrollable is (Viewable & Actionable)
         
     fun ref setScrollState(newState:U32) =>
       if scrollState != newState then
-        // TODO: should we alert someone that things are happening?
         if newState == ScrollState.dragging then
           scrollViewWillBeginDragging()
         elseif newState == ScrollState.decelerating then
@@ -348,7 +347,7 @@ trait Scrollable is (Viewable & Actionable)
       else
         //we're not moving or past the edge of the scroll, just idle
         setScrollState(ScrollState.idle)
-      end    
+      end
     
     fun ref handleTouchEnded(e:TouchEvent val, touchPosition:V2) =>
       //check if we flicked the scroll view

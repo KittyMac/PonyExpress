@@ -1,0 +1,7 @@
+{
+  "title": "ImageSearchResponseData",
+  "type": "object",
+  "properties": {
+    "result": { "type": "#object/ImageSearchResponseDataResult" }
+  }
+}

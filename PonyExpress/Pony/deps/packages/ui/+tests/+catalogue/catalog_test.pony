@@ -11,8 +11,9 @@ primitive SwitchToClips is Action
 primitive SwitchToScroll is Action
 primitive SwitchToAnimation is Action
 primitive SwitchToTextField is Action
+primitive SwitchToImageSearch is Action
 
-type CatalogAction is (SwitchToColors | SwitchToButtons | SwitchToImages | SwitchToFonts | SwitchToFonts2 | SwitchToClips | SwitchToScroll | SwitchToAnimation | SwitchToTextField)
+type CatalogAction is (SwitchToColors | SwitchToButtons | SwitchToImages | SwitchToFonts | SwitchToFonts2 | SwitchToClips | SwitchToScroll | SwitchToAnimation | SwitchToTextField | SwitchToImageSearch)
   
 
 actor Catalog is Controllerable
@@ -44,6 +45,7 @@ actor Catalog is Controllerable
               menuButton("Scroll", font, SwitchToScroll)
               menuButton("Animation", font, SwitchToAnimation)
               menuButton("Text Field", font, SwitchToTextField)
+              menuButton("Image Search", font, SwitchToImageSearch)
           ])
           
         ]
@@ -58,11 +60,11 @@ actor Catalog is Controllerable
     YogaNode.>width(104)
             .>height(36)
             .>padding(YGEdge.all, 6)
-            .>padding(YGEdge.left, 12)
+            .>padding(YGEdge.left, 8)
             .>view( ImageButton( "white", "white").>pressedColor(RGBA.u32( 0x98cbf3ff ))
                                                   .>color(RGBA.u32( 0xffffff00 ))
                                                   .>action(this, evt) )
-            .>addChild( YogaNode.>view( Label.>value(title).>font(font', 18).>left() ) )
+            .>addChild( YogaNode.>view( Label.>value(title).>font(font', 16).>left() ) )
   
   be action(evt:Action) =>
     if engine as RenderEngine then
@@ -76,6 +78,7 @@ actor Catalog is Controllerable
         | SwitchToScroll => ScrollTest.load(engine, "Panel")
         | SwitchToAnimation => AnimationTest.load(engine, "Panel")
         | SwitchToTextField => TextFieldTest.load(engine, "Panel")
+        | SwitchToImageSearch => ImageSearchTest.load(engine, "Panel")
         end
     end
     

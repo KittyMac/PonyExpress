@@ -52,7 +52,7 @@ clean:
 ios: confirm build_ios build_library_ios
 
 build_ios:
-	$(ponyc) -o $(builddir) --extfun -b "$(product_name)_arm64" -p $(deps_packagesdir) -p ../../../PonyExpressDemo/ -p ../../../ --triple aarch64-apple-ios --pic --features +neon $(debug) -robj
+	$(ponyc) --print-code -o $(builddir) --extfun -b "$(product_name)_arm64" -p $(deps_packagesdir) -p ../../../PonyExpressDemo/ -p ../../../ --triple aarch64-apple-ios --pic --features +neon $(debug) -robj
 
 build_library_ios:
 	@$(iphonesdk_libtool) -static $(builddir)/*.o -o $(deps_libdir_ios)/lib$(product_name)-ios.a

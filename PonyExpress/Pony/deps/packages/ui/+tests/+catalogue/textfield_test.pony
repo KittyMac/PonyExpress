@@ -43,20 +43,20 @@ actor TextFieldTest is Controllerable
           ])
       end
 
-    be action(evt:Action) =>
-      if engine as RenderEngine then
-          match evt
-          | PerformLogIn => performLogInToServer()
-          end
-      end
-    
-    fun ref performLogInToServer() =>
-      try
-        let email = syncData(emailKey)?
-        let password = syncData(passwordKey)?
-        
-        if (email as String) and (password as String) then
-          Log.println("Log into the server. Email is [%s] and password is [%s]", email, password)
+  be action(evt:Action) =>
+    if engine as RenderEngine then
+        match evt
+        | PerformLogIn => performLogInToServer()
         end
+    end
+  
+  fun ref performLogInToServer() =>
+    try
+      let email = syncData(emailKey)?
+      let password = syncData(passwordKey)?
+      
+      if (email as String) and (password as String) then
+        Log.println("Log into the server. Email is [%s] and password is [%s]", email, password)
       end
+    end
       

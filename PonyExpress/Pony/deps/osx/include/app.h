@@ -17,6 +17,8 @@ typedef struct __uint128_t { uint64_t low; uint64_t high; } __uint128_t;
 
 typedef struct t3_t2_F32_val_F32_val_F32_val_F32_val t3_t2_F32_val_F32_val_F32_val_F32_val;
 
+typedef struct ui_$2$33 ui_$2$33;
+
 typedef struct ui_NullEvent ui_NullEvent;
 
 typedef struct ui_RGBA ui_RGBA;
@@ -289,8 +291,6 @@ typedef struct ui_RenderNeeded ui_RenderNeeded;
 
 typedef struct _UnsignedPartialArithmetic _UnsignedPartialArithmetic;
 
-typedef struct ui_$2$25 ui_$2$25;
-
 /*
 Things that can be turned into a String.
 */
@@ -545,8 +545,6 @@ typedef struct String String;
 
 typedef struct t2_F32_val_F32_val t2_F32_val_F32_val;
 
-typedef struct ui_$2$24 ui_$2$24;
-
 typedef struct ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_box ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_box;
 
 typedef struct ui_Controllerable ui_Controllerable;
@@ -744,6 +742,8 @@ typedef struct ui_YogaNode ui_YogaNode;
 
 typedef struct ui_TouchEvent ui_TouchEvent;
 
+typedef struct ui_$2$32 ui_$2$32;
+
 typedef struct ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref;
 
 typedef struct $0$9_U32_val $0$9_U32_val;
@@ -936,6 +936,15 @@ typedef struct _SignedCheckedArithmetic _SignedCheckedArithmetic;
 
 /* Allocate a t3_t2_F32_val_F32_val_F32_val_F32_val without initialising it. */
 t3_t2_F32_val_F32_val_F32_val_F32_val* t3_t2_F32_val_F32_val_F32_val_F32_val_Alloc(void);
+
+/* Allocate a ui_$2$33 without initialising it. */
+ui_$2$33* ui_$2$33_Alloc(void);
+
+None* ui_$2$33_val_apply_oo(ui_$2$33* self, ui_RenderEngine* p1);
+
+None* ui_$2$33_box_apply_oo(ui_$2$33* self, ui_RenderEngine* p1);
+
+None* ui_$2$33_ref_apply_oo(ui_$2$33* self, ui_RenderEngine* p1);
 
 /* Allocate a ui_NullEvent without initialising it. */
 ui_NullEvent* ui_NullEvent_Alloc(void);
@@ -1615,15 +1624,6 @@ _UnsignedPartialArithmetic* _UnsignedPartialArithmetic_Alloc(void);
 
 _UnsignedPartialArithmetic* _UnsignedPartialArithmetic_val_create_o(_UnsignedPartialArithmetic* self);
 
-/* Allocate a ui_$2$25 without initialising it. */
-ui_$2$25* ui_$2$25_Alloc(void);
-
-None* ui_$2$25_val_apply_oo(ui_$2$25* self, ui_RenderEngine* p1);
-
-None* ui_$2$25_box_apply_oo(ui_$2$25* self, ui_RenderEngine* p1);
-
-None* ui_$2$25_ref_apply_oo(ui_$2$25* self, ui_RenderEngine* p1);
-
 /* Allocate a Stringable without initialising it. */
 Stringable* Stringable_Alloc(void);
 
@@ -2165,7 +2165,7 @@ None* None_val_create_o(None* self);
 /* Allocate a ui_RenderEngine without initialising it. */
 ui_RenderEngine* ui_RenderEngine_Alloc(void);
 
-None* ui_RenderEngine_tag_getNodeByName_ooo__send(ui_RenderEngine* self, String* nodeName, ui_$2$24* callback);
+None* ui_RenderEngine_tag_getNodeByName_ooo__send(ui_RenderEngine* self, String* nodeName, ui_$2$32* callback);
 
 float ui_RenderEngine_ref_nanoToSec_Wf(ui_RenderEngine* self, uint64_t nano);
 
@@ -2173,7 +2173,7 @@ float ui_RenderEngine_box_nanoToSec_Wf(ui_RenderEngine* self, uint64_t nano);
 
 float ui_RenderEngine_val_nanoToSec_Wf(ui_RenderEngine* self, uint64_t nano);
 
-None* ui_RenderEngine_tag_getNodeByID_Zoo__send(ui_RenderEngine* self, size_t id, ui_$2$24* callback);
+None* ui_RenderEngine_tag_getNodeByID_Zoo__send(ui_RenderEngine* self, size_t id, ui_$2$32* callback);
 
 None* ui_RenderEngine_ref_invalidateNodeByID_Zo(ui_RenderEngine* self, size_t id);
 
@@ -2209,7 +2209,7 @@ uint32_t ui_RenderEngine_box__batch_I(ui_RenderEngine* self);
 
 None* ui_RenderEngine_tag_setNeedsRendered_o__send(ui_RenderEngine* self);
 
-None* ui_RenderEngine_tag_run_oo__send(ui_RenderEngine* self, ui_$2$25* callback);
+None* ui_RenderEngine_tag_run_oo__send(ui_RenderEngine* self, ui_$2$33* callback);
 
 None* ui_RenderEngine_ref_markRenderFinished_o(ui_RenderEngine* self);
 
@@ -2673,15 +2673,6 @@ size_t String_ref_offset_to_index_zZ(String* self, ssize_t i);
 /* Allocate a t2_F32_val_F32_val without initialising it. */
 t2_F32_val_F32_val* t2_F32_val_F32_val_Alloc(void);
 
-/* Allocate a ui_$2$24 without initialising it. */
-ui_$2$24* ui_$2$24_Alloc(void);
-
-void* ui_$2$24_val_apply_oo(ui_$2$24* self, void* p1);
-
-void* ui_$2$24_box_apply_oo(ui_$2$24* self, void* p1);
-
-void* ui_$2$24_ref_apply_oo(ui_$2$24* self, void* p1);
-
 /* Allocate a ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_box without initialising it. */
 ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_box* ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_box_Alloc(void);
 
@@ -3003,6 +2994,15 @@ None* ui_YogaNode_ref_name_oo(ui_YogaNode* self, String* name_);
 ui_TouchEvent* ui_TouchEvent_Alloc(void);
 
 ui_TouchEvent* ui_TouchEvent_val_create_Zbffo(ui_TouchEvent* self, size_t id_, bool pressed_, float x, float y);
+
+/* Allocate a ui_$2$32 without initialising it. */
+ui_$2$32* ui_$2$32_Alloc(void);
+
+void* ui_$2$32_val_apply_oo(ui_$2$32* self, void* p1);
+
+void* ui_$2$32_box_apply_oo(ui_$2$32* self, void* p1);
+
+void* ui_$2$32_ref_apply_oo(ui_$2$32* self, void* p1);
 
 /* Allocate a ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref without initialising it. */
 ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref* ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref_Alloc(void);

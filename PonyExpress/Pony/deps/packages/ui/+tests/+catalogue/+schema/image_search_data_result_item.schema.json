@@ -1,0 +1,20 @@
+{
+  "title": "ImageSearchResponseDataResultItem",
+  "type": "object",
+  "properties": {
+    "title": { "type": "string" },
+    "type": { "type": "string" },
+    "media": { "type": "string" },
+    "desc": { "type": "string" },
+    "thumbnail": { "type": "string" },
+    "thumb_width": { "type": "number" },
+    "thumb_height": { "type": "number" },
+    "width": { "type": "number" },
+    "height": { "type": "number" },
+    "size": { "type": "number" },
+    "url": { "type": "string" },
+    "media_fullsize": { "type": "string" },
+    "thumb_type": { "type": "string" },
+    "media_preview": { "type": "string" }
+  }
+}

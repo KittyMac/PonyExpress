@@ -1,0 +1,349 @@
+{
+  "status": "success",
+  "data": {
+    "query": {
+      "locale": "fr_fr",
+      "query": "kittens",
+      "offset": 0
+    },
+    "cache": {
+      "key": "818b7a57827fee51395600aa27fb252aa",
+      "created": 1587443839,
+      "expiration": 2592000,
+      "status": "miss",
+      "age": 0
+    },
+    "result": {
+      "total": 15,
+      "items": [
+        {
+          "title": "Proud Cats Love Their Kittens Compilation - YouTube",
+          "type": "image",
+          "media": "https://i.ytimg.com/vi/0ZKRpCmVLjo/maxresdefault.jpg",
+          "desc": "",
+          "thumbnail": "//s1.qwant.com/thumbr/355x200/1/6/5245023fe79eaaf677b58725fcbbdeec5e56d6cb8f3d66dcaae16edbd550fd/maxresdefault.jpg?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2F0ZKRpCmVLjo%2Fmaxresdefault.jpg&q=0&b=1&p=0&a=0&b_id=OIP.ga-blltIhKLuV8aBZsXrHAHaEK",
+          "thumb_width": 355,
+          "thumb_height": 200,
+          "width": "1280",
+          "height": "720",
+          "size": "148849",
+          "url": "https://www.youtube.com/watch?v=0ZKRpCmVLjo",
+          "_id": "7483fb50868ad96b337d93c4a2ff3f6d",
+          "b_id": "OIP.ga-blltIhKLuV8aBZsXrHAHaEK",
+          "media_fullsize": "//s1.qwant.com/thumbr/0x0/1/5/f90938ca31602aefd8ce97809ae7c2e4eca08ab7ecbbe7cf6ed8907da175d2/maxresdefault.jpg?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2F0ZKRpCmVLjo%2Fmaxresdefault.jpg&q=0&b=1&p=0&a=1",
+          "thumb_type": "jpg",
+          "count": 0,
+          "media_preview": "//s1.qwant.com/thumbr/0x380/a/8/5653a2c1a59abcc91d5a674770126e9fa7b925b1212a1d6a091aa01a5a6ee4/maxresdefault.jpg?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2F0ZKRpCmVLjo%2Fmaxresdefault.jpg&q=0&b=1&p=0&a=1"
+        },
+        {
+          "title": "The Best Cute Kittens and Funny Cats Videos - YouTube",
+          "type": "image",
+          "media": "https://i.ytimg.com/vi/SBjCQX7Lh2Q/maxresdefault.jpg",
+          "desc": "",
+          "thumbnail": "//s1.qwant.com/thumbr/355x200/2/1/b8719a9d414e9ec0aa0eb2bd1752a92419a9e279de46b10a4ebce9b58d84c6/maxresdefault.jpg?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2FSBjCQX7Lh2Q%2Fmaxresdefault.jpg&q=0&b=1&p=0&a=0&b_id=OIP.IUzeRhiRHWvbZqZZzDJY2gHaEK",
+          "thumb_width": 355,
+          "thumb_height": 200,
+          "width": "1280",
+          "height": "720",
+          "size": "111890",
+          "url": "http://www.youtube.com/watch?v=SBjCQX7Lh2Q",
+          "_id": "062fd4404c17d612e93553bb04dba0fb",
+          "b_id": "OIP.IUzeRhiRHWvbZqZZzDJY2gHaEK",
+          "media_fullsize": "//s2.qwant.com/thumbr/0x0/4/3/4f955440424832a2b34b91a672026ef7c7bbcb785fa08c8dbc95767f7d8ec0/maxresdefault.jpg?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2FSBjCQX7Lh2Q%2Fmaxresdefault.jpg&q=0&b=1&p=0&a=1",
+          "thumb_type": "jpg",
+          "count": 1,
+          "media_preview": "//s2.qwant.com/thumbr/0x380/7/d/1aa0d246102d198377218cebffc281850ad3103e71cc2c89b183d01748ec97/maxresdefault.jpg?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2FSBjCQX7Lh2Q%2Fmaxresdefault.jpg&q=0&b=1&p=0&a=1"
+        },
+        {
+          "title": "Cute Teacup Kittens Vines Compilation - YouTube",
+          "type": "image",
+          "media": "https://i.ytimg.com/vi/w9O11noT_zk/maxresdefault.jpg",
+          "desc": "",
+          "thumbnail": "//s2.qwant.com/thumbr/355x200/c/6/a2bde907276d76c8bfc18128949c5e16c9c8c95b893126dbf54897184b5232/maxresdefault.jpg?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2Fw9O11noT_zk%2Fmaxresdefault.jpg&q=0&b=1&p=0&a=0&b_id=OIP.xMQFDXFkDFXk6PC86RO3EgHaEK",
+          "thumb_width": 355,
+          "thumb_height": 200,
+          "width": "1280",
+          "height": "720",
+          "size": "139107",
+          "url": "https://www.youtube.com/watch?v=w9O11noT_zk",
+          "_id": "07b35128e8628533796df8c0a5b18d99",
+          "b_id": "OIP.xMQFDXFkDFXk6PC86RO3EgHaEK",
+          "media_fullsize": "//s1.qwant.com/thumbr/0x0/8/6/564398b4efb78aca897a75fdcb577202c0ca950cf394389b57ce21b5252dac/maxresdefault.jpg?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2Fw9O11noT_zk%2Fmaxresdefault.jpg&q=0&b=1&p=0&a=1",
+          "thumb_type": "jpg",
+          "count": 2,
+          "media_preview": "//s1.qwant.com/thumbr/0x380/3/0/feaae904e6952775fe90528bd56632fceb98e1f3ce92a561e93d515e45e022/maxresdefault.jpg?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2Fw9O11noT_zk%2Fmaxresdefault.jpg&q=0&b=1&p=0&a=1"
+        },
+        {
+          "title": "Virtual #KittenTherapy: OMG Kitten Cuteness - YouTube",
+          "type": "image",
+          "media": "https://i.ytimg.com/vi/kNxbDNFz2Qw/maxresdefault.jpg",
+          "desc": "",
+          "thumbnail": "//s1.qwant.com/thumbr/355x200/a/4/355657cda1f135f3e40746794a8773a757135b657b9d7a01f1c85415d9de9f/maxresdefault.jpg?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2FkNxbDNFz2Qw%2Fmaxresdefault.jpg&q=0&b=1&p=0&a=0&b_id=OIP._3dVkSuuY2CyD-cccM2D2gHaEK",
+          "thumb_width": 355,
+          "thumb_height": 200,
+          "width": "1280",
+          "height": "720",
+          "size": "77552",
+          "url": "https://www.youtube.com/watch?v=kNxbDNFz2Qw",
+          "_id": "d557b2a4343d064054c4dd468ece2066",
+          "b_id": "OIP._3dVkSuuY2CyD-cccM2D2gHaEK",
+          "media_fullsize": "//s1.qwant.com/thumbr/0x0/8/7/186871fb047c44e7eaf46becacd55106a0635aee73f3793d4ef78756b95687/maxresdefault.jpg?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2FkNxbDNFz2Qw%2Fmaxresdefault.jpg&q=0&b=1&p=0&a=1",
+          "thumb_type": "jpg",
+          "count": 3,
+          "media_preview": "//s2.qwant.com/thumbr/0x380/c/6/5413d1407040b4f8907cd0ad865e11e9b5a75342bf8f16c8c28d1c3ccfc8b4/maxresdefault.jpg?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2FkNxbDNFz2Qw%2Fmaxresdefault.jpg&q=0&b=1&p=0&a=1"
+        },
+        {
+          "title": "Top Kittens 🔴 Funny and Cute Kittens Videos Compilation ...",
+          "type": "image",
+          "media": "https://i.ytimg.com/vi/k031_JWX0YU/maxresdefault.jpg",
+          "desc": "",
+          "thumbnail": "//s2.qwant.com/thumbr/355x200/f/b/b34bd47402d14e59108492881c240f86c3476dc9822c8d00c38605c3b141ce/maxresdefault.jpg?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2Fk031_JWX0YU%2Fmaxresdefault.jpg&q=0&b=1&p=0&a=0&b_id=OIP.En2SWqrEIkxKfsZNtupqYwHaEK",
+          "thumb_width": 355,
+          "thumb_height": 200,
+          "width": "1280",
+          "height": "720",
+          "size": "114996",
+          "url": "http://www.youtube.com/watch?v=k031_JWX0YU",
+          "_id": "f6c87864a1efd927e38e55f40b20e206",
+          "b_id": "OIP.En2SWqrEIkxKfsZNtupqYwHaEK",
+          "media_fullsize": "//s1.qwant.com/thumbr/0x0/8/6/26161265f1c9447fcbd3c1c16f6b885fe4e97980f5e53b70f9c31504559096/maxresdefault.jpg?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2Fk031_JWX0YU%2Fmaxresdefault.jpg&q=0&b=1&p=0&a=1",
+          "thumb_type": "jpg",
+          "count": 4,
+          "media_preview": "//s1.qwant.com/thumbr/0x380/9/9/7411b196e2909ef147626bb8fab96b6ddce20114c176c591669c8201f2202c/maxresdefault.jpg?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2Fk031_JWX0YU%2Fmaxresdefault.jpg&q=0&b=1&p=0&a=1"
+        }
+      ],
+      "filters": {
+        "size": {
+          "label": "Size",
+          "name": "size",
+          "type": "dropdown",
+          "selected": "all",
+          "values": [
+            {
+              "value": "all",
+              "label": "All",
+              "translate": true
+            },
+            {
+              "value": "small",
+              "label": "Small",
+              "translate": true
+            },
+            {
+              "value": "medium",
+              "label": "Medium",
+              "translate": true
+            },
+            {
+              "value": "large",
+              "label": "Large",
+              "translate": true
+            }
+          ]
+        },
+        "license": {
+          "label": "License",
+          "name": "license",
+          "type": "dropdown",
+          "selected": "all",
+          "values": [
+            {
+              "value": "all",
+              "label": "All",
+              "translate": true
+            },
+            {
+              "value": "public",
+              "label": "Public domain",
+              "translate": true
+            },
+            {
+              "value": "share",
+              "label": "Non-commercial reproduction and sharing",
+              "translate": true
+            },
+            {
+              "value": "sharecommercially",
+              "label": "Reproduction and sharing",
+              "translate": true
+            },
+            {
+              "value": "modify",
+              "label": "Non-commercial reproduction, sharing and modification",
+              "translate": true
+            },
+            {
+              "value": "modifycommercially",
+              "label": "Reproduction, sharing and modification",
+              "translate": true
+            }
+          ]
+        },
+        "freshness": {
+          "label": "Freshness",
+          "name": "freshness",
+          "type": "dropdown",
+          "selected": "all",
+          "values": [
+            {
+              "value": "all",
+              "label": "All time",
+              "translate": true
+            },
+            {
+              "value": "day",
+              "label": "Past 24 hours",
+              "translate": true
+            },
+            {
+              "value": "week",
+              "label": "Past week",
+              "translate": true
+            },
+            {
+              "value": "month",
+              "label": "Past month",
+              "translate": true
+            }
+          ]
+        },
+        "color": {
+          "label": "Color",
+          "name": "color",
+          "type": "dropdown",
+          "selected": "all",
+          "values": [
+            {
+              "value": "all",
+              "label": "All",
+              "translate": true
+            },
+            {
+              "value": "coloronly",
+              "label": "Color only",
+              "translate": true
+            },
+            {
+              "value": "monochrome",
+              "label": "Monochrome",
+              "translate": true
+            },
+            {
+              "value": "black",
+              "label": "grid:color:black",
+              "translate": false
+            },
+            {
+              "value": "brown",
+              "label": "grid:color:brown",
+              "translate": false
+            },
+            {
+              "value": "gray",
+              "label": "grid:color:gray",
+              "translate": false
+            },
+            {
+              "value": "white",
+              "label": "grid:color:white",
+              "translate": false
+            },
+            {
+              "value": "yellow",
+              "label": "grid:color:yellow",
+              "translate": false
+            },
+            {
+              "value": "orange",
+              "label": "grid:color:orange",
+              "translate": false
+            },
+            {
+              "value": "red",
+              "label": "grid:color:red",
+              "translate": false
+            },
+            {
+              "value": "pink",
+              "label": "grid:color:pink",
+              "translate": false
+            },
+            {
+              "value": "purple",
+              "label": "grid:color:purple",
+              "translate": false
+            },
+            {
+              "value": "blue",
+              "label": "grid:color:blue",
+              "translate": false
+            },
+            {
+              "value": "teal",
+              "label": "grid:color:teal",
+              "translate": false
+            },
+            {
+              "value": "green",
+              "label": "grid:color:green",
+              "translate": false
+            }
+          ]
+        },
+        "imagetype": {
+          "label": "Type",
+          "name": "imagetype",
+          "type": "dropdown",
+          "selected": "all",
+          "values": [
+            {
+              "value": "all",
+              "label": "All",
+              "translate": true
+            },
+            {
+              "value": "animatedgif",
+              "label": "Animated Gif",
+              "translate": true
+            },
+            {
+              "value": "photo",
+              "label": "Photograph",
+              "translate": true
+            },
+            {
+              "value": "transparent",
+              "label": "Transparent",
+              "translate": true
+            }
+          ]
+        },
+        "source": {
+          "label": "Source",
+          "name": "source",
+          "type": "dropdown",
+          "selected": "web",
+          "values": [
+            {
+              "value": "web",
+              "label": "Web",
+              "translate": true
+            },
+            {
+              "value": "flickr",
+              "label": "Flickr",
+              "translate": false
+            },
+            {
+              "value": "500px",
+              "label": "500px",
+              "translate": false
+            }
+          ]
+        }
+      },
+      "domain": "web",
+      "last": true
+    }
+  }
+}

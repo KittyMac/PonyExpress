@@ -1,0 +1,8 @@
+{
+  "title": "ImageSearchResponseDataResult",
+  "type": "object",
+  "properties": {
+    "total": { "type": "number" },
+    "items": { "type": "array", "items": { "type": "#object/ImageSearchResponseDataResultItem" } }
+  }
+}
