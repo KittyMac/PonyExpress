@@ -16,6 +16,9 @@ class Geometry
   
   fun ref invalidate() =>
     bounds = R4fun.zero()
+    matrix = M4fun.id()
+    screenBounds = R4fun.zero()
+    extra = 0
   
   fun ref check(frameContext:FrameContext box, new_bounds:R4, new_extra:USize = 0):Bool =>
     if R4fun.eq(bounds, new_bounds) and R4fun.eq(screenBounds, frameContext.screenBounds) and M4fun.eq(matrix, frameContext.matrix) and (extra == new_extra) then
