@@ -1,0 +1,8 @@
+{
+	"title": "PersonRequest",
+	"type": "object",
+	"properties": {
+		"firstName": { "type": "string", "default":""  },
+		"lastName": { "type": "string", "default":"" },
+	}
+}

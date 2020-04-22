@@ -1,0 +1,14 @@
+{
+	"title": "PersonResponse",
+	"type": "array",
+	"items": {
+		"title": "Person",
+		"type": "object",
+		"properties": {
+			"firstName": { "type": "string", "default":""  },
+			"lastName": { "type": "string", "default":""  },
+			"age": { "type": "integer", "default":"0"  },
+			"height": { "type": "number", "default":"0"  },
+		}
+	}
+}

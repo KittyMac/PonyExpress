@@ -1,6 +1,7 @@
 use "yoga"
 use "utility"
 use "collections"
+use "http"
 
 primitive PerformImageSearch is Action
 
@@ -81,12 +82,28 @@ actor ImageSearchTest is Controllerable
               resultsNode.removeChildren()
             
               for item in response.data.result.items.values() do
-                let resultView = YogaNode.>height(200).>widthAuto().>marginAll(2).>aspectRatio(item.thumb_width / item.thumb_height)
-                                         .>view( Color.>red() )
-                                    
-                resultsNode.addChild(resultView)
                 
-                Log.println("%s", item.media)
+                try
+                  // Note: HttpClient doesn't currently support https, so we'll just swap https with http and hope that works!
+                  let fixedMediaURL:String val = recover val 
+                    let temp = item.media.clone()
+                    temp.replace("https://", "http://")
+                    consume temp
+                  end
+                  
+                  HttpClient.download(fixedMediaURL, {(response:HttpResponseHeader val, content:Array[U8] val) => 
+                    if response.statusCode == 200 then
+                      Log.println("Downloaded image of %s bytes", content.size())
+                    else
+                      Log.println("Failed to download image, status code %s", response.statusCode)
+                    end
+                  })?
+                  
+                  let resultView = YogaNode.>height(200).>widthAuto().>marginAll(2).>aspectRatio(item.thumb_width / item.thumb_height)
+                                           .>view( Color.>red() )
+                                           
+                  resultsNode.addChild(resultView)
+                end
               end
               
               self.setNeedsLayout()
