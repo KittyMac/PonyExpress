@@ -20,12 +20,12 @@ actor ImageSearchTest is Controllerable
 	fun ref mainNode():YogaNode iso^ =>
     
     recover iso 
-      YogaNode.>paddingAll(6)
+      YogaNode.>paddingAll(6).>columns().>columnsReversed()
               .>view( Color.>color(RGBA(0.98,0.98,0.98,1)) )
               .>addChildren( [
             
             // Scroll view containing the search results
-            YogaNode.>paddingLeft(6).>paddingRight(6).>paddingTop(60)
+            YogaNode.>paddingLeft(6).>paddingRight(6).>shrink()
                     .>clips(true)
                     .>view( Scroll.>horizontal(false) )
                     .>addChild(
@@ -36,7 +36,7 @@ actor ImageSearchTest is Controllerable
                       )
             
             // Top bar containing the search field
-            YogaNode.>absolute().>origin(0,0).>height(60).>minWidth(200).>rows().>paddingAll(6)
+            YogaNode.>height(60).>minWidth(200).>rows().>paddingAll(6)
                     .>view( Image.>path("dialog_background").>stretchAll(12).>renderInset(-100,-200,-5,-30) )
                     .>addChildren( [ 
                       

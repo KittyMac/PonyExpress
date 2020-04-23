@@ -410,6 +410,9 @@ class YogaNode
   fun ref rows() => @YGNodeStyleSetFlexDirection(node, YGFlexDirection.row)
   fun ref columns() => @YGNodeStyleSetFlexDirection(node, YGFlexDirection.column)
   
+  fun ref rowsReversed() => @YGNodeStyleSetFlexDirection(node, YGFlexDirection.rowreverse)
+  fun ref columnsReversed() => @YGNodeStyleSetFlexDirection(node, YGFlexDirection.columnreverse)
+  
   fun ref rightToLeft() => @YGNodeStyleSetDirection(node, YGDirection.rtl)
   fun ref leftToRight() => @YGNodeStyleSetDirection(node, YGDirection.ltr)
   
