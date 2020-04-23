@@ -280,7 +280,7 @@ actor@ RenderEngine
         layoutNeeded = false
         renderNeeded = false
       else
-        Log.println("startNeeded required but waitingOnViewsToStart is not 0 (is it %s) \n", waitingOnViewsToStart)
+        Log.println("startNeeded required but waitingOnViewsToStart is not 0 (it is %s) \n", waitingOnViewsToStart)
         markRenderFinished()
         return
       end
@@ -299,7 +299,7 @@ actor@ RenderEngine
         let frameContext = FrameContext(this, renderContext, node.id(), focusedNodeID, frameNumber, 0, M4fun.id(), V2fun.zero(), node.nodeSize(), node.contentSize(), R4fun.big(), screenBounds, last_animation_delta)
         waitingOnViewsToRender = node.render(frameContext)
       else
-        Log.println("renderNeeded required but waitingOnViewsToRender is not 0 (is it %s) \n", waitingOnViewsToRender)
+        Log.println("renderNeeded required but waitingOnViewsToRender is not 0 (it is %s) \n", waitingOnViewsToRender)
         markRenderFinished()
       end
     else

@@ -81,7 +81,7 @@ actor ImageSearchTest is Controllerable
             let resultsNode = self.node.getNodeByName(resultsView)
             if resultsNode as YogaNode then
               resultsNode.removeChildren()
-            
+                            
               for item in response.data.result.items.values() do
                 
                 try
@@ -114,7 +114,7 @@ actor ImageSearchTest is Controllerable
                     imageView.path(fixedMediaURL)
                   end
                   
-                  let resultView = YogaNode.>height(200).>widthAuto().>marginAll(2).>aspectRatio(item.thumb_width / item.thumb_height)
+                  let resultView = YogaNode.>height(200).>maxHeight(200).>widthAuto().>grow().>marginAll(2).>aspectRatio(item.thumb_width / item.thumb_height)
                                            .>view( Color.>gray() )
                                            .>view( imageView )
                                            

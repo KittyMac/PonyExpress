@@ -292,7 +292,7 @@ trait Scrollable is (Viewable & Actionable)
       end
       
       //ensure a maximum velocity
-      let m:F32 = 30_000
+      let m:F32 = 60_000
       if velocityX > m then velocityX = m end
       if velocityX < -m then velocityX = -m end
       if velocityY > m then velocityY = m end

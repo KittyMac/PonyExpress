@@ -26,7 +26,7 @@ class HttpRequest
   var httpResponseHeaderBuffer:Array[U8]
   var httpResponseContentBuffer:Array[U8] trn
   
-  let maxHttpResponseHeaderSize:USize = 2048
+  let maxHttpResponseHeaderSize:USize = 65536
   
   var writeOffset:USize = 0
   
@@ -128,7 +128,7 @@ class HttpRequest
     
   fun ref read(event:AsioEventID):Bool =>
     try
-      while true do
+      //while true do
         match requestState
         | HttpRequestState.header() =>
         
@@ -191,7 +191,7 @@ class HttpRequest
                   
         end
                 
-      end
+      //end
     else
       finished()
       return true

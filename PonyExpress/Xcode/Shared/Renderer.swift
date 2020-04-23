@@ -363,7 +363,7 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             }
             
             renderAheadCount += 1
-                        
+            
             RenderEngineInternal_renderAll(nil)
             
             // ensure that our depth texture size is correct!
@@ -431,7 +431,7 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             renderEncoder.setDepthStencilState(ignoreStencilState)
             
             var aborted = false
-            
+                        
             while let unitPtr = RenderEngineInternal_nextRenderUnit(nil) {
                 let unit = unitPtr.pointee
                 let shaderType = unit.shaderType
@@ -536,7 +536,7 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             renderEncoder.setVertexBytes(&globalUniforms, length: MemoryLayout<GlobalUniforms>.stride, index: 2)
         }
         
-        if unit.bytes_vertices < 4096 {
+        if unit.bytes_vertices <= 4096 {
             renderEncoder.setVertexBytes(unit.vertices, length: Int(unit.bytes_vertices), index: 0)
             renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: Int(unit.num_vertices))
             RenderEngine_release(unit.vertices, unit.size_vertices_array)
@@ -629,17 +629,6 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             
             if let bytesPtr = bytesPtr {
                 
-                // This doesn't like being multi-threaded, because we use dictionary cache. So lock and then check again before loading
-                objc_sync_enter(getTextureLock)
-                defer {
-                    objc_sync_exit(getTextureLock)
-                }
-                
-                var texture = textureCache[name]
-                if texture != nil {
-                    return
-                }
-                
                 let textureLoaderOptions = [
                     MTKTextureLoader.Option.textureUsage: NSNumber(value: MTLTextureUsage.shaderRead.rawValue),
                     MTKTextureLoader.Option.textureStorageMode: NSNumber(value: MTLStorageMode.`private`.rawValue),
@@ -647,8 +636,13 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
                     MTKTextureLoader.Option.generateMipmaps: NSNumber(value: false)
                 ]
                 do {
-                    texture = try textureLoader.newTexture(data: Data(bytesNoCopy: bytesPtr, count: bytesCount, deallocator: .none), options: textureLoaderOptions)
+                    var texture = try textureLoader.newTexture(data: Data(bytesNoCopy: bytesPtr, count: bytesCount, deallocator: .none), options: textureLoaderOptions)
+                    
+                    // This doesn't like being multi-threaded, because we use dictionary cache. So lock and then check again before loading
+                    objc_sync_enter(getTextureLock)
                     textureCache[name] = texture
+                    objc_sync_exit(getTextureLock)
+                    
                 } catch {
                     print("Texture failed to load: \(error)")
                 }

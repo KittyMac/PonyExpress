@@ -407,7 +407,7 @@ bool RenderEngineInternal_gatherAllRenderUnitsForNextFrame(HALRenderContext * co
             }
             
             // Sanity check: if for whatever reason we get stuck waiting "forever" for the frame to end, exit without waiting for the end frame
-            if (time_spent_sleeping > 1000000) {
+            if (time_spent_sleeping > 100000000) {
                 fprintf(stderr, "failed to reach end of frame in reasonable amount of time, bailing...");
                 break;
             }
