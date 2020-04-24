@@ -135,9 +135,9 @@ actor@ RenderEngine
   var last_animation_time:U64 = @ponyint_cpu_tick()
   var last_animation_delta:F32 = 0
   
-  fun _tag():U32 => 2002
-  fun _batch():U32 => 5_000_000
-  fun _prioritiy():U32 => 999
+  fun _tag():U64 => 2002
+  fun _batch():U64 => 5_000_000
+  fun _priority():U64 => 999
   
   fun tag root():String val => "Root"
   

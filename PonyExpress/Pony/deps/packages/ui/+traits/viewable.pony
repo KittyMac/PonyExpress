@@ -8,7 +8,7 @@ trait tag Viewable is Animatable
   var renderInsets:V4 = V4fun.zero()
   var eventInsets:V4 = V4fun.zero()
   
-  fun _prioritiy():U32 => 100
+  fun _priority():U64 => 100
   
   be renderInset(top:F32, left:F32, bottom:F32, right:F32) =>
     renderInsets = V4fun(top, left, bottom, right)

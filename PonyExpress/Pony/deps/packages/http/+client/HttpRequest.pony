@@ -14,11 +14,13 @@ class HttpResponseHeader
   var statusCode:U32 = 0
   var contentType:String val
   var contentLength:USize
+  var location:String val
   
-  new val create(statusCode':U32, contentType':String val, contentLength':USize) =>
+  new val create(statusCode':U32, contentType':String val, contentLength':USize, location':String val) =>
     statusCode = statusCode'
     contentType = contentType'
     contentLength = contentLength'
+    location = location'
 
 class HttpRequest
   let httpRequestString:String val
@@ -38,6 +40,7 @@ class HttpRequest
   
   var httpContentLength:String ref
   var httpContentType:String ref
+  var httpLocation:String ref
   var httpStatus:String ref
   var httpStatusCode:U32 = 0
     
@@ -53,6 +56,7 @@ class HttpRequest
     
     httpContentLength = String(128)
     httpContentType = String(128)
+    httpLocation = String(128)
     httpStatus = String(10)
   
   fun ref matchScan(string:String):Bool =>
@@ -104,7 +108,7 @@ class HttpRequest
     
     (httpResponseContentBuffer, let content) = consumeFieldArray(consume httpResponseContentBuffer)
     
-    callback(HttpResponseHeader(httpStatusCode, httpContentType.clone(), readContentLength), content)
+    callback(HttpResponseHeader(httpStatusCode, httpContentType.clone(), readContentLength, httpLocation.clone()), content)
   
   fun ref write(event:AsioEventID):Bool =>
     try
@@ -150,6 +154,8 @@ class HttpRequest
             if  (prevScanCharA == 'T') and (prevScanCharB == 'T') and (c == 'P') and matchScan("HTTP") then
               scanHttpStatus(readOffset-3, httpStatus)
               try httpStatusCode = httpStatus.u32()? end
+            elseif (prevScanCharA == 'o') and (prevScanCharB == 'n') and (c == ':') and matchScan("Location:") then
+              scanHeader(readOffset-5, httpLocation)
             elseif (prevScanCharA == 'p') and (prevScanCharB == 'e') and (c == ':') and matchScan("Content-Type:") then
               scanHeader(readOffset-5, httpContentType)
             elseif (prevScanCharA == 't') and (prevScanCharB == 'h') and (c == ':') and matchScan("Content-Length:") then

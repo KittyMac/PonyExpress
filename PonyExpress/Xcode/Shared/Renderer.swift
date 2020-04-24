@@ -74,7 +74,7 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
     
     private var aaplView: PonyExpressView
     
-    private var getTextureLock:NSObject = NSObject()
+    private var textureCacheLock:NSObject = NSObject()
     private var fileURLFromBundlePathLock:NSObject = NSObject()
     private var renderAheadCountLock:NSObject = NSObject()
         
@@ -268,10 +268,10 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
         RenderEngineInternal_registerAPICallbacks(nil,
                                                   bridge(self),
                                                   
-                                                  // getTexture
+                                                  // loadTextureNow
                                                   { (observer, namePtr, widthPtr, heightPtr) -> Void in
                                                         let mySelf = Unmanaged<Renderer>.fromOpaque(observer!).takeUnretainedValue()
-                                                    if let texture = mySelf.getTexture(namePtr: namePtr) {
+                                                    if let texture = mySelf.loadTextureNow(namePtr: namePtr) {
                                                             if let widthPtr = widthPtr {
                                                                 widthPtr.initialize(to: Float(texture.width))
                                                             }
@@ -437,7 +437,7 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
                 let shaderType = unit.shaderType
                 
                 if unit.textureName != nil {
-                    let texture = getTexture(namePtr: unit.textureName)
+                    let texture = loadTextureNow(namePtr: unit.textureName)
                     if texture == nil {
                         continue
                     }
@@ -579,7 +579,7 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
         return metalDevice.makeTexture(descriptor: desc)!
     }
     
-    func getTexture(namePtr: UnsafePointer<Int8>?) -> MTLTexture? {
+    func loadTextureNow(namePtr: UnsafePointer<Int8>?) -> MTLTexture? {
         // attempt to get it from cache first, if not load it then cache it
         if let namePtr = namePtr {
             let name = String(cString: namePtr)
@@ -589,9 +589,9 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             let resolvedName = fileURLFromBundlePath(name)
                         
             // This doesn't like being multi-threaded, because we use dictionary cache. So lock and then check again before loading
-            objc_sync_enter(getTextureLock)
+            objc_sync_enter(textureCacheLock)
             defer {
-                objc_sync_exit(getTextureLock)
+                objc_sync_exit(textureCacheLock)
             }
             
             var texture = textureCache[resolvedName]
@@ -635,17 +635,18 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
                     MTKTextureLoader.Option.SRGB: NSNumber(value: false),
                     MTKTextureLoader.Option.generateMipmaps: NSNumber(value: false)
                 ]
-                do {
-                    var texture = try textureLoader.newTexture(data: Data(bytesNoCopy: bytesPtr, count: bytesCount, deallocator: .none), options: textureLoaderOptions)
-                    
-                    // This doesn't like being multi-threaded, because we use dictionary cache. So lock and then check again before loading
-                    objc_sync_enter(getTextureLock)
-                    textureCache[name] = texture
-                    objc_sync_exit(getTextureLock)
-                    
-                } catch {
-                    print("Texture failed to load: \(error)")
-                }
+                
+                textureLoader.newTexture(data: Data(bytes: bytesPtr, count: bytesCount), options: textureLoaderOptions, completionHandler: { (texture, error) in
+                    if let texture = texture {
+                        objc_sync_enter(self.textureCacheLock)
+                        self.textureCache[name] = texture
+                        objc_sync_exit(self.textureCacheLock)
+                        
+                        DispatchQueue.main.async {
+                            RenderEngineInternal_setNeedsRendered(nil)
+                        }
+                    }
+                })
             }
         }
     }

@@ -30,7 +30,7 @@ actor HttpClient
     
     if false then error end
   
-  new download(url:String, callback:HttpRequestCallback val)? =>
+  new download(url:String, callback:HttpRequestCallback val, retryCount:U32 = 3)? =>
     // a "one shot" method to download the content of a url
     pendingRequestWrites = Array[HttpRequest](128)
     pendingRequestReads = Array[HttpRequest](128)
@@ -48,7 +48,7 @@ actor HttpClient
     
     let port = match protocol
     | "http" => "80"
-    | "https" => "443"
+    | "https" => "80" // When we support https then switch this to 443
     else error end
     
     //@printf[I32]("%s | %s | %s | %s | %s | %s\n".cstring(), protocol.cstring(), host.cstring(), path.cstring(), file.cstring(), query.cstring(), hash.cstring())
@@ -57,7 +57,21 @@ actor HttpClient
     _connect(host, port, "")?
     
     // 3. request the desired information
-    httpGet(path + file, callback)
+    let selfTag:HttpClient tag = this
+    let httpDidComplete:HttpRequestCallback val = {(response:HttpResponseHeader val, content:Array[U8] val) => 
+      if response.statusCode == 301 then
+        if (response.location != url) and (retryCount > 0) then
+          try HttpClient.download(response.location, callback, retryCount-1)? end
+        else
+          callback(response, content)
+        end
+      else
+        callback(response, content)
+      end
+      selfTag.close()
+    }
+    
+    httpGet(path + file, httpDidComplete)
     
   
   be _connect(host:String, port:String, from: String = "") =>
@@ -96,7 +110,7 @@ actor HttpClient
           @pony_asio_event_set_writeable(event, false)
           @pony_asio_event_resubscribe_write(event)
         else
-          close()
+          closeNow()
         end
       end
     else
@@ -144,12 +158,16 @@ actor HttpClient
     let request = HttpRequest(StringExt.format("PUT %s HTTP/1.1\r\n%sUser-Agent: Pony/0.1\r\n\r\n%s", urlPath, httpHost, content), callback)
     pendingRequestWrites.push(request)
     
-  fun ref close() =>
-    if event != AsioEvent.none() then
-          @pony_asio_event_unsubscribe(event)
-      //@pony_asio_event_destroy(event)
-      event = AsioEvent.none()
+  be close() =>
+    closeNow()
   
+  fun ref closeNow() =>
+    if event != AsioEvent.none() then
+      @pony_asio_event_unsubscribe(event)
+      event = AsioEvent.none()
+    end
+    
+    if socket != 0 then
       @pony_os_socket_close[None](socket)     
       socket = 0
     end

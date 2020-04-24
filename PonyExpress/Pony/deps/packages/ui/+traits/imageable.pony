@@ -97,12 +97,12 @@ trait Imageable is (Viewable & Colorable)
     let geom = bufferedGeometry.next()
     let vertices = geom.vertices
     
+    confirmImageSize(frameContext)
+    
     if geom.check(frameContext, bounds, (image_width + image_height).usize()) == false then
       
       vertices.reserve(6 * 9)
       vertices.clear()
-      
-      confirmImageSize(frameContext)
       
       if imageLoaded() then
         let image_aspect = image_width / image_height

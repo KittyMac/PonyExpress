@@ -84,39 +84,31 @@ actor ImageSearchTest is Controllerable
                             
               for item in response.data.result.items.values() do
                 
-                try
-                  // Note: HttpClient doesn't currently support https, so we'll just swap https with http and hope that works!
-                  let fixedMediaURL:String val = recover val 
-                    let temp = item.media.clone()
-                    temp.replace("https://", "http://")
-                    consume temp
-                  end
-                  
+                try                  
                   // Before we download the image, we can check and see if the texture exists already. If it does, there
                   // is no need to download it!
+                  let mediaURL = item.media
+                  
                   var image_width:F32 = 0
                   var image_height:F32 = 0
-                  @RenderEngine_textureInfo(self.renderContext, fixedMediaURL.cpointer(), addressof image_width, addressof image_height)
-                  
-                  let imageView:Image tag = Image.>aspectFill()
-                  
+                  @RenderEngine_textureInfo(self.renderContext, mediaURL.cpointer(), addressof image_width, addressof image_height)
+                                    
                   if (image_width == 0) and (image_height == 0) then
-                    HttpClient.download(fixedMediaURL, {(response:HttpResponseHeader val, content:Array[U8] val) => 
+                    HttpClient.download(mediaURL, {(response:HttpResponseHeader val, content:Array[U8] val) => 
                       if response.statusCode == 200 then
-                        selfTag.createTextureFromBytes(fixedMediaURL.cpointer(), content.cpointer(), content.size())
-                        imageView.path(fixedMediaURL)
-                        selfTag.setNeedsRendered()
+                        Log.println("download succeeded: %s", mediaURL)
+                        selfTag.createTextureFromBytes(mediaURL.cpointer(), content.cpointer(), content.size())
                       else
                         Log.println("Failed to download image, status code %s", response.statusCode)
                       end
                     })?
                   else
-                    imageView.path(fixedMediaURL)
+                    Log.println("HttpClient.download failed with error:\n %s", Utility.errorLoc())
                   end
                   
                   let resultView = YogaNode.>height(200).>maxHeight(200).>widthAuto().>grow().>marginAll(2).>aspectRatio(item.thumb_width / item.thumb_height)
                                            .>view( Color.>gray() )
-                                           .>view( imageView )
+                                           .>view( Image.>path(mediaURL).>aspectFill() )
                                            
                   resultsNode.addChild(resultView)
                 end

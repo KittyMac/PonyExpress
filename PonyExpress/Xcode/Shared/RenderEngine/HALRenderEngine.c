@@ -314,6 +314,12 @@ void RenderEngineInternal_renderAll(HALRenderContext * context) {
     ui_RenderEngine_tag_renderAll_o__send(context->ponyRenderEngine);
 }
 
+void RenderEngineInternal_setNeedsRendered(HALRenderContext * context) {
+    RESOLVE_CONTEXT();
+    
+    ui_RenderEngine_tag_setNeedsRendered_o__send(context->ponyRenderEngine);
+}
+
 bool RenderEngineInternal_hasRenderUnits(HALRenderContext * context) {
     RESOLVE_CONTEXT_RET(false);
     

@@ -161,6 +161,7 @@ void RenderEngineInternal_registerAPICallbacks(HALRenderContext * context,
 
 void RenderEngineInternal_renderAll(HALRenderContext * context);
 void RenderEngineInternal_updateBounds(HALRenderContext * context, float width, float height, float topInset, float leftInset, float bottomInset, float rightInset);
+void RenderEngineInternal_setNeedsRendered(HALRenderContext * context);
 bool RenderEngineInternal_hasRenderUnits(HALRenderContext * context);
 
 bool RenderEngineInternal_gatherAllRenderUnitsForNextFrame(HALRenderContext * context);
