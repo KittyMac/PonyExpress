@@ -287,6 +287,12 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
                                                     mySelf.createTextureFromBytes(namePtr: namePtr, bytesPtr: bytesPtr, bytesCount:bytesCount)
                                                   },
                                                   
+                                                  // createTextureFromUrl
+                                                  { (observer, urlPtr) -> Void in
+                                                    let mySelf = Unmanaged<Renderer>.fromOpaque(observer!).takeUnretainedValue()
+                                                    mySelf.createTextureFromUrl(urlPtr: urlPtr)
+                                                  },
+                                                  
                                                   // beginKeyboard
                                                   { (observer) -> Void in
                                                     let mySelf = Unmanaged<Renderer>.fromOpaque(observer!).takeUnretainedValue()
@@ -647,6 +653,51 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
                         }
                     }
                 })
+            }
+        }
+    }
+    
+    func createTextureFromUrl(urlPtr: UnsafePointer<Int8>?) {
+        if let urlPtr = urlPtr {
+            let urlString = String(cString: urlPtr)
+            if urlString.count == 0 {
+                return
+            }
+            
+            if let url = URL(string: urlString) {
+                let textureLoaderOptions = [
+                    MTKTextureLoader.Option.textureUsage: NSNumber(value: MTLTextureUsage.shaderRead.rawValue),
+                    MTKTextureLoader.Option.textureStorageMode: NSNumber(value: MTLStorageMode.`private`.rawValue),
+                    MTKTextureLoader.Option.SRGB: NSNumber(value: false),
+                    MTKTextureLoader.Option.generateMipmaps: NSNumber(value: false)
+                ]
+                
+                // Make sure we don't already have it
+                objc_sync_enter(textureCacheLock)
+                defer {
+                    objc_sync_exit(textureCacheLock)
+                }
+                
+                if textureCache[urlString] != nil {
+                    return
+                }
+                
+                URLSession.shared.dataTask(with: url) { (data, response, error) in
+                    if let data = data {
+                        self.textureLoader.newTexture(data: data, options: textureLoaderOptions, completionHandler: { (texture, error) in
+                            if let texture = texture {
+                                objc_sync_enter(self.textureCacheLock)
+                                self.textureCache[urlString] = texture
+                                objc_sync_exit(self.textureCacheLock)
+                                
+                                DispatchQueue.main.async {
+                                    RenderEngineInternal_setNeedsRendered(nil)
+                                }
+                            }
+                        })
+                    }
+                }.resume()
+                
             }
         }
     }

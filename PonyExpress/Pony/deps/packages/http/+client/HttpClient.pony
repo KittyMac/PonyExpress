@@ -48,7 +48,7 @@ actor HttpClient
     
     let port = match protocol
     | "http" => "80"
-    | "https" => "80" // When we support https then switch this to 443
+    | "https" => "443"
     else error end
     
     //@printf[I32]("%s | %s | %s | %s | %s | %s\n".cstring(), protocol.cstring(), host.cstring(), path.cstring(), file.cstring(), query.cstring(), hash.cstring())

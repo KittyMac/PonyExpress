@@ -361,4 +361,7 @@ actor@ RenderEngine
     node.event(frameContext, KeyEvent(pressed, keyCode, recover String.copy_cstring(charactersPtr) end, x, y))
   
   be createTextureFromBytes(name:Pointer[U8] tag, bytes:Pointer[U8] tag, bytesCount:USize) =>
-    @RenderEngine_createTexture(renderContext, name, bytes, bytesCount)
+    @RenderEngine_createTextureFromBytes(renderContext, name, bytes, bytesCount)
+  
+  be createTextureFromUrl(url:String val) =>
+    @RenderEngine_createTextureFromUrl(renderContext, url.cstring())

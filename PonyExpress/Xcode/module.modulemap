@@ -1,5 +1,5 @@
 module PonyExpress_Private {
-    private header "Shared/ShaderTypes.h"
+    private header "Shared/RenderEngine/ShaderTypes.h"
     export *
 }
 

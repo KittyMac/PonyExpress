@@ -83,33 +83,24 @@ actor ImageSearchTest is Controllerable
               resultsNode.removeChildren()
                             
               for item in response.data.result.items.values() do
-                let mediaURL = item.media
+                let mediaURL = "https:" + item.thumbnail
                 
-                try                  
-                  // Before we download the image, we can check and see if the texture exists already. If it does, there
-                  // is no need to download it!
-                  var image_width:F32 = 0
-                  var image_height:F32 = 0
-                  @RenderEngine_textureInfo(self.renderContext, mediaURL.cpointer(), addressof image_width, addressof image_height)
-                                    
-                  if (image_width == 0) and (image_height == 0) then
-                    HttpClient.download(mediaURL, {(response:HttpResponseHeader val, content:Array[U8] val) => 
-                      if response.statusCode == 200 then
-                        selfTag.createTextureFromBytes(mediaURL.cpointer(), content.cpointer(), content.size())
-                      else
-                        Log.println("Failed to download image, status code %s", response.statusCode)
-                      end
-                    })?
-                  end
-                  
-                  let resultView = YogaNode.>height(200).>maxHeight(200).>widthAuto().>grow().>marginAll(2).>aspectRatio(item.thumb_width / item.thumb_height)
-                                           .>view( Color.>gray() )
-                                           .>view( Image.>path(mediaURL).>aspectFill() )
-                                           
-                  resultsNode.addChild(resultView)
-                else
-                  Log.println("HttpClient.download failed for url %s with error:\n %s", mediaURL, Utility.errorLoc())
+                // Before we download the image, we can check and see if the texture exists already. If it does, there
+                // is no need to download it!
+                var image_width:F32 = 0
+                var image_height:F32 = 0
+                @RenderEngine_textureInfo(self.renderContext, mediaURL.cpointer(), addressof image_width, addressof image_height)
+                                  
+                if (image_width == 0) and (image_height == 0) then
+                  selfTag.createTextureFromUrl(mediaURL)
                 end
+                
+                let resultView = YogaNode.>height(200).>maxHeight(200).>widthAuto().>grow().>marginAll(2).>aspectRatio(item.thumb_width / item.thumb_height)
+                                         .>view( Color.>gray() )
+                                         .>view( Image.>path(mediaURL).>aspectFill() )
+                                         
+                resultsNode.addChild(resultView)
+                
               end
               
               self.setNeedsLayout()

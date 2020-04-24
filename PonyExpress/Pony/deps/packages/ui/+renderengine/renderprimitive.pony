@@ -3,7 +3,8 @@ use "yoga"
 use "linal"
 use "utility"
 
-use @RenderEngine_createTexture[None](ctx:RenderContextRef tag, textureName:Pointer[U8] tag, widthPtr:Pointer[U8] tag, bytesCount:USize)
+use @RenderEngine_createTextureFromBytes[None](ctx:RenderContextRef tag, textureName:Pointer[U8] tag, widthPtr:Pointer[U8] tag, bytesCount:USize)
+use @RenderEngine_createTextureFromUrl[None](ctx:RenderContextRef tag, url:Pointer[U8] tag)
 
 use @RenderEngine_textureInfo[TextureInfo](ctx:RenderContextRef tag, textureName:Pointer[U8] tag, widthPtr:Pointer[F32], heightPtr:Pointer[F32])
 use @RenderEngine_render[None]( ctx:RenderContextRef tag, 
@@ -139,7 +140,7 @@ primitive RenderPrimitive
     frameContext.engine.startFinished()
   
   fun tag createTextureFromBytes(frameContext:FrameContext val, name:Pointer[U8] tag, bytes:Pointer[U8] tag, bytesCount:USize) =>
-    @RenderEngine_createTexture(frameContext.renderContext, name, bytes, bytesCount)
+    @RenderEngine_createTextureFromBytes(frameContext.renderContext, name, bytes, bytesCount)
   
   fun tag renderCachedGeometry(frameContext:FrameContext val, partNum:U64, shaderType:U32, vertices:FloatAlignedArray, gc:RGBA val, t:Pointer[U8] tag) =>
     if vertices.size() == 0 then
