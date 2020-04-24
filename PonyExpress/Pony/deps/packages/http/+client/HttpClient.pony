@@ -36,7 +36,7 @@ actor HttpClient
     pendingRequestReads = Array[HttpRequest](128)
         
     // 1. parse the relevant information from the url
-    let userAgentRegex = try Regex("^((http[s]?|ftp):\\/)?\\/?([^:\\/\\s]+)((\\/\\w+)*\\/)([\\w\\-\\.]+[^#?\\s]+)(.*)?(#[\\w\\-]+)?$")? else Regex.empty() end
+    let userAgentRegex = try Regex("^((http[s]?|ftp):\\/)?\\/?([^:\\/\\s]+)((\\/\\w+)*\\/)([\\w\\-\\.\\~]+[^#?\\s]+)(.*)?(#[\\w\\-]+)?$")? else Regex.empty() end
     let matched = userAgentRegex(url)?
     
     let protocol:String val = matched(2)?

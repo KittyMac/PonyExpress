@@ -2189,6 +2189,8 @@ float ui_RenderEngine_box_nanoToSec_Wf(ui_RenderEngine* self, uint64_t nano);
 
 float ui_RenderEngine_val_nanoToSec_Wf(ui_RenderEngine* self, uint64_t nano);
 
+uint64_t ui_RenderEngine_box__priority_W(ui_RenderEngine* self);
+
 None* ui_RenderEngine_tag_getNodeByID_Zoo__send(ui_RenderEngine* self, size_t id, ui_$2$32* callback);
 
 None* ui_RenderEngine_ref_invalidateNodeByID_Zo(ui_RenderEngine* self, size_t id);
@@ -2215,15 +2217,9 @@ None* ui_RenderEngine_tag_renderAll_o__send(ui_RenderEngine* self);
 
 None* ui_RenderEngine_tag_createTextureFromBytes_ooZo__send(ui_RenderEngine* self, char* name, char* bytes, size_t bytesCount);
 
-uint32_t ui_RenderEngine_box__prioritiy_I(ui_RenderEngine* self);
-
-uint32_t ui_RenderEngine_val__prioritiy_I(ui_RenderEngine* self);
-
-uint32_t ui_RenderEngine_ref__prioritiy_I(ui_RenderEngine* self);
-
 ui_RenderEngine* ui_RenderEngine_tag_empty_o__send(ui_RenderEngine* self);
 
-uint32_t ui_RenderEngine_box__batch_I(ui_RenderEngine* self);
+uint64_t ui_RenderEngine_box__batch_W(ui_RenderEngine* self);
 
 None* ui_RenderEngine_tag_setNeedsRendered_o__send(ui_RenderEngine* self);
 
@@ -2247,7 +2243,7 @@ None* ui_RenderEngine_tag_startFinished_o__send(ui_RenderEngine* self);
 
 None* ui_RenderEngine_tag_releaseFocus_Zo__send(ui_RenderEngine* self, size_t id);
 
-uint32_t ui_RenderEngine_box__tag_I(ui_RenderEngine* self);
+uint64_t ui_RenderEngine_box__tag_W(ui_RenderEngine* self);
 
 None* ui_RenderEngine_tag_setNeedsLayout_o__send(ui_RenderEngine* self);
 

@@ -83,12 +83,11 @@ actor ImageSearchTest is Controllerable
               resultsNode.removeChildren()
                             
               for item in response.data.result.items.values() do
+                let mediaURL = item.media
                 
                 try                  
                   // Before we download the image, we can check and see if the texture exists already. If it does, there
                   // is no need to download it!
-                  let mediaURL = item.media
-                  
                   var image_width:F32 = 0
                   var image_height:F32 = 0
                   @RenderEngine_textureInfo(self.renderContext, mediaURL.cpointer(), addressof image_width, addressof image_height)
@@ -96,14 +95,11 @@ actor ImageSearchTest is Controllerable
                   if (image_width == 0) and (image_height == 0) then
                     HttpClient.download(mediaURL, {(response:HttpResponseHeader val, content:Array[U8] val) => 
                       if response.statusCode == 200 then
-                        Log.println("download succeeded: %s", mediaURL)
                         selfTag.createTextureFromBytes(mediaURL.cpointer(), content.cpointer(), content.size())
                       else
                         Log.println("Failed to download image, status code %s", response.statusCode)
                       end
                     })?
-                  else
-                    Log.println("HttpClient.download failed with error:\n %s", Utility.errorLoc())
                   end
                   
                   let resultView = YogaNode.>height(200).>maxHeight(200).>widthAuto().>grow().>marginAll(2).>aspectRatio(item.thumb_width / item.thumb_height)
@@ -111,6 +107,8 @@ actor ImageSearchTest is Controllerable
                                            .>view( Image.>path(mediaURL).>aspectFill() )
                                            
                   resultsNode.addChild(resultView)
+                else
+                  Log.println("HttpClient.download failed for url %s with error:\n %s", mediaURL, Utility.errorLoc())
                 end
               end
               
