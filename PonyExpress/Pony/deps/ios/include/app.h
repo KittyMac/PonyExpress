@@ -19,7 +19,11 @@ typedef struct t3_t2_F32_val_F32_val_F32_val_F32_val t3_t2_F32_val_F32_val_F32_v
 
 typedef struct ui_$2$33 ui_$2$33;
 
+typedef struct ArrayPairs_U8_val_Array_U8_val_val ArrayPairs_U8_val_Array_U8_val_val;
+
 typedef struct ui_NullEvent ui_NullEvent;
+
+typedef struct URLDownload URLDownload;
 
 typedef struct ui_RGBA ui_RGBA;
 
@@ -110,6 +114,8 @@ no guarantees that the GC will actually reclaim any space.
 */
 typedef struct Array_String_val Array_String_val;
 
+typedef struct t2_String_val_$1$0_val t2_String_val_$1$0_val;
+
 typedef struct t2_USize_val_Bool_val t2_USize_val_Bool_val;
 
 /*
@@ -122,16 +128,24 @@ A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
 included in a union or intersection, or be a subtype of any interface. Most
 functions on a Pointer[A] are private to maintain memory safety.
 */
+typedef struct format_PrefixSpace format_PrefixSpace;
+
 /*
 A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
 included in a union or intersection, or be a subtype of any interface. Most
 functions on a Pointer[A] are private to maintain memory safety.
 */
+typedef struct format_FormatHexSmallBare format_FormatHexSmallBare;
+
 typedef struct ui_Viewable ui_Viewable;
 
 typedef struct u2_ui_YogaNode_ref_None_val u2_ui_YogaNode_ref_None_val;
 
 typedef struct PlatformOSX PlatformOSX;
+
+typedef struct u3_format_AlignLeft_val_format_AlignRight_val_format_AlignCenter_val u3_format_AlignLeft_val_format_AlignRight_val_format_AlignCenter_val;
+
+typedef struct format_FormatBinary format_FormatBinary;
 
 /*
 This type represents the root capability. When a Pony program starts, the
@@ -152,6 +166,10 @@ typedef struct AmbientAuth AmbientAuth;
 tuple based Vector 4 functions - see VectorFun for details*/
 typedef struct linal_V4fun linal_V4fun;
 
+typedef struct format_PrefixSign format_PrefixSign;
+
+typedef struct format_AlignLeft format_AlignLeft;
+
 typedef struct t4_t4_F32_val_F32_val_F32_val_F32_val_t4_F32_val_F32_val_F32_val_F32_val_t4_F32_val_F32_val_F32_val_F32_val_t4_F32_val_F32_val_F32_val_F32_val t4_t4_F32_val_F32_val_F32_val_F32_val_t4_F32_val_F32_val_F32_val_F32_val_t4_F32_val_F32_val_F32_val_F32_val_t4_F32_val_F32_val_F32_val_F32_val;
 
 /*
@@ -159,6 +177,8 @@ tuple based Vector 2 functions - see VectorFun for details*/
 typedef struct linal_V2fun linal_V2fun;
 
 typedef struct _SignedPartialArithmetic _SignedPartialArithmetic;
+
+typedef struct format_AlignRight format_AlignRight;
 
 /*
 A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
@@ -177,12 +197,18 @@ functions on a Pointer[A] are private to maintain memory safety.
 */
 typedef struct ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_box ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_box;
 
+typedef struct format_FormatHexSmall format_FormatHexSmall;
+
 typedef struct t4_F32_val_F32_val_F32_val_F32_val t4_F32_val_F32_val_F32_val_F32_val;
+
+typedef struct collections__MapEmpty collections__MapEmpty;
 
 /*
 Liek AlignedArray, but optimized for floating point geomtry submission
 */
 typedef struct ui_FloatAlignedArray ui_FloatAlignedArray;
+
+typedef struct format_FormatOctal format_FormatOctal;
 
 /*
 Contiguous, resizable memory to store elements of type A.
@@ -283,6 +309,91 @@ typedef struct OutStream OutStream;
 functions for a 4x4 matrix*/
 typedef struct linal_M4fun linal_M4fun;
 
+/*
+Contiguous, resizable memory to store elements of type A.
+
+## Usage
+
+Creating an Array of String:
+```pony
+  let array: Array[String] = ["dog"; "cat"; "wombat"]
+  // array.size() == 3
+  // array.space() >= 3
+```
+
+Creating an empty Array of String, which may hold at least 10 elements before
+requesting more space:
+```pony
+  let array = Array[String](10)
+  // array.size() == 0
+  // array.space() >= 10
+```
+
+Accessing elements can be done via the `apply(i: USize): this->A ?` method.
+The provided index might be out of bounds so `apply` is partial and has to be
+called within a try-catch block or inside another partial method:
+```pony
+  let array: Array[String] = ["dog"; "cat"; "wombat"]
+  let is_second_element_wobat = try
+    // indexes start from 0, so 1 is the second element
+    array(1)? == "wombat"
+  else
+    false
+  end
+```
+
+Adding and removing elements to and from the end of the Array can be done via
+`push` and `pop` methods. You could treat the array as a LIFO stack using
+those methods:
+```pony
+  while (array.size() > 0) do
+    let elem = array.pop()?
+    // do something with element
+  end
+```
+
+Modifying the Array can be done via `update`, `insert` and `delete` methods
+which alter the Array at an arbitrary index, moving elements left (when
+deleting) or right (when inserting) as necessary.
+
+Iterating over the elements of an Array can be done using the `values` method:
+```pony
+  for element in array.values() do
+      // do something with element
+  end
+```
+
+## Memory allocation
+Array allocates contiguous memory. It always allocates at least enough memory
+space to hold all of its elements. Space is the number of elements the Array
+can hold without allocating more memory. The `space()` method returns the
+number of elements an Array can hold. The `size()` method returns the number
+of elements the Array holds.
+
+Different data types require different amounts of memory. Array[U64] with size
+of 6 will take more memory than an Array[U8] of the same size.
+
+When creating an Array or adding more elements will calculate the next power
+of 2 of the requested number of elements and allocate that much space, with a
+lower bound of space for 8 elements.
+
+Here's a few examples of the space allocated when initialising an Array with
+various number of elements:
+
+| size | space |
+|------|-------|
+| 0    | 0     |
+| 1    | 8     |
+| 8    | 8     |
+| 9    | 16    |
+| 16   | 16    |
+| 17   | 32    |
+
+Call the `compact()` method to ask the GC to reclaim unused space. There are
+no guarantees that the GC will actually reclaim any space.
+*/
+typedef struct Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val;
+
 typedef struct $0$12_U32_val $0$12_U32_val;
 
 typedef struct $0$6 $0$6;
@@ -290,6 +401,8 @@ typedef struct $0$6 $0$6;
 typedef struct u2_ui_Controllerable_tag_None_val u2_ui_Controllerable_tag_None_val;
 
 typedef struct ui_RenderNeeded ui_RenderNeeded;
+
+typedef struct format_PrefixDefault format_PrefixDefault;
 
 typedef struct _UnsignedPartialArithmetic _UnsignedPartialArithmetic;
 
@@ -307,6 +420,15 @@ typedef struct InputStream InputStream;
 
 typedef struct ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_ref ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_ref;
 
+typedef struct _UTF32Encoder _UTF32Encoder;
+
+typedef struct $1$0 $1$0;
+
+/*
+A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
+included in a union or intersection, or be a subtype of any interface. Most
+functions on a Pointer[A] are private to maintain memory safety.
+*/
 typedef struct u2_ui_RenderEngine_tag_None_val u2_ui_RenderEngine_tag_None_val;
 
 /*
@@ -330,6 +452,10 @@ A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
 included in a union or intersection, or be a subtype of any interface. Most
 functions on a Pointer[A] are private to maintain memory safety.
 */
+typedef struct u10_format_FormatDefault_val_format_FormatUTF32_val_format_FormatBinary_val_format_FormatBinaryBare_val_format_FormatOctal_val_format_FormatOctalBare_val_format_FormatHex_val_format_FormatHexBare_val_format_FormatHexSmall_val_format_FormatHexSmallBare_val u10_format_FormatDefault_val_format_FormatUTF32_val_format_FormatBinary_val_format_FormatBinaryBare_val_format_FormatOctal_val_format_FormatOctalBare_val_format_FormatHex_val_format_FormatHexBare_val_format_FormatHexSmall_val_format_FormatHexSmallBare_val;
+
+typedef struct format_FormatHex format_FormatHex;
+
 typedef struct t2_USize_val_USize_val t2_USize_val_USize_val;
 
 /*
@@ -417,11 +543,19 @@ no guarantees that the GC will actually reclaim any space.
 */
 typedef struct Array_ui_Viewable_tag Array_ui_Viewable_tag;
 
+typedef struct ArrayPairs_U8_val_Array_U8_val_ref ArrayPairs_U8_val_Array_U8_val_ref;
+
+typedef struct format_FormatUTF32 format_FormatUTF32;
+
 typedef struct StringRunes StringRunes;
+
+typedef struct format_AlignCenter format_AlignCenter;
 
 typedef struct yoga_YGNode yoga_YGNode;
 
 typedef struct ui_RenderContext ui_RenderContext;
+
+typedef struct u2_Array_U8_val_val_None_val u2_Array_U8_val_val_None_val;
 
 /*
 Memory allocations for large amounts of geometry can get expensive. So the ideal circumstance is we allocate it once and it can be
@@ -443,6 +577,8 @@ A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
 included in a union or intersection, or be a subtype of any interface. Most
 functions on a Pointer[A] are private to maintain memory safety.
 */
+typedef struct u3_format_PrefixDefault_val_format_PrefixSpace_val_format_PrefixSign_val u3_format_PrefixDefault_val_format_PrefixSpace_val_format_PrefixSign_val;
+
 /*
 One unit of geometry. Hash needs to uniquely represent the buffered content in order to allow for reuse of geometric
 data if nothing has changed
@@ -451,7 +587,39 @@ typedef struct ui_Geometry ui_Geometry;
 
 typedef struct utility_Log utility_Log;
 
+/*
+Provides functions for generating formatted strings.
+
+* fmt. Format to use.
+* prefix. Prefix to use.
+* prec. Precision to use. The exact meaning of this depends on the type,
+but is generally the number of characters used for all, or part, of the
+string. A value of -1 indicates that the default for the type should be
+used.
+* width. The minimum number of characters that will be in the produced
+string. If necessary the string will be padded with the fill character to
+make it long enough.
+*align. Specify whether fill characters should be added at the beginning or
+end of the generated string, or both.
+*fill: The character to pad a string with if is is shorter than width.
+*/
+typedef struct format_Format format_Format;
+
 typedef struct None None;
+
+typedef struct t2_U64_val_Bool_val t2_U64_val_Bool_val;
+
+/*
+Worker type providing to string conversions for integers.
+*/
+typedef struct format__FormatInt format__FormatInt;
+
+/*
+A quadratic probing hash map. Resize occurs at a load factor of 0.75. A
+resized map has 2 times the space. The hash function can be plugged in to the
+type to create different kinds of maps.
+*/
+typedef struct collections_HashMap_String_val_$1$0_val_collections_HashEq_String_val_val collections_HashMap_String_val_$1$0_val_collections_HashEq_String_val_val;
 
 /*
 The render engine is responsible for sending "renderable chunks" across the FFI to the 3D engine
@@ -501,6 +669,10 @@ A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
 included in a union or intersection, or be a subtype of any interface. Most
 functions on a Pointer[A] are private to maintain memory safety.
 */
+typedef struct t5_USize_val_U8_val_U8_val_U8_val_U8_val t5_USize_val_U8_val_U8_val_U8_val_U8_val;
+
+typedef struct u2_$1$0_val_None_val u2_$1$0_val_None_val;
+
 typedef struct PlatformIOS PlatformIOS;
 
 /*
@@ -649,7 +821,11 @@ typedef struct linal_Linear linal_Linear;
 
 typedef struct t2_U32_val_U8_val t2_U32_val_U8_val;
 
+typedef struct format_FormatDefault format_FormatDefault;
+
 typedef struct u3_None_val_ui_LayoutNeeded_val_ui_RenderNeeded_val u3_None_val_ui_LayoutNeeded_val_ui_RenderNeeded_val;
+
+typedef struct collections_HashEq_String_val collections_HashEq_String_val;
 
 typedef struct ui_FrameContext ui_FrameContext;
 
@@ -742,9 +918,25 @@ typedef struct ui_ScrollEvent ui_ScrollEvent;
 
 typedef struct ui_YogaNode ui_YogaNode;
 
+/*
+An UUID. Currently it can be used to generate UUIDs of versions 3, 4 and 5.
+
+```
+use uuid = "uuid"
+
+actor Main
+  new create(env: Env) =>
+    let id = uuid.UUID.v4()
+    env.out.print(id.string())
+```
+*/
+typedef struct utility_UUID utility_UUID;
+
 typedef struct ui_TouchEvent ui_TouchEvent;
 
 typedef struct ui_$2$32 ui_$2$32;
+
+typedef struct format_FormatHexBare format_FormatHexBare;
 
 typedef struct ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref;
 
@@ -752,12 +944,22 @@ typedef struct $0$9_U32_val $0$9_U32_val;
 
 typedef struct ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_val ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_val;
 
+typedef struct collections__MapDeleted collections__MapDeleted;
+
+typedef struct u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val;
+
+typedef struct ArrayPairs_U8_val_Array_U8_val_box ArrayPairs_U8_val_Array_U8_val_box;
+
+typedef struct t3_U32_val_String_val_String_val t3_U32_val_String_val_String_val;
+
 /*
 Rendering actors can call this concurrently safely to submit geometry to the platform rendering engine
 */
 typedef struct ui_RenderPrimitive ui_RenderPrimitive;
 
 typedef struct ui_KeyEvent ui_KeyEvent;
+
+typedef struct utility_Size utility_Size;
 
 /*
 A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
@@ -840,6 +1042,8 @@ end
 
 */
 typedef struct collections_Range_USize_val collections_Range_USize_val;
+
+typedef struct t2_USize_val_U8_val t2_USize_val_U8_val;
 
 typedef struct stringext_StringExt stringext_StringExt;
 
@@ -930,6 +1134,10 @@ no guarantees that the GC will actually reclaim any space.
 */
 typedef struct Array_ui_Geometry_ref Array_ui_Geometry_ref;
 
+typedef struct format_FormatBinaryBare format_FormatBinaryBare;
+
+typedef struct format_FormatOctalBare format_FormatOctalBare;
+
 /*
 rectangle operations for R4*/
 typedef struct linal_R4fun linal_R4fun;
@@ -948,8 +1156,28 @@ None* ui_$2$33_box_apply_oo(ui_$2$33* self, ui_RenderEngine* p1);
 
 None* ui_$2$33_ref_apply_oo(ui_$2$33* self, ui_RenderEngine* p1);
 
+/* Allocate a ArrayPairs_U8_val_Array_U8_val_val without initialising it. */
+ArrayPairs_U8_val_Array_U8_val_val* ArrayPairs_U8_val_Array_U8_val_val_Alloc(void);
+
+ArrayPairs_U8_val_Array_U8_val_val* ArrayPairs_U8_val_Array_U8_val_val_ref_create_oo(ArrayPairs_U8_val_Array_U8_val_val* self, Array_U8_val* array);
+
+bool ArrayPairs_U8_val_Array_U8_val_val_box_has_next_b(ArrayPairs_U8_val_Array_U8_val_val* self);
+
+bool ArrayPairs_U8_val_Array_U8_val_val_ref_has_next_b(ArrayPairs_U8_val_Array_U8_val_val* self);
+
+bool ArrayPairs_U8_val_Array_U8_val_val_val_has_next_b(ArrayPairs_U8_val_Array_U8_val_val* self);
+
 /* Allocate a ui_NullEvent without initialising it. */
 ui_NullEvent* ui_NullEvent_Alloc(void);
+
+/* Allocate a URLDownload without initialising it. */
+URLDownload* URLDownload_Alloc(void);
+
+URLDownload* URLDownload_tag_create_o__send(URLDownload* self);
+
+None* URLDownload_tag_response_ooZo__send(URLDownload* self, String* uuid, char* data, size_t size);
+
+None* URLDownload_tag_get_ooo__send(URLDownload* self, String* url, $1$0* callback);
 
 /* Allocate a ui_RGBA without initialising it. */
 ui_RGBA* ui_RGBA_Alloc(void);
@@ -1040,6 +1268,9 @@ double F64_box_f64_d(double self);
 
 double F64_val_create_dd(double self, double value);
 
+/* Allocate a t2_String_val_$1$0_val without initialising it. */
+t2_String_val_$1$0_val* t2_String_val_$1$0_val_Alloc(void);
+
 /* Allocate a t2_USize_val_Bool_val without initialising it. */
 t2_USize_val_Bool_val* t2_USize_val_Bool_val_Alloc(void);
 
@@ -1065,6 +1296,15 @@ size_t ReadSeq_U8_val_box_size_Z(ReadSeq_U8_val* self);
 A null pointer.
 */
 ui_RenderContext** Pointer_ui_RenderContext_val_ref_create_o(ui_RenderContext** self);
+
+/* Allocate a format_PrefixSpace without initialising it. */
+format_PrefixSpace* format_PrefixSpace_Alloc(void);
+
+format_PrefixSpace* format_PrefixSpace_val_create_o(format_PrefixSpace* self);
+
+bool format_PrefixSpace_box_eq_ob(format_PrefixSpace* self, format_PrefixSpace* that);
+
+bool format_PrefixSpace_val_eq_ob(format_PrefixSpace* self, format_PrefixSpace* that);
 
 /*
 Space for len instances of A.
@@ -1198,6 +1438,15 @@ Copy n elements from this to that.
 */
 char* Pointer_U8_val_box__copy_to_oZo(char* self, char* that, size_t n);
 
+/* Allocate a format_FormatHexSmallBare without initialising it. */
+format_FormatHexSmallBare* format_FormatHexSmallBare_Alloc(void);
+
+format_FormatHexSmallBare* format_FormatHexSmallBare_val_create_o(format_FormatHexSmallBare* self);
+
+bool format_FormatHexSmallBare_box_eq_ob(format_FormatHexSmallBare* self, format_FormatHexSmallBare* that);
+
+bool format_FormatHexSmallBare_val_eq_ob(format_FormatHexSmallBare* self, format_FormatHexSmallBare* that);
+
 /* Allocate a ui_Viewable without initialising it. */
 ui_Viewable* ui_Viewable_Alloc(void);
 
@@ -1230,9 +1479,17 @@ size_t u2_ui_YogaNode_ref_None_val_box_id_Z(void* self);
 
 size_t u2_ui_YogaNode_ref_None_val_ref_id_Z(void* self);
 
+uint32_t U32_val_shr_II(uint32_t self, uint32_t y);
+
+uint32_t U32_box_shr_II(uint32_t self, uint32_t y);
+
 uint64_t U32_val_u64_W(uint32_t self);
 
 uint64_t U32_box_u64_W(uint32_t self);
+
+uint32_t U32_val_op_and_II(uint32_t self, uint32_t y);
+
+uint32_t U32_box_op_and_II(uint32_t self, uint32_t y);
 
 uint32_t U32_box_sub_II(uint32_t self, uint32_t y);
 
@@ -1252,7 +1509,23 @@ uint32_t U32_val_add_II(uint32_t self, uint32_t y);
 
 uint32_t U32_box_add_II(uint32_t self, uint32_t y);
 
+char U32_box_u8_C(uint32_t self);
+
+char U32_val_u8_C(uint32_t self);
+
 uint32_t U32_val_create_II(uint32_t self, uint32_t value);
+
+bool U32_val_lt_Ib(uint32_t self, uint32_t y);
+
+bool U32_box_lt_Ib(uint32_t self, uint32_t y);
+
+uint32_t U32_box_op_or_II(uint32_t self, uint32_t y);
+
+uint32_t U32_val_op_or_II(uint32_t self, uint32_t y);
+
+__uint128_t U32_box_u128_Q(uint32_t self);
+
+__uint128_t U32_val_u128_Q(uint32_t self);
 
 /* Allocate a PlatformOSX without initialising it. */
 PlatformOSX* PlatformOSX_Alloc(void);
@@ -1265,6 +1538,18 @@ None* PlatformOSX_ref_register_oo(PlatformOSX* self, PonyPlatform* platform);
 
 bool PlatformOSX_box__use_main_thread_b(PlatformOSX* self);
 
+/* Allocate a u3_format_AlignLeft_val_format_AlignRight_val_format_AlignCenter_val without initialising it. */
+u3_format_AlignLeft_val_format_AlignRight_val_format_AlignCenter_val* u3_format_AlignLeft_val_format_AlignRight_val_format_AlignCenter_val_Alloc(void);
+
+/* Allocate a format_FormatBinary without initialising it. */
+format_FormatBinary* format_FormatBinary_Alloc(void);
+
+format_FormatBinary* format_FormatBinary_val_create_o(format_FormatBinary* self);
+
+bool format_FormatBinary_box_eq_ob(format_FormatBinary* self, format_FormatBinary* that);
+
+bool format_FormatBinary_val_eq_ob(format_FormatBinary* self, format_FormatBinary* that);
+
 /* Allocate a AmbientAuth without initialising it. */
 AmbientAuth* AmbientAuth_Alloc(void);
 
@@ -1272,6 +1557,19 @@ AmbientAuth* AmbientAuth_Alloc(void);
 linal_V4fun* linal_V4fun_Alloc(void);
 
 linal_V4fun* linal_V4fun_val_create_o(linal_V4fun* self);
+
+/* Allocate a format_PrefixSign without initialising it. */
+format_PrefixSign* format_PrefixSign_Alloc(void);
+
+format_PrefixSign* format_PrefixSign_val_create_o(format_PrefixSign* self);
+
+bool format_PrefixSign_box_eq_ob(format_PrefixSign* self, format_PrefixSign* that);
+
+bool format_PrefixSign_val_eq_ob(format_PrefixSign* self, format_PrefixSign* that);
+
+size_t USize_box_op_and_ZZ(size_t self, size_t y);
+
+size_t USize_val_op_and_ZZ(size_t self, size_t y);
 
 ssize_t USize_box_isize_z(size_t self);
 
@@ -1341,6 +1639,10 @@ size_t USize_box_usize_Z(size_t self);
 
 size_t USize_val_usize_Z(size_t self);
 
+__uint128_t USize_box_u128_Q(size_t self);
+
+__uint128_t USize_val_u128_Q(size_t self);
+
 size_t USize_val_max_value_Z(size_t self);
 
 size_t USize_val_add_ZZ(size_t self, size_t y);
@@ -1373,6 +1675,15 @@ size_t USize_val_min_ZZ(size_t self, size_t y);
 
 size_t USize_box_min_ZZ(size_t self, size_t y);
 
+/* Allocate a format_AlignLeft without initialising it. */
+format_AlignLeft* format_AlignLeft_Alloc(void);
+
+format_AlignLeft* format_AlignLeft_val_create_o(format_AlignLeft* self);
+
+bool format_AlignLeft_box_eq_ob(format_AlignLeft* self, format_AlignLeft* that);
+
+bool format_AlignLeft_val_eq_ob(format_AlignLeft* self, format_AlignLeft* that);
+
 /* Allocate a t4_t4_F32_val_F32_val_F32_val_F32_val_t4_F32_val_F32_val_F32_val_F32_val_t4_F32_val_F32_val_F32_val_F32_val_t4_F32_val_F32_val_F32_val_F32_val without initialising it. */
 t4_t4_F32_val_F32_val_F32_val_F32_val_t4_F32_val_F32_val_F32_val_F32_val_t4_F32_val_F32_val_F32_val_F32_val_t4_F32_val_F32_val_F32_val_F32_val* t4_t4_F32_val_F32_val_F32_val_F32_val_t4_F32_val_F32_val_F32_val_F32_val_t4_F32_val_F32_val_F32_val_F32_val_t4_F32_val_F32_val_F32_val_F32_val_Alloc(void);
 
@@ -1385,6 +1696,15 @@ linal_V2fun* linal_V2fun_val_create_o(linal_V2fun* self);
 _SignedPartialArithmetic* _SignedPartialArithmetic_Alloc(void);
 
 _SignedPartialArithmetic* _SignedPartialArithmetic_val_create_o(_SignedPartialArithmetic* self);
+
+/* Allocate a format_AlignRight without initialising it. */
+format_AlignRight* format_AlignRight_Alloc(void);
+
+format_AlignRight* format_AlignRight_val_create_o(format_AlignRight* self);
+
+bool format_AlignRight_box_eq_ob(format_AlignRight* self, format_AlignRight* that);
+
+bool format_AlignRight_val_eq_ob(format_AlignRight* self, format_AlignRight* that);
 
 /*
 Convert the pointer into an integer.
@@ -1409,15 +1729,19 @@ size_t Pointer_yoga_YGNode_val_tag_usize_Z(yoga_YGNode** self);
 /* Allocate a _ToString without initialising it. */
 _ToString* _ToString_Alloc(void);
 
+String* _ToString_box__u64_Wbo(_ToString* self, uint64_t x, bool neg);
+
+String* _ToString_val__u64_Wbo(_ToString* self, uint64_t x, bool neg);
+
 _ToString* _ToString_val_create_o(_ToString* self);
+
+String* _ToString_val__u128_Qbo(_ToString* self, __uint128_t x, bool neg);
+
+String* _ToString_box__u128_Qbo(_ToString* self, __uint128_t x, bool neg);
 
 String* _ToString_val__f64_do(_ToString* self, double x);
 
 String* _ToString_box__f64_do(_ToString* self, double x);
-
-String* _ToString_box__u64_Wbo(_ToString* self, uint64_t x, bool neg);
-
-String* _ToString_val__u64_Wbo(_ToString* self, uint64_t x, bool neg);
 
 /*
 Space for len instances of A.
@@ -1459,8 +1783,26 @@ ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_box* ArrayValues_ui_YogaNode_r
 
 ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_box* ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_box_ref_create_oZo(ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_box* self, Array_ui_YogaNode_ref* array, size_t offset);
 
+/* Allocate a format_FormatHexSmall without initialising it. */
+format_FormatHexSmall* format_FormatHexSmall_Alloc(void);
+
+format_FormatHexSmall* format_FormatHexSmall_val_create_o(format_FormatHexSmall* self);
+
+bool format_FormatHexSmall_box_eq_ob(format_FormatHexSmall* self, format_FormatHexSmall* that);
+
+bool format_FormatHexSmall_val_eq_ob(format_FormatHexSmall* self, format_FormatHexSmall* that);
+
 /* Allocate a t4_F32_val_F32_val_F32_val_F32_val without initialising it. */
 t4_F32_val_F32_val_F32_val_F32_val* t4_F32_val_F32_val_F32_val_F32_val_Alloc(void);
+
+/* Allocate a collections__MapEmpty without initialising it. */
+collections__MapEmpty* collections__MapEmpty_Alloc(void);
+
+collections__MapEmpty* collections__MapEmpty_val_create_o(collections__MapEmpty* self);
+
+bool collections__MapEmpty_box_eq_ob(collections__MapEmpty* self, collections__MapEmpty* that);
+
+bool collections__MapEmpty_val_eq_ob(collections__MapEmpty* self, collections__MapEmpty* that);
 
 /* Allocate a ui_FloatAlignedArray without initialising it. */
 ui_FloatAlignedArray* ui_FloatAlignedArray_Alloc(void);
@@ -1528,8 +1870,105 @@ Create an array with zero elements, but space for len elements.
 */
 ui_FloatAlignedArray* ui_FloatAlignedArray_ref_create_Zo(ui_FloatAlignedArray* self, size_t len);
 
+/* Allocate a format_FormatOctal without initialising it. */
+format_FormatOctal* format_FormatOctal_Alloc(void);
+
+format_FormatOctal* format_FormatOctal_val_create_o(format_FormatOctal* self);
+
+bool format_FormatOctal_box_eq_ob(format_FormatOctal* self, format_FormatOctal* that);
+
+bool format_FormatOctal_val_eq_ob(format_FormatOctal* self, format_FormatOctal* that);
+
 /* Allocate a Array_U8_val without initialising it. */
 Array_U8_val* Array_U8_val_Alloc(void);
+
+/*
+Return a shared portion of this array, covering `from` until `to`.
+Both the original and the new array are immutable, as they share memory.
+The operation does not allocate a new array pointer nor copy elements.
+*/
+Array_U8_val* Array_U8_val_val_trim_ZZo(Array_U8_val* self, size_t from, size_t to);
+
+/*
+Return an iterator over the (index, value) pairs in the array.
+*/
+ArrayPairs_U8_val_Array_U8_val_val* Array_U8_val_val_pairs_o(Array_U8_val* self);
+
+/*
+Return an iterator over the (index, value) pairs in the array.
+*/
+ArrayPairs_U8_val_Array_U8_val_ref* Array_U8_val_ref_pairs_o(Array_U8_val* self);
+
+/*
+Return an iterator over the (index, value) pairs in the array.
+*/
+ArrayPairs_U8_val_Array_U8_val_box* Array_U8_val_box_pairs_o(Array_U8_val* self);
+
+/*
+Create an array from a C-style pointer and length. The contents are not
+copied.
+*/
+Array_U8_val* Array_U8_val_ref_from_cpointer_oZZo(Array_U8_val* self, char* ptr, size_t len, size_t alloc);
+
+/*
+The number of elements in the array.
+*/
+size_t Array_U8_val_ref_size_Z(Array_U8_val* self);
+
+/*
+The number of elements in the array.
+*/
+size_t Array_U8_val_val_size_Z(Array_U8_val* self);
+
+/*
+The number of elements in the array.
+*/
+size_t Array_U8_val_box_size_Z(Array_U8_val* self);
+
+/*
+Reserve space for len elements, including whatever elements are already in
+the array. Array space grows geometrically.
+*/
+None* Array_U8_val_ref_reserve_Zo(Array_U8_val* self, size_t len);
+
+size_t Array_U8_val_ref_next_growth_size_ZZ(Array_U8_val* self, size_t s);
+
+size_t Array_U8_val_val_next_growth_size_ZZ(Array_U8_val* self, size_t s);
+
+size_t Array_U8_val_box_next_growth_size_ZZ(Array_U8_val* self, size_t s);
+
+size_t Array_U8_val_tag_next_growth_size_ZZ(Array_U8_val* self, size_t s);
+
+/*
+Return the underlying C-style pointer.
+*/
+char* Array_U8_val_box_cpointer_Zo(Array_U8_val* self, size_t offset);
+
+/*
+Return the underlying C-style pointer.
+*/
+char* Array_U8_val_val_cpointer_Zo(Array_U8_val* self, size_t offset);
+
+/*
+Return the underlying C-style pointer.
+*/
+char* Array_U8_val_ref_cpointer_Zo(Array_U8_val* self, size_t offset);
+
+/*
+Resize to len elements, populating previously empty elements with random
+memory. This is only allowed for an array of numbers.
+*/
+None* Array_U8_val_ref_undefined_U8_val_Zo(Array_U8_val* self, size_t len);
+
+/*
+Add an element to the end of the array.
+*/
+None* Array_U8_val_ref_push_Co(Array_U8_val* self, char value);
+
+/*
+Create an array with zero elements, but space for len elements.
+*/
+Array_U8_val* Array_U8_val_ref_create_Zo(Array_U8_val* self, size_t len);
 
 /*
 Copy copy_len elements from this to that at specified offsets.
@@ -1545,21 +1984,6 @@ None* Array_U8_val_val__copy_to_oZZZo(Array_U8_val* self, char* ptr, size_t copy
 Copy copy_len elements from this to that at specified offsets.
 */
 None* Array_U8_val_box__copy_to_oZZZo(Array_U8_val* self, char* ptr, size_t copy_len, size_t from_offset, size_t to_offset);
-
-/*
-The number of elements in the array.
-*/
-size_t Array_U8_val_box_size_Z(Array_U8_val* self);
-
-/*
-The number of elements in the array.
-*/
-size_t Array_U8_val_val_size_Z(Array_U8_val* self);
-
-/*
-The number of elements in the array.
-*/
-size_t Array_U8_val_ref_size_Z(Array_U8_val* self);
 
 /*
 Space for len instances of A.
@@ -1604,6 +2028,37 @@ linal_M4fun* linal_M4fun_Alloc(void);
 
 linal_M4fun* linal_M4fun_val_create_o(linal_M4fun* self);
 
+/* Allocate a Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val without initialising it. */
+Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val* Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_Alloc(void);
+
+/*
+Create an array of len elements, all initialised to the given value.
+*/
+Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val* Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_ref_init_oZo(Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val* self, void* from, size_t len);
+
+/*
+The number of elements in the array.
+*/
+size_t Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_ref_size_Z(Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val* self);
+
+/*
+The number of elements in the array.
+*/
+size_t Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_val_size_Z(Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val* self);
+
+/*
+The number of elements in the array.
+*/
+size_t Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_box_size_Z(Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val* self);
+
+size_t Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_ref_next_growth_size_ZZ(Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val* self, size_t s);
+
+size_t Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_val_next_growth_size_ZZ(Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val* self, size_t s);
+
+size_t Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_box_next_growth_size_ZZ(Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val* self, size_t s);
+
+size_t Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_tag_next_growth_size_ZZ(Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val* self, size_t s);
+
 /* Allocate a $0$12_U32_val without initialising it. */
 $0$12_U32_val* $0$12_U32_val_Alloc(void);
 
@@ -1629,6 +2084,11 @@ ui_RenderNeeded* ui_RenderNeeded_val_create_o(ui_RenderNeeded* self);
 bool ui_RenderNeeded_box_eq_ob(ui_RenderNeeded* self, ui_RenderNeeded* that);
 
 bool ui_RenderNeeded_val_eq_ob(ui_RenderNeeded* self, ui_RenderNeeded* that);
+
+/* Allocate a format_PrefixDefault without initialising it. */
+format_PrefixDefault* format_PrefixDefault_Alloc(void);
+
+format_PrefixDefault* format_PrefixDefault_val_create_o(format_PrefixDefault* self);
 
 /* Allocate a _UnsignedPartialArithmetic without initialising it. */
 _UnsignedPartialArithmetic* _UnsignedPartialArithmetic_Alloc(void);
@@ -1670,6 +2130,11 @@ bool ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_ref_ref_has_next_b(ArrayV
 
 bool ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_ref_val_has_next_b(ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_ref* self);
 
+/* Allocate a _UTF32Encoder without initialising it. */
+_UTF32Encoder* _UTF32Encoder_Alloc(void);
+
+_UTF32Encoder* _UTF32Encoder_val_create_o(_UTF32Encoder* self);
+
 String* I8_box_string_o(int8_t self);
 
 String* I8_val_string_o(int8_t self);
@@ -1702,6 +2167,15 @@ bool I8_val_lt_cb(int8_t self, int8_t y);
 
 bool I8_box_lt_cb(int8_t self, int8_t y);
 
+/* Allocate a $1$0 without initialising it. */
+$1$0* $1$0_Alloc(void);
+
+None* $1$0_val_apply_oo($1$0* self, void* p1);
+
+None* $1$0_box_apply_oo($1$0* self, void* p1);
+
+None* $1$0_ref_apply_oo($1$0* self, void* p1);
+
 bool U64_box_le_Wb(uint64_t self, uint64_t y);
 
 bool U64_val_le_Wb(uint64_t self, uint64_t y);
@@ -1713,6 +2187,10 @@ uint64_t U64_box_u64_W(uint64_t self);
 uint64_t U64_box_sub_WW(uint64_t self, uint64_t y);
 
 uint64_t U64_val_sub_WW(uint64_t self, uint64_t y);
+
+uint64_t U64_val_shl_WW(uint64_t self, uint64_t y);
+
+uint64_t U64_box_shl_WW(uint64_t self, uint64_t y);
 
 size_t U64_box_usize_Z(uint64_t self);
 
@@ -1734,6 +2212,10 @@ uint64_t U64_box_add_WW(uint64_t self, uint64_t y);
 
 uint64_t U64_val_add_WW(uint64_t self, uint64_t y);
 
+uint32_t U64_box_u32_I(uint64_t self);
+
+uint32_t U64_val_u32_I(uint64_t self);
+
 uint64_t U64_val_mul_WW(uint64_t self, uint64_t y);
 
 uint64_t U64_box_mul_WW(uint64_t self, uint64_t y);
@@ -1750,11 +2232,55 @@ uint64_t U64_box_div_WW(uint64_t self, uint64_t y);
 
 uint64_t U64_val_div_WW(uint64_t self, uint64_t y);
 
+uint64_t U64_val_from_USize_val_ZW(uint64_t self, size_t a);
+
+uint64_t U64_box_neg_W(uint64_t self);
+
+uint64_t U64_val_neg_W(uint64_t self);
+
+uint64_t U64_box_op_or_WW(uint64_t self, uint64_t y);
+
+uint64_t U64_val_op_or_WW(uint64_t self, uint64_t y);
+
 uint64_t U64_val_create_WW(uint64_t self, uint64_t value);
+
+bool U64_val_lt_Wb(uint64_t self, uint64_t y);
+
+bool U64_box_lt_Wb(uint64_t self, uint64_t y);
 
 bool U64_box_gt_Wb(uint64_t self, uint64_t y);
 
 bool U64_val_gt_Wb(uint64_t self, uint64_t y);
+
+/*
+Space for len instances of A.
+*/
+void** Pointer_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_ref__alloc_Zo(void** self, size_t len);
+
+/*
+A null pointer.
+*/
+void** Pointer_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_ref_create_o(void** self);
+
+/*
+Set index i and return the previous value.
+*/
+void* Pointer_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_ref__update_Zoo(void** self, size_t i, void* value);
+
+/*
+Retrieve index i.
+*/
+void* Pointer_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_box__apply_Zo(void** self, size_t i);
+
+/*
+Retrieve index i.
+*/
+void* Pointer_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_val__apply_Zo(void** self, size_t i);
+
+/*
+Retrieve index i.
+*/
+void* Pointer_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_ref__apply_Zo(void** self, size_t i);
 
 /* Allocate a u2_ui_RenderEngine_tag_None_val without initialising it. */
 u2_ui_RenderEngine_tag_None_val* u2_ui_RenderEngine_tag_None_val_Alloc(void);
@@ -1827,6 +2353,18 @@ Return a pointer to the n-th element.
 */
 float* UnsafePointer_F32_val_val_offset_Zo(float* self, size_t n);
 
+/* Allocate a u10_format_FormatDefault_val_format_FormatUTF32_val_format_FormatBinary_val_format_FormatBinaryBare_val_format_FormatOctal_val_format_FormatOctalBare_val_format_FormatHex_val_format_FormatHexBare_val_format_FormatHexSmall_val_format_FormatHexSmallBare_val without initialising it. */
+u10_format_FormatDefault_val_format_FormatUTF32_val_format_FormatBinary_val_format_FormatBinaryBare_val_format_FormatOctal_val_format_FormatOctalBare_val_format_FormatHex_val_format_FormatHexBare_val_format_FormatHexSmall_val_format_FormatHexSmallBare_val* u10_format_FormatDefault_val_format_FormatUTF32_val_format_FormatBinary_val_format_FormatBinaryBare_val_format_FormatOctal_val_format_FormatOctalBare_val_format_FormatHex_val_format_FormatHexBare_val_format_FormatHexSmall_val_format_FormatHexSmallBare_val_Alloc(void);
+
+/* Allocate a format_FormatHex without initialising it. */
+format_FormatHex* format_FormatHex_Alloc(void);
+
+format_FormatHex* format_FormatHex_val_create_o(format_FormatHex* self);
+
+bool format_FormatHex_box_eq_ob(format_FormatHex* self, format_FormatHex* that);
+
+bool format_FormatHex_val_eq_ob(format_FormatHex* self, format_FormatHex* that);
+
 uint64_t U8_val_u64_W(char self);
 
 uint64_t U8_box_u64_W(char self);
@@ -1874,6 +2412,10 @@ ssize_t U8_box_isize_z(char self);
 ssize_t U8_val_isize_z(char self);
 
 char U8_val_create_CC(char self, char value);
+
+char U8_val_op_or_CC(char self, char y);
+
+char U8_box_op_or_CC(char self, char y);
 
 bool U8_val_lt_Cb(char self, char y);
 
@@ -1932,6 +2474,20 @@ Create an array with zero elements, but space for len elements.
 */
 Array_ui_Viewable_tag* Array_ui_Viewable_tag_ref_create_Zo(Array_ui_Viewable_tag* self, size_t len);
 
+/* Allocate a ArrayPairs_U8_val_Array_U8_val_ref without initialising it. */
+ArrayPairs_U8_val_Array_U8_val_ref* ArrayPairs_U8_val_Array_U8_val_ref_Alloc(void);
+
+ArrayPairs_U8_val_Array_U8_val_ref* ArrayPairs_U8_val_Array_U8_val_ref_ref_create_oo(ArrayPairs_U8_val_Array_U8_val_ref* self, Array_U8_val* array);
+
+/* Allocate a format_FormatUTF32 without initialising it. */
+format_FormatUTF32* format_FormatUTF32_Alloc(void);
+
+format_FormatUTF32* format_FormatUTF32_val_create_o(format_FormatUTF32* self);
+
+bool format_FormatUTF32_box_eq_ob(format_FormatUTF32* self, format_FormatUTF32* that);
+
+bool format_FormatUTF32_val_eq_ob(format_FormatUTF32* self, format_FormatUTF32* that);
+
 /* Allocate a StringRunes without initialising it. */
 StringRunes* StringRunes_Alloc(void);
 
@@ -1971,11 +2527,23 @@ bool I64_box_lt_wb(int64_t self, int64_t y);
 
 int64_t I64_val_create_ww(int64_t self, int64_t value);
 
+/* Allocate a format_AlignCenter without initialising it. */
+format_AlignCenter* format_AlignCenter_Alloc(void);
+
+format_AlignCenter* format_AlignCenter_val_create_o(format_AlignCenter* self);
+
+bool format_AlignCenter_box_eq_ob(format_AlignCenter* self, format_AlignCenter* that);
+
+bool format_AlignCenter_val_eq_ob(format_AlignCenter* self, format_AlignCenter* that);
+
 /* Allocate a yoga_YGNode without initialising it. */
 yoga_YGNode* yoga_YGNode_Alloc(void);
 
 /* Allocate a ui_RenderContext without initialising it. */
 ui_RenderContext* ui_RenderContext_Alloc(void);
+
+/* Allocate a u2_Array_U8_val_val_None_val without initialising it. */
+u2_Array_U8_val_val_None_val* u2_Array_U8_val_val_None_val_Alloc(void);
 
 bool ISize_box_le_zb(ssize_t self, ssize_t y);
 
@@ -2143,6 +2711,9 @@ A null pointer.
 */
 None** Pointer_None_val_ref_create_o(None** self);
 
+/* Allocate a u3_format_PrefixDefault_val_format_PrefixSpace_val_format_PrefixSign_val without initialising it. */
+u3_format_PrefixDefault_val_format_PrefixSpace_val_format_PrefixSign_val* u3_format_PrefixDefault_val_format_PrefixSpace_val_format_PrefixSign_val_Alloc(void);
+
 /* Allocate a ui_Geometry without initialising it. */
 ui_Geometry* ui_Geometry_Alloc(void);
 
@@ -2156,6 +2727,15 @@ utility_Log* utility_Log_val_create_o(utility_Log* self);
 None* utility_Log_val_println_oooooooooooooooooooooo(utility_Log* self, String* fmt, Stringable* arg0, Stringable* arg1, Stringable* arg2, Stringable* arg3, Stringable* arg4, Stringable* arg5, Stringable* arg6, Stringable* arg7, Stringable* arg8, Stringable* arg9, Stringable* arg10, Stringable* arg11, Stringable* arg12, Stringable* arg13, Stringable* arg14, Stringable* arg15, Stringable* arg16, Stringable* arg17, Stringable* arg18, Stringable* arg19);
 
 None* utility_Log_box_println_oooooooooooooooooooooo(utility_Log* self, String* fmt, Stringable* arg0, Stringable* arg1, Stringable* arg2, Stringable* arg3, Stringable* arg4, Stringable* arg5, Stringable* arg6, Stringable* arg7, Stringable* arg8, Stringable* arg9, Stringable* arg10, Stringable* arg11, Stringable* arg12, Stringable* arg13, Stringable* arg14, Stringable* arg15, Stringable* arg16, Stringable* arg17, Stringable* arg18, Stringable* arg19);
+
+/* Allocate a format_Format without initialising it. */
+format_Format* format_Format_Alloc(void);
+
+String* format_Format_val_int_U64_val_WooZZoIo(format_Format* self, uint64_t x, void* fmt, void* prefix, size_t prec, size_t width, void* align, uint32_t fill);
+
+String* format_Format_box_int_U64_val_WooZZoIo(format_Format* self, uint64_t x, void* fmt, void* prefix, size_t prec, size_t width, void* align, uint32_t fill);
+
+format_Format* format_Format_val_create_o(format_Format* self);
 
 String* U16_box_string_o(uint16_t self);
 
@@ -2177,6 +2757,58 @@ String* None_val_string_o(None* self);
 String* None_box_string_o(None* self);
 
 None* None_val_create_o(None* self);
+
+/* Allocate a t2_U64_val_Bool_val without initialising it. */
+t2_U64_val_Bool_val* t2_U64_val_Bool_val_Alloc(void);
+
+/* Allocate a format__FormatInt without initialising it. */
+format__FormatInt* format__FormatInt_Alloc(void);
+
+String* format__FormatInt_box_u64_WbooZZoIo(format__FormatInt* self, uint64_t x, bool neg, void* fmt, void* prefix, size_t prec, size_t width, void* align, uint32_t fill);
+
+String* format__FormatInt_val_u64_WbooZZoIo(format__FormatInt* self, uint64_t x, bool neg, void* fmt, void* prefix, size_t prec, size_t width, void* align, uint32_t fill);
+
+String* format__FormatInt_box__prefix_boo(format__FormatInt* self, bool neg, void* prefix);
+
+String* format__FormatInt_val__prefix_boo(format__FormatInt* self, bool neg, void* prefix);
+
+String* format__FormatInt_val__small_o(format__FormatInt* self);
+
+String* format__FormatInt_box__small_o(format__FormatInt* self);
+
+None* format__FormatInt_val__pad_oZoIo(format__FormatInt* self, String* s, size_t width, void* align, uint32_t fill);
+
+None* format__FormatInt_box__pad_oZoIo(format__FormatInt* self, String* s, size_t width, void* align, uint32_t fill);
+
+None* format__FormatInt_val__extend_digits_oZo(format__FormatInt* self, String* s, size_t digits);
+
+None* format__FormatInt_box__extend_digits_oZo(format__FormatInt* self, String* s, size_t digits);
+
+String* format__FormatInt_box__large_o(format__FormatInt* self);
+
+String* format__FormatInt_val__large_o(format__FormatInt* self);
+
+format__FormatInt* format__FormatInt_val_create_o(format__FormatInt* self);
+
+/* Allocate a collections_HashMap_String_val_$1$0_val_collections_HashEq_String_val_val without initialising it. */
+collections_HashMap_String_val_$1$0_val_collections_HashEq_String_val_val* collections_HashMap_String_val_$1$0_val_collections_HashEq_String_val_val_Alloc(void);
+
+/*
+Sets a value in the map. Returns the old value if there was one, otherwise
+returns None. If there was no previous value, this may trigger a resize.
+*/
+void* collections_HashMap_String_val_$1$0_val_collections_HashEq_String_val_val_ref_update_ooo(collections_HashMap_String_val_$1$0_val_collections_HashEq_String_val_val* self, String* key, $1$0* value);
+
+/*
+Change the available space.
+*/
+None* collections_HashMap_String_val_$1$0_val_collections_HashEq_String_val_val_ref__resize_Zo(collections_HashMap_String_val_$1$0_val_collections_HashEq_String_val_val* self, size_t len);
+
+/*
+Create an array with space for prealloc elements without triggering a
+resize. Defaults to 6.
+*/
+collections_HashMap_String_val_$1$0_val_collections_HashEq_String_val_val* collections_HashMap_String_val_$1$0_val_collections_HashEq_String_val_val_ref_create_Zo(collections_HashMap_String_val_$1$0_val_collections_HashEq_String_val_val* self, size_t prealloc);
 
 /* Allocate a ui_RenderEngine without initialising it. */
 ui_RenderEngine* ui_RenderEngine_Alloc(void);
@@ -2220,6 +2852,8 @@ None* ui_RenderEngine_tag_createTextureFromBytes_ooZo__send(ui_RenderEngine* sel
 ui_RenderEngine* ui_RenderEngine_tag_empty_o__send(ui_RenderEngine* self);
 
 uint64_t ui_RenderEngine_box__batch_W(ui_RenderEngine* self);
+
+None* ui_RenderEngine_tag_createTextureFromUrl_oo__send(ui_RenderEngine* self, String* url);
 
 None* ui_RenderEngine_tag_setNeedsRendered_o__send(ui_RenderEngine* self);
 
@@ -2295,6 +2929,12 @@ String* Pointer_String_val_ref__apply_Zo(String** self, size_t i);
 A null pointer.
 */
 String** Pointer_String_val_ref_create_o(String** self);
+
+/* Allocate a t5_USize_val_U8_val_U8_val_U8_val_U8_val without initialising it. */
+t5_USize_val_U8_val_U8_val_U8_val_U8_val* t5_USize_val_U8_val_U8_val_U8_val_U8_val_Alloc(void);
+
+/* Allocate a u2_$1$0_val_None_val without initialising it. */
+u2_$1$0_val_None_val* u2_$1$0_val_None_val_Alloc(void);
 
 /* Allocate a PlatformIOS without initialising it. */
 PlatformIOS* PlatformIOS_Alloc(void);
@@ -2411,6 +3051,17 @@ allocated length, the size will not be changed.
 */
 None* String_ref_recalc_o(String* self);
 
+size_t String_val_hash_Z(String* self);
+
+size_t String_ref_hash_Z(String* self);
+
+size_t String_box_hash_Z(String* self);
+
+/*
+Create a UTF-8 string from a single UTF-32 code point.
+*/
+String* String_ref_from_utf32_Io(String* self, uint32_t value);
+
 /*
 Unsafe update, used internally.
 */
@@ -2487,6 +3138,12 @@ size_t String_val_next_growth_size_ZZ(String* self, size_t s);
 size_t String_box_next_growth_size_ZZ(String* self, size_t s);
 
 size_t String_tag_next_growth_size_ZZ(String* self, size_t s);
+
+/*
+Inserts the given string at the given offset. Appends the string if the
+offset is out of bounds.
+*/
+None* String_ref_insert_in_place_zoo(String* self, ssize_t offset, String* that);
 
 /*
 Returns a copy of the string. The resulting string is
@@ -2875,8 +3532,36 @@ bool linal_Linear_val_eq_fffb(linal_Linear* self, float a, float b, float eps);
 /* Allocate a t2_U32_val_U8_val without initialising it. */
 t2_U32_val_U8_val* t2_U32_val_U8_val_Alloc(void);
 
+/* Allocate a format_FormatDefault without initialising it. */
+format_FormatDefault* format_FormatDefault_Alloc(void);
+
 /* Allocate a u3_None_val_ui_LayoutNeeded_val_ui_RenderNeeded_val without initialising it. */
 u3_None_val_ui_LayoutNeeded_val_ui_RenderNeeded_val* u3_None_val_ui_LayoutNeeded_val_ui_RenderNeeded_val_Alloc(void);
+
+/* Allocate a collections_HashEq_String_val without initialising it. */
+collections_HashEq_String_val* collections_HashEq_String_val_Alloc(void);
+
+collections_HashEq_String_val* collections_HashEq_String_val_val_create_o(collections_HashEq_String_val* self);
+
+/*
+Use the hash function from the type parameter.
+*/
+size_t collections_HashEq_String_val_val_hash_oZ(collections_HashEq_String_val* self, String* x);
+
+/*
+Use the hash function from the type parameter.
+*/
+size_t collections_HashEq_String_val_box_hash_oZ(collections_HashEq_String_val* self, String* x);
+
+/*
+Use the structural equality function from the type parameter.
+*/
+bool collections_HashEq_String_val_val_eq_oob(collections_HashEq_String_val* self, String* x, String* y);
+
+/*
+Use the structural equality function from the type parameter.
+*/
+bool collections_HashEq_String_val_box_eq_oob(collections_HashEq_String_val* self, String* x, String* y);
 
 /* Allocate a ui_FrameContext without initialising it. */
 ui_FrameContext* ui_FrameContext_Alloc(void);
@@ -3004,6 +3689,43 @@ None* ui_YogaNode_ref_padding_Ifo(ui_YogaNode* self, uint32_t v1, float v2);
 
 None* ui_YogaNode_ref_name_oo(ui_YogaNode* self, String* name_);
 
+/* Allocate a utility_UUID without initialising it. */
+utility_UUID* utility_UUID_Alloc(void);
+
+/*
+Returns a string representation of the UUID.
+*/
+String* utility_UUID_ref_string_o(utility_UUID* self);
+
+/*
+Returns a string representation of the UUID.
+*/
+String* utility_UUID_val_string_o(utility_UUID* self);
+
+/*
+Returns a string representation of the UUID.
+*/
+String* utility_UUID_box_string_o(utility_UUID* self);
+
+/*
+Creates a random UUID. This is an alias for the `v4` constructor.
+*/
+utility_UUID* utility_UUID_val_create_o(utility_UUID* self);
+
+Array_U8_val* utility_UUID_tag__create_v4_o(utility_UUID* self);
+
+Array_U8_val* utility_UUID_val__create_v4_o(utility_UUID* self);
+
+Array_U8_val* utility_UUID_ref__create_v4_o(utility_UUID* self);
+
+Array_U8_val* utility_UUID_box__create_v4_o(utility_UUID* self);
+
+String* utility_UUID_val__hex_string_oZo(utility_UUID* self, Array_U8_val* data, size_t width);
+
+String* utility_UUID_ref__hex_string_oZo(utility_UUID* self, Array_U8_val* data, size_t width);
+
+String* utility_UUID_box__hex_string_oZo(utility_UUID* self, Array_U8_val* data, size_t width);
+
 /* Allocate a ui_TouchEvent without initialising it. */
 ui_TouchEvent* ui_TouchEvent_Alloc(void);
 
@@ -3017,6 +3739,15 @@ void* ui_$2$32_val_apply_oo(ui_$2$32* self, void* p1);
 void* ui_$2$32_box_apply_oo(ui_$2$32* self, void* p1);
 
 void* ui_$2$32_ref_apply_oo(ui_$2$32* self, void* p1);
+
+/* Allocate a format_FormatHexBare without initialising it. */
+format_FormatHexBare* format_FormatHexBare_Alloc(void);
+
+format_FormatHexBare* format_FormatHexBare_val_create_o(format_FormatHexBare* self);
+
+bool format_FormatHexBare_box_eq_ob(format_FormatHexBare* self, format_FormatHexBare* that);
+
+bool format_FormatHexBare_val_eq_ob(format_FormatHexBare* self, format_FormatHexBare* that);
 
 /* Allocate a ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref without initialising it. */
 ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref* ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref_Alloc(void);
@@ -3043,6 +3774,78 @@ ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_val* ArrayValues_ui_YogaNode_r
 
 ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_val* ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_val_ref_create_oZo(ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_val* self, Array_ui_YogaNode_ref* array, size_t offset);
 
+/* Allocate a collections__MapDeleted without initialising it. */
+collections__MapDeleted* collections__MapDeleted_Alloc(void);
+
+collections__MapDeleted* collections__MapDeleted_val_create_o(collections__MapDeleted* self);
+
+bool collections__MapDeleted_box_eq_ob(collections__MapDeleted* self, collections__MapDeleted* that);
+
+bool collections__MapDeleted_val_eq_ob(collections__MapDeleted* self, collections__MapDeleted* that);
+
+/* Allocate a u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val without initialising it. */
+u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val* u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_Alloc(void);
+
+__uint128_t U128_box_op_and_QQ(__uint128_t self, __uint128_t y);
+
+__uint128_t U128_val_op_and_QQ(__uint128_t self, __uint128_t y);
+
+__uint128_t U128_val_sub_QQ(__uint128_t self, __uint128_t y);
+
+__uint128_t U128_box_sub_QQ(__uint128_t self, __uint128_t y);
+
+__uint128_t U128_box_shl_QQ(__uint128_t self, __uint128_t y);
+
+__uint128_t U128_val_shl_QQ(__uint128_t self, __uint128_t y);
+
+size_t U128_box_usize_Z(__uint128_t self);
+
+size_t U128_val_usize_Z(__uint128_t self);
+
+bool U128_box_ne_Qb(__uint128_t self, __uint128_t y);
+
+bool U128_val_ne_Qb(__uint128_t self, __uint128_t y);
+
+String* U128_ref_string_o(__uint128_t self);
+
+String* U128_val_string_o(__uint128_t self);
+
+String* U128_box_string_o(__uint128_t self);
+
+__uint128_t U128_box_mul_QQ(__uint128_t self, __uint128_t y);
+
+__uint128_t U128_val_mul_QQ(__uint128_t self, __uint128_t y);
+
+bool U128_box_eq_Qb(__uint128_t self, __uint128_t y);
+
+bool U128_val_eq_Qb(__uint128_t self, __uint128_t y);
+
+__uint128_t U128_box_div_QQ(__uint128_t self, __uint128_t y);
+
+__uint128_t U128_val_div_QQ(__uint128_t self, __uint128_t y);
+
+char U128_box_u8_C(__uint128_t self);
+
+char U128_val_u8_C(__uint128_t self);
+
+__uint128_t U128_box_op_or_QQ(__uint128_t self, __uint128_t y);
+
+__uint128_t U128_val_op_or_QQ(__uint128_t self, __uint128_t y);
+
+__uint128_t U128_val_create_QQ(__uint128_t self, __uint128_t value);
+
+__uint128_t U128_val_shr_QQ(__uint128_t self, __uint128_t y);
+
+__uint128_t U128_box_shr_QQ(__uint128_t self, __uint128_t y);
+
+/* Allocate a ArrayPairs_U8_val_Array_U8_val_box without initialising it. */
+ArrayPairs_U8_val_Array_U8_val_box* ArrayPairs_U8_val_Array_U8_val_box_Alloc(void);
+
+ArrayPairs_U8_val_Array_U8_val_box* ArrayPairs_U8_val_Array_U8_val_box_ref_create_oo(ArrayPairs_U8_val_Array_U8_val_box* self, Array_U8_val* array);
+
+/* Allocate a t3_U32_val_String_val_String_val without initialising it. */
+t3_U32_val_String_val_String_val* t3_U32_val_String_val_String_val_Alloc(void);
+
 /* Allocate a ui_RenderPrimitive without initialising it. */
 ui_RenderPrimitive* ui_RenderPrimitive_Alloc(void);
 
@@ -3064,6 +3867,15 @@ None* ui_RenderPrimitive_box_startFinished_oo(ui_RenderPrimitive* self, ui_Frame
 ui_KeyEvent* ui_KeyEvent_Alloc(void);
 
 ui_KeyEvent* ui_KeyEvent_val_create_bSoffo(ui_KeyEvent* self, bool pressed_, uint16_t keyCode_, String* characters_, float x, float y);
+
+/* Allocate a utility_Size without initialising it. */
+utility_Size* utility_Size_Alloc(void);
+
+size_t utility_Size_val_apply_Z(utility_Size* self);
+
+size_t utility_Size_box_apply_Z(utility_Size* self);
+
+utility_Size* utility_Size_val_create_o(utility_Size* self);
 
 /* Allocate a u4_ui_NullEvent_val_ui_TouchEvent_val_ui_ScrollEvent_val_ui_KeyEvent_val without initialising it. */
 u4_ui_NullEvent_val_ui_TouchEvent_val_ui_ScrollEvent_val_ui_KeyEvent_val* u4_ui_NullEvent_val_ui_TouchEvent_val_ui_ScrollEvent_val_ui_KeyEvent_val_Alloc(void);
@@ -3151,6 +3963,9 @@ bool collections_Range_USize_val_ref_has_next_b(collections_Range_USize_val* sel
 
 bool collections_Range_USize_val_val_has_next_b(collections_Range_USize_val* self);
 
+/* Allocate a t2_USize_val_U8_val without initialising it. */
+t2_USize_val_U8_val* t2_USize_val_U8_val_Alloc(void);
+
 /* Allocate a stringext_StringExt without initialising it. */
 stringext_StringExt* stringext_StringExt_Alloc(void);
 
@@ -3189,6 +4004,24 @@ None* Array_ui_Geometry_ref_ref_push_oo(Array_ui_Geometry_ref* self, ui_Geometry
 Create an array with zero elements, but space for len elements.
 */
 Array_ui_Geometry_ref* Array_ui_Geometry_ref_ref_create_Zo(Array_ui_Geometry_ref* self, size_t len);
+
+/* Allocate a format_FormatBinaryBare without initialising it. */
+format_FormatBinaryBare* format_FormatBinaryBare_Alloc(void);
+
+format_FormatBinaryBare* format_FormatBinaryBare_val_create_o(format_FormatBinaryBare* self);
+
+bool format_FormatBinaryBare_box_eq_ob(format_FormatBinaryBare* self, format_FormatBinaryBare* that);
+
+bool format_FormatBinaryBare_val_eq_ob(format_FormatBinaryBare* self, format_FormatBinaryBare* that);
+
+/* Allocate a format_FormatOctalBare without initialising it. */
+format_FormatOctalBare* format_FormatOctalBare_Alloc(void);
+
+format_FormatOctalBare* format_FormatOctalBare_val_create_o(format_FormatOctalBare* self);
+
+bool format_FormatOctalBare_box_eq_ob(format_FormatOctalBare* self, format_FormatOctalBare* that);
+
+bool format_FormatOctalBare_val_eq_ob(format_FormatOctalBare* self, format_FormatOctalBare* that);
 
 /* Allocate a linal_R4fun without initialising it. */
 linal_R4fun* linal_R4fun_Alloc(void);

@@ -7,8 +7,8 @@ primitive PerformImageSearch is Action
 
 actor ImageSearchTest is Controllerable
   """
-  Most image search APIs require you to pay to call them, and that's too rediculous to contemplate for this little example program. So no matter
-  what you enter in the search field, we will load a cached result of searching for "kittens" from the following url:
+  Most image search APIs require you to pay to call them, and that's too rediculous to contemplate for this little example program. 
+  So I have included a save search for kittens, which will be loaded no matter what yiou put in the field.
   http://api.qwant.com/api/search/images?count=250&q=kittens&t=images&local=en_US&uiv=4
   """
   
@@ -63,7 +63,12 @@ actor ImageSearchTest is Controllerable
   
   fun ref performImageSearch() =>
     try
-      let searchString = syncData(searchKey)?
+      var searchString = getSyncData(searchKey)?
+      
+      // we only allow searches for kittens, stoopid
+      searchString = "kittens"
+      
+      setSyncData(searchKey, searchString)
       
       if (searchString as String) then
         Log.println("Search for images with the term \"%s\"", searchString)
@@ -90,10 +95,9 @@ actor ImageSearchTest is Controllerable
                 var image_width:F32 = 0
                 var image_height:F32 = 0
                 @RenderEngine_textureInfo(self.renderContext, mediaURL.cpointer(), addressof image_width, addressof image_height)
-                                  
-                if (image_width == 0) and (image_height == 0) then
-                  selfTag.createTextureFromUrl(mediaURL)
-                end
+                
+                // Its ok to call this repeatedly, it won't redownload it if it already exists
+                selfTag.createTextureFromUrl(mediaURL)
                 
                 let resultView = YogaNode.>height(200).>maxHeight(200).>widthAuto().>grow().>marginAll(2).>aspectRatio(item.thumb_width / item.thumb_height)
                                          .>view( Color.>gray() )

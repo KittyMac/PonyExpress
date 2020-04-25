@@ -32,9 +32,11 @@ trait Fontable is (Colorable & Viewable)
   
   be value(value':String) =>
     _value = value'
+    fontRender.invalidate()
   
   be placeholder(placeholder':String val) =>
     _placeholder = placeholder'
+    fontRender.invalidate()
   
   be sizeToFit() =>
     _sizeToFit = true
@@ -42,17 +44,23 @@ trait Fontable is (Colorable & Viewable)
   
   be left() =>
     fontRender.fontAlignment = Alignment.left
+    fontRender.invalidate()
   be center() =>
     fontRender.fontAlignment = Alignment.center
+    fontRender.invalidate()
   be right() =>
     fontRender.fontAlignment = Alignment.right
+    fontRender.invalidate()
   
   be top() =>
     fontRender.fontVerticalAlignment = VerticalAlignment.top
+    fontRender.invalidate()
   be middle() =>
     fontRender.fontVerticalAlignment = VerticalAlignment.middle
+    fontRender.invalidate()
   be bottom() =>
     fontRender.fontVerticalAlignment = VerticalAlignment.bottom
+    fontRender.invalidate()
   
   fun actualValue(frameContext:FrameContext val):String =>
     if hasFocus(frameContext) or (_value.size() > 0) then 

@@ -99,6 +99,12 @@ trait tag Viewable is Animatable
     nodeID = frameContext.nodeID
     start(frameContext)
   
+  fun ref finish() =>
+    None
+
+  be viewable_finish() =>
+    finish()
+  
   fun ref render(frameContext:FrameContext val, bounds:R4) =>
     None
   

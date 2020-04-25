@@ -38,10 +38,11 @@ Pony Express is a UI toolkit for building fully concurrent applications written 
 ## misc
 
 * [ ] add support for Laba animations
+* [ ] automatically unload textures when they are no longer needed
 
 ## demos
 
-* [ ] massively scrolling google image search
+* [x] ~~scrolling image search results~~
 
 ## platforms
 

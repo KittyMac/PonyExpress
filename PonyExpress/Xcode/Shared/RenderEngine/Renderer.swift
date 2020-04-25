@@ -665,13 +665,6 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             }
             
             if let url = URL(string: urlString) {
-                let textureLoaderOptions = [
-                    MTKTextureLoader.Option.textureUsage: NSNumber(value: MTLTextureUsage.shaderRead.rawValue),
-                    MTKTextureLoader.Option.textureStorageMode: NSNumber(value: MTLStorageMode.`private`.rawValue),
-                    MTKTextureLoader.Option.SRGB: NSNumber(value: false),
-                    MTKTextureLoader.Option.generateMipmaps: NSNumber(value: false)
-                ]
-                
                 // Make sure we don't already have it
                 objc_sync_enter(textureCacheLock)
                 defer {
@@ -681,6 +674,13 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
                 if textureCache[urlString] != nil {
                     return
                 }
+                
+                let textureLoaderOptions = [
+                    MTKTextureLoader.Option.textureUsage: NSNumber(value: MTLTextureUsage.shaderRead.rawValue),
+                    MTKTextureLoader.Option.textureStorageMode: NSNumber(value: MTLStorageMode.`private`.rawValue),
+                    MTKTextureLoader.Option.SRGB: NSNumber(value: false),
+                    MTKTextureLoader.Option.generateMipmaps: NSNumber(value: false)
+                ]
                 
                 URLSession.shared.dataTask(with: url) { (data, response, error) in
                     if let data = data {

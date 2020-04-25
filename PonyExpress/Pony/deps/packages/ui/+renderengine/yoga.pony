@@ -56,12 +56,17 @@ class YogaNode
     end
   
   fun ref removeChild(child:YogaNode) =>
+    child.finish()
     @YGNodeRemoveChild(node, child.node)
     children.deleteOne(child)
   
   fun ref removeChildren() =>
+    for child in children.values() do
+      child.finish()
+    end
     children.clear()
     @YGNodeRemoveAllChildren(node)
+    
   
   fun ref layout() =>
     // Before we can calculate the layout, we need to see if any of our children sizeToFit their content. If we do, we need
@@ -160,6 +165,15 @@ class YogaNode
       frameContext.renderNumber = n
     end
     n
+  
+  // Called when the node is removed from the render engine hierarchy
+  fun ref finish() =>
+    for local_view in _views.values() do    
+      local_view.viewable_finish()
+    end
+    for child in children.values() do
+      child.finish()
+    end
   
   // Called on all nodes right before Yoga layout calculations are made
   fun ref preLayout() =>

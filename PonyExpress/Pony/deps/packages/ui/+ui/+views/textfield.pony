@@ -33,6 +33,11 @@ actor TextField is (Fontable & Buttonable & Actionable & Syncable)
       end
     end
   
+  fun ref syncDidUpdate(value:SyncType val) =>
+    _value = value.string()
+    fontRender.invalidate()
+    setNeedsRendered()
+  
   fun ref performClick() =>
     clickedCallback()
 
@@ -41,3 +46,6 @@ actor TextField is (Fontable & Buttonable & Actionable & Syncable)
   
   fun ref invalidate(frameContext:FrameContext val) =>
     fontable_invalidate(frameContext)
+
+  fun ref finish() =>
+    syncable_finish()
