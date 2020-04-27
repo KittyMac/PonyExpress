@@ -153,7 +153,7 @@ primitive RenderPrimitive
                           vertices.size().u32(), 
                           vertices.cpointer(),
                           vertices.allocSize().u32(),
-                          gc.r, gc.g, gc.b, gc.a,
+                          gc.r, gc.g, gc.b, gc.a * frameContext.alpha,
                           t)
     
   

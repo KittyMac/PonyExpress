@@ -114,3 +114,28 @@ class LabaActionMoveY is LabaAction
   fun update(target:LabaTarget, animationValue:F32) =>
     target.setY( Easing.tween(easing,from,to,animationValue) )
     //Log.println("%s: from %s,  to %s,  v %s", target.getY(), from, to, animationValue)
+
+
+class LabaActionFade is LabaAction
+"""
+  f0 is fade the alpha from current value to zero
+  f1 is fade the alpha from current value to one
+  !f is fade alpha from zero to current value
+"""
+  new create(operator':U8, target:LabaTarget, parser:StringParser, inverted':Bool, easing':U32) =>
+    operator = operator'
+    inverted = inverted'
+    easing = easing'
+    value = try parser.f32()? else target.getAlpha() end
+    if inverted then
+      to = target.getAlpha()
+      from = if to > 0.5 then 0.0 else 1.0 end
+    else
+      from = target.getAlpha()
+      to = value
+    end
+    
+    
+  fun update(target:LabaTarget, animationValue:F32) =>
+    target.setAlpha( Easing.tween(easing,from,to,animationValue) )
+    //Log.println("%s: from %s,  to %s,  v %s", target.getAlpha(), from, to, animationValue)

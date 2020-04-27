@@ -1292,6 +1292,13 @@ functions on a Pointer[A] are private to maintain memory safety.
 */
 typedef struct u2_String_box_Array_U8_val_box u2_String_box_Array_U8_val_box;
 
+/*
+f0 is fade the alpha from current value to zero
+f1 is fade the alpha from current value to one
+!f is fade alpha from zero to current value
+*/
+typedef struct laba_LabaActionFade laba_LabaActionFade;
+
 typedef struct t2_ISize_val_Bool_val t2_ISize_val_Bool_val;
 
 /*
@@ -2631,6 +2638,8 @@ float laba_LabaTarget_ref_getHeight_f(laba_LabaTarget* self);
 
 float laba_LabaTarget_ref_getY_f(laba_LabaTarget* self);
 
+None* laba_LabaTarget_ref_setAlpha_fo(laba_LabaTarget* self, float a);
+
 size_t laba_LabaTarget_ref_getSiblingIdx_Z(laba_LabaTarget* self);
 
 None* laba_LabaTarget_ref_setX_fo(laba_LabaTarget* self, float x);
@@ -2638,6 +2647,8 @@ None* laba_LabaTarget_ref_setX_fo(laba_LabaTarget* self, float x);
 None* laba_LabaTarget_ref_syncFromNode_o(laba_LabaTarget* self);
 
 float laba_LabaTarget_ref_getWidth_f(laba_LabaTarget* self);
+
+float laba_LabaTarget_ref_getAlpha_f(laba_LabaTarget* self);
 
 None* laba_LabaTarget_ref_setY_fo(laba_LabaTarget* self, float y);
 
@@ -4385,6 +4396,12 @@ float ui_YogaNode_val__handleNAN_ff(ui_YogaNode* self, float v);
 
 float ui_YogaNode_ref__handleNAN_ff(ui_YogaNode* self, float v);
 
+float ui_YogaNode_box_getAlpha_f(ui_YogaNode* self);
+
+float ui_YogaNode_ref_getAlpha_f(ui_YogaNode* self);
+
+float ui_YogaNode_val_getAlpha_f(ui_YogaNode* self);
+
 None* ui_YogaNode_ref_padding_Ifo(ui_YogaNode* self, uint32_t v1, float v2);
 
 String* ui_YogaNode_ref_string_o(ui_YogaNode* self);
@@ -4392,6 +4409,8 @@ String* ui_YogaNode_ref_string_o(ui_YogaNode* self);
 String* ui_YogaNode_val_string_o(ui_YogaNode* self);
 
 String* ui_YogaNode_box_string_o(ui_YogaNode* self);
+
+None* ui_YogaNode_ref_alpha_fo(ui_YogaNode* self, float a);
 
 float ui_YogaNode_ref_getTop_f(ui_YogaNode* self);
 
@@ -5061,6 +5080,17 @@ None* u2_String_box_Array_U8_val_box_val__copy_to_oZZZo(void* self, char* ptr, s
 Copy copy_len characters from this to that at specified offsets.
 */
 None* u2_String_box_Array_U8_val_box_box__copy_to_oZZZo(void* self, char* ptr, size_t copy_len, size_t from_offset, size_t to_offset);
+
+/* Allocate a laba_LabaActionFade without initialising it. */
+laba_LabaActionFade* laba_LabaActionFade_Alloc(void);
+
+laba_LabaActionFade* laba_LabaActionFade_ref_create_CoobIo(laba_LabaActionFade* self, char operator_, laba_LabaTarget* target, stringext_StringParser* parser, bool inverted_, uint32_t easing_);
+
+None* laba_LabaActionFade_box_update_ofo(laba_LabaActionFade* self, laba_LabaTarget* target, float animationValue);
+
+None* laba_LabaActionFade_ref_update_ofo(laba_LabaActionFade* self, laba_LabaTarget* target, float animationValue);
+
+None* laba_LabaActionFade_val_update_ofo(laba_LabaActionFade* self, laba_LabaTarget* target, float animationValue);
 
 /* Allocate a t2_ISize_val_Bool_val without initialising it. */
 t2_ISize_val_Bool_val* t2_ISize_val_Bool_val_Alloc(void);

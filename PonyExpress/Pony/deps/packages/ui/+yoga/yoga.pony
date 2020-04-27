@@ -35,6 +35,8 @@ class YogaNode
   
   var _focusIdx:ISize = -1
   
+  var _alpha:F32 = 1.0
+  
   fun _final() =>
     //@printf("_final called on yoga node [%d]\n".cstring(), node)
     @YGNodeFree(node)
@@ -266,12 +268,15 @@ class YogaNode
                 M4fun.rot(Q4fun.from_euler(_rotation))
               )
       end
-    
+      
+      let savedAlpha = frameContext.alpha
+      
       frameContext.matrix = local_matrix
       frameContext.nodeID = id()
       frameContext.contentSize = contentSize()
       frameContext.nodeSize = nodeSize()
       frameContext.parentContentOffset = parentContentOffset
+      frameContext.alpha = frameContext.alpha * _alpha
     
       last_bounds = R4fun( (-local_width/2)+parentContentOffset._1, (-local_height/2)-parentContentOffset._2, local_width, local_height)
       last_matrix = local_matrix
@@ -328,6 +333,8 @@ class YogaNode
       
         popClips( frameContext.clone(), last_bounds )
       end
+      
+      frameContext.alpha = savedAlpha
     
     end
     
@@ -412,6 +419,12 @@ class YogaNode
   
   fun ref focusIdx(idx:ISize) =>
     _focusIdx = idx.max(-1)
+  
+  fun getAlpha():F32 =>
+    _alpha
+  
+  fun ref alpha(a:F32) =>
+    _alpha = a
   
   // Helper functions for more declaratively defining layouts
   
