@@ -4,7 +4,7 @@
  *
  * ? argument replacement, replaced in order by arguments supplied to the constructor such as node.laba("d?<?", duration, movement)
  *
- * ~ delay
+ * ~ delay (inverted means staggered based on child index)
  *
  * w width
  * h height
@@ -25,9 +25,7 @@
  * p pitch
  * a yaw
  *
- * d duration for current pipe
- *
- * D staggaered duration based on sibling/child index
+ * d duration for current pipe (inverted means staggered based on child index)
  *
  * L loop (absolute) this segment (value is number of times to loop, -1 means loop infinitely)
  *
@@ -62,6 +60,7 @@ class LabaActionGroup
   let actions:Array[LabaAction]
   var duration:F32 = LabaConst.duration
   var delay:F32 = 0.0
+  var easing:U32 = EasingID.cubicInOut
   
   new create() =>
     actions = Array[LabaAction](32)
@@ -102,15 +101,19 @@ class LabaTarget
   let target:YogaNode
   var _x:F32 = 0
   var _y:F32 = 0
+  var _w:F32 = 0
+  var _h:F32 = 0
   
   var x_sync:Bool = false
   var y_sync:Bool = false
+  var w_sync:Bool = false
+  var h_sync:Bool = false
 
   new create(target':YogaNode) =>
     target = target'
   
   fun ref getSiblingIdx():USize => 
-    target.sibling_index
+    target.sibling_index + 1
   
   fun ref getX():F32 => _x
   fun ref setX(x:F32) => _x = x; x_sync = true
@@ -118,13 +121,23 @@ class LabaTarget
   fun ref getY():F32 => _y
   fun ref setY(y:F32) => _y = y; y_sync = true
   
+  fun ref getWidth():F32 => _w
+  fun ref setWidth(w:F32) => _w = w; w_sync = true
+  
+  fun ref getHeight():F32 => _h
+  fun ref setHeight(h:F32) => _h = h; h_sync = true
+  
   fun ref syncFromNode() =>
     _x = target.getLeft()
     _y = target.getTop()
+    _w = target.getWidth()
+    _h = target.getHeight()
   
   fun ref syncToNode() =>
     if x_sync then target.left(_x); x_sync = false end
     if y_sync then target.top(_y); y_sync = false end
+    if w_sync then target.width(_w); w_sync = false end
+    if h_sync then target.height(_h); h_sync = false end
 
 
 class Laba
@@ -211,6 +224,7 @@ class Laba
     // make the animation happen. Note that we cannot do this in create(), because
     // the node as not yet been laid out. So we do it on the first call to animate.
     let parser = StringParser(animationString)
+    var easing:U32 = EasingID.cubicInOut
     var inverted:Bool = false
     var action:(LabaAction|None) = None
     var group = LabaActionGroup
@@ -224,18 +238,33 @@ class Laba
         let c = parser.u8()?
         match c
         | '!' => inverted = true
-        | '<' => action = LabaActionMoveX(c, target, parser, -1, inverted)
-        | '>' => action = LabaActionMoveX(c, target, parser, 1, inverted)
-        | '^' => action = LabaActionMoveY(c, target, parser, -1, inverted)
-        | 'v' => action = LabaActionMoveY(c, target, parser, 1, inverted)
+        | '<' => action = LabaActionMoveX(c, target, parser, -1, inverted, group.easing)
+        | '>' => action = LabaActionMoveX(c, target, parser, 1, inverted, group.easing)
+        | '^' => action = LabaActionMoveY(c, target, parser, -1, inverted, group.easing)
+        | 'v' => action = LabaActionMoveY(c, target, parser, 1, inverted, group.easing)
         
-        | 'D' => group.duration = (try parser.f32()? else LabaConst.duration end) * target.getSiblingIdx().f32()
-        | 'd' => group.duration = try parser.f32()? else LabaConst.duration end
-        | '~' => group.delay = try parser.f32()? else LabaConst.delay end
-      
+        | 'e' => easing = try parser.i32()?.u32() else EasingID.cubicInOut end; group.easing = easing
+        
+        | 'd' => 
+          if inverted then
+            group.duration = (try parser.f32()? else LabaConst.duration end) * target.getSiblingIdx().f32()
+          else
+            group.duration = try parser.f32()? else LabaConst.duration end
+          end
+          inverted = false
+        
+        | '~' =>
+          if inverted then
+            group.delay = (try parser.f32()? else LabaConst.delay end) * target.getSiblingIdx().f32()
+          else
+            group.delay = try parser.f32()? else LabaConst.delay end
+          end
+          inverted = false
+        
         | '|' =>
           group.commit(target)
           group = LabaActionGroup
+          group.easing = easing
           groups.push(group)
         end
       

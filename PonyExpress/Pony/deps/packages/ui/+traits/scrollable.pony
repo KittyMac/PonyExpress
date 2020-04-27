@@ -387,7 +387,7 @@ trait Scrollable is (Viewable & Actionable)
           if horizontalDecelerationState == DeceleratingState.returningFromEdge then
             //we're returning from being scrolled past the edge
             horizontalDecelerationTime = horizontalDecelerationTime + delta
-            assignScrollX = Easing.tweenCubicEaseOut(animStartScrollX, animEndScrollX, horizontalDecelerationTime / animationDuration)
+            assignScrollX = Easing.tweenCubicOut(animStartScrollX, animEndScrollX, horizontalDecelerationTime / animationDuration)
 
             //are we done animating?
             if horizontalDecelerationTime >= animationDuration then
@@ -400,8 +400,8 @@ trait Scrollable is (Viewable & Actionable)
             if horizontalDecelerationState == DeceleratingState.scrolling then
               //we're scrolling, and have not yet hit the edge
               let deceleratingPercent = scrollStateTime / scrollDuration
-              assignScrollX = Easing.tweenQuinticEaseOut(animStartScrollX, animEndScrollX, deceleratingPercent)
-              velocityX = Easing.tweenQuinticEaseOut(animStartVelocityX, 0.0, deceleratingPercent)
+              assignScrollX = Easing.tweenQuinticOut(animStartScrollX, animEndScrollX, deceleratingPercent)
+              velocityX = Easing.tweenQuinticOut(animStartVelocityX, 0.0, deceleratingPercent)
 
               //check if we've hit the edge
               if (scrollX < 0.0) or (scrollX > calcMaxScrollX()) then
@@ -429,9 +429,9 @@ trait Scrollable is (Viewable & Actionable)
                 //assign the bounce position
                 let bounceDistPastEdge = edge + (velocityX * bounceDistancePerVelocity)
                 if horizontalDecelerationTime < (edgeBounceEaseTimePercent * edgeBounceDuration) then
-                  assignScrollX = Easing.tweenQuadraticEaseOut(edge, bounceDistPastEdge, horizontalDecelerationTime / (edgeBounceEaseTimePercent * edgeBounceDuration))
+                  assignScrollX = Easing.tweenQuadraticOut(edge, bounceDistPastEdge, horizontalDecelerationTime / (edgeBounceEaseTimePercent * edgeBounceDuration))
                 else
-                  assignScrollX = Easing.tweenQuadraticEaseOut(bounceDistPastEdge, edge, (horizontalDecelerationTime - (edgeBounceEaseTimePercent * edgeBounceDuration)) / ((1.0 - edgeBounceEaseTimePercent) * edgeBounceDuration))
+                  assignScrollX = Easing.tweenQuadraticOut(bounceDistPastEdge, edge, (horizontalDecelerationTime - (edgeBounceEaseTimePercent * edgeBounceDuration)) / ((1.0 - edgeBounceEaseTimePercent) * edgeBounceDuration))
                 end
               end
             end
@@ -444,7 +444,7 @@ trait Scrollable is (Viewable & Actionable)
           if verticalDecelerationState == DeceleratingState.returningFromEdge then
             //we're returning from being scrolled past the edge
             verticalDecelerationTime = verticalDecelerationTime + delta
-            assignScrollY = Easing.tweenCubicEaseOut(animStartScrollY, animEndScrollY, verticalDecelerationTime / animationDuration)
+            assignScrollY = Easing.tweenCubicOut(animStartScrollY, animEndScrollY, verticalDecelerationTime / animationDuration)
 
             //are we done animating?
             if verticalDecelerationTime >= animationDuration then
@@ -457,8 +457,8 @@ trait Scrollable is (Viewable & Actionable)
             if verticalDecelerationState == DeceleratingState.scrolling then              
               //we're scrolling, and have not yet hit the edge
               let deceleratingPercent = scrollStateTime / scrollDuration
-              assignScrollY = Easing.tweenQuinticEaseOut(animStartScrollY, animEndScrollY, deceleratingPercent)
-              velocityY = Easing.tweenQuinticEaseOut(animStartVelocityY, 0.0, deceleratingPercent)
+              assignScrollY = Easing.tweenQuinticOut(animStartScrollY, animEndScrollY, deceleratingPercent)
+              velocityY = Easing.tweenQuinticOut(animStartVelocityY, 0.0, deceleratingPercent)
 
               //check if we've hit the edge
               if (scrollY < 0.0) or (scrollY > calcMaxScrollY()) then
@@ -486,9 +486,9 @@ trait Scrollable is (Viewable & Actionable)
                 //assign the bounce position
                 let bounceDistPastEdge = edge + (velocityY * bounceDistancePerVelocity)
                 if verticalDecelerationTime < (edgeBounceEaseTimePercent * edgeBounceDuration) then
-                  assignScrollY = Easing.tweenQuadraticEaseOut(edge, bounceDistPastEdge, verticalDecelerationTime / (edgeBounceEaseTimePercent * edgeBounceDuration))
+                  assignScrollY = Easing.tweenQuadraticOut(edge, bounceDistPastEdge, verticalDecelerationTime / (edgeBounceEaseTimePercent * edgeBounceDuration))
                 else
-                  assignScrollY = Easing.tweenQuadraticEaseOut(bounceDistPastEdge, edge, (verticalDecelerationTime - (edgeBounceEaseTimePercent * edgeBounceDuration)) / ((1.0 - edgeBounceEaseTimePercent) * edgeBounceDuration))
+                  assignScrollY = Easing.tweenQuadraticOut(bounceDistPastEdge, edge, (verticalDecelerationTime - (edgeBounceEaseTimePercent * edgeBounceDuration)) / ((1.0 - edgeBounceEaseTimePercent) * edgeBounceDuration))
                 end
               end
             end
@@ -532,13 +532,13 @@ trait Scrollable is (Viewable & Actionable)
         //animate horizontally
         if scrollHorizontal then
           //animate towards our desired scroll position
-          assignScrollX = Easing.tweenCubicEaseOut(animStartScrollX, animEndScrollX, scrollStateTime / animationDuration)
+          assignScrollX = Easing.tweenCubicOut(animStartScrollX, animEndScrollX, scrollStateTime / animationDuration)
         end
 
         //animate vertically
         if scrollVertical then
           //animate towards our desired scroll position
-          assignScrollY = Easing.tweenCubicEaseOut(animStartScrollY, animEndScrollY, scrollStateTime / animationDuration)
+          assignScrollY = Easing.tweenCubicOut(animStartScrollY, animEndScrollY, scrollStateTime / animationDuration)
         end
 
         //ready to switch states?

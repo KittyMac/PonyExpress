@@ -59,6 +59,7 @@ trait LabaAction
   var from:F32 = 0.0
   var to:F32 = 0.0
   var inverted:Bool = false
+  var easing:U32 = EasingID.cubicInOut
   
   fun update(target:LabaTarget, animationValue:F32)
   
@@ -74,10 +75,11 @@ class LabaActionMoveX is LabaAction
   <100 is move the target 100 units to the left
   >100 is move the target 100 units to the right
 """
-  new create(operator':U8, target:LabaTarget, parser:StringParser, mod:F32, inverted':Bool) =>
+  new create(operator':U8, target:LabaTarget, parser:StringParser, mod:F32, inverted':Bool, easing':U32) =>
     operator = operator'
     inverted = inverted'
-    value = try parser.f32()? else 0.0 end
+    easing = easing'
+    value = try parser.f32()? else target.getWidth() end
     if inverted then
       to = target.getX()
       from = to - (mod * value)
@@ -87,7 +89,7 @@ class LabaActionMoveX is LabaAction
     end
     
   fun update(target:LabaTarget, animationValue:F32) =>
-    target.setX( Easing.tweenQuadraticEaseOut(from,to,animationValue) )
+    target.setX( Easing.tween(easing,from,to,animationValue) )
     //Log.println("%s: from %s,  to %s,  v %s", target.getX(), from, to, animationValue)
 
 class LabaActionMoveY is LabaAction
@@ -95,10 +97,11 @@ class LabaActionMoveY is LabaAction
   ^100 is move the target 100 units up
   v100 is move the target 100 units down
 """
-  new create(operator':U8, target:LabaTarget, parser:StringParser, mod:F32, inverted':Bool) =>
+  new create(operator':U8, target:LabaTarget, parser:StringParser, mod:F32, inverted':Bool, easing':U32) =>
     operator = operator'
     inverted = inverted'
-    value = try parser.f32()? else 0.0 end
+    easing = easing'
+    value = try parser.f32()? else target.getHeight() end
     if inverted then
       to = target.getY()
       from = to - (mod * value)
@@ -109,5 +112,5 @@ class LabaActionMoveY is LabaAction
     
     
   fun update(target:LabaTarget, animationValue:F32) =>
-    target.setY( Easing.tweenQuadraticEaseOut(from,to,animationValue) )
-    Log.println("%s: from %s,  to %s,  v %s", target.getY(), from, to, animationValue)
+    target.setY( Easing.tween(easing,from,to,animationValue) )
+    //Log.println("%s: from %s,  to %s,  v %s", target.getY(), from, to, animationValue)

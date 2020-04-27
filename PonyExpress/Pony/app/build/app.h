@@ -1946,7 +1946,7 @@ bool format_PrefixSign_val_eq_ob(format_PrefixSign* self, format_PrefixSign* tha
 /* Allocate a laba_LabaActionMoveY without initialising it. */
 laba_LabaActionMoveY* laba_LabaActionMoveY_Alloc(void);
 
-laba_LabaActionMoveY* laba_LabaActionMoveY_ref_create_Coofbo(laba_LabaActionMoveY* self, char operator_, laba_LabaTarget* target, stringext_StringParser* parser, float mod, bool inverted_);
+laba_LabaActionMoveY* laba_LabaActionMoveY_ref_create_CoofbIo(laba_LabaActionMoveY* self, char operator_, laba_LabaTarget* target, stringext_StringParser* parser, float mod, bool inverted_, uint32_t easing_);
 
 None* laba_LabaActionMoveY_box_update_ofo(laba_LabaActionMoveY* self, laba_LabaTarget* target, float animationValue);
 
@@ -2114,9 +2114,9 @@ bool format_AlignRight_val_eq_ob(format_AlignRight* self, format_AlignRight* tha
 /* Allocate a stringext_StringParser without initialising it. */
 stringext_StringParser* stringext_StringParser_Alloc(void);
 
-stringext_StringParser* stringext_StringParser_ref_create_oo(stringext_StringParser* self, String* string_);
-
 size_t stringext_StringParser_ref_advance_oZ(stringext_StringParser* self, Array_U8_val* set);
+
+stringext_StringParser* stringext_StringParser_ref_create_oo(stringext_StringParser* self, String* string_);
 
 /*
 Convert the pointer into an integer.
@@ -2611,6 +2611,8 @@ _UnsignedPartialArithmetic* _UnsignedPartialArithmetic_val_create_o(_UnsignedPar
 /* Allocate a laba_LabaTarget without initialising it. */
 laba_LabaTarget* laba_LabaTarget_Alloc(void);
 
+float laba_LabaTarget_ref_getHeight_f(laba_LabaTarget* self);
+
 float laba_LabaTarget_ref_getY_f(laba_LabaTarget* self);
 
 size_t laba_LabaTarget_ref_getSiblingIdx_Z(laba_LabaTarget* self);
@@ -2618,6 +2620,8 @@ size_t laba_LabaTarget_ref_getSiblingIdx_Z(laba_LabaTarget* self);
 None* laba_LabaTarget_ref_setX_fo(laba_LabaTarget* self, float x);
 
 None* laba_LabaTarget_ref_syncFromNode_o(laba_LabaTarget* self);
+
+float laba_LabaTarget_ref_getWidth_f(laba_LabaTarget* self);
 
 None* laba_LabaTarget_ref_setY_fo(laba_LabaTarget* self, float y);
 
@@ -3572,7 +3576,7 @@ bool PlatformIOS_box__use_main_thread_b(PlatformIOS* self);
 /* Allocate a laba_LabaActionMoveX without initialising it. */
 laba_LabaActionMoveX* laba_LabaActionMoveX_Alloc(void);
 
-laba_LabaActionMoveX* laba_LabaActionMoveX_ref_create_Coofbo(laba_LabaActionMoveX* self, char operator_, laba_LabaTarget* target, stringext_StringParser* parser, float mod, bool inverted_);
+laba_LabaActionMoveX* laba_LabaActionMoveX_ref_create_CoofbIo(laba_LabaActionMoveX* self, char operator_, laba_LabaTarget* target, stringext_StringParser* parser, float mod, bool inverted_, uint32_t easing_);
 
 None* laba_LabaActionMoveX_box_update_ofo(laba_LabaActionMoveX* self, laba_LabaTarget* target, float animationValue);
 
@@ -4124,6 +4128,10 @@ float F32_box_add_ff(float self, float y);
 
 float F32_val_add_ff(float self, float y);
 
+float F32_box_cos_f(float self);
+
+float F32_val_cos_f(float self);
+
 /*
 Minimum positive value such that (1 + epsilon) != 1.
 */
@@ -4132,6 +4140,10 @@ float F32_val_epsilon_f(float self);
 float F32_box_mul_ff(float self, float y);
 
 float F32_val_mul_ff(float self, float y);
+
+float F32_box_pow_ff(float self, float y);
+
+float F32_val_pow_ff(float self, float y);
 
 /*
 Check whether this number is NaN.
@@ -4142,6 +4154,14 @@ bool F32_val_nan_b(float self);
 Check whether this number is NaN.
 */
 bool F32_box_nan_b(float self);
+
+bool F32_val_eq_fb(float self, float y);
+
+bool F32_box_eq_fb(float self, float y);
+
+float F32_box_sin_f(float self);
+
+float F32_val_sin_f(float self);
 
 float F32_val__nan_f(float self);
 
@@ -4317,6 +4337,12 @@ void* ui_YogaNode_ref_getNodeByName_oo(ui_YogaNode* self, String* nodeName);
 
 void* ui_YogaNode_ref_getNodeByID_Zo(ui_YogaNode* self, size_t nodeID);
 
+float ui_YogaNode_box_getHeight_f(ui_YogaNode* self);
+
+float ui_YogaNode_val_getHeight_f(ui_YogaNode* self);
+
+float ui_YogaNode_ref_getHeight_f(ui_YogaNode* self);
+
 size_t ui_YogaNode_val_id_Z(ui_YogaNode* self);
 
 size_t ui_YogaNode_box_id_Z(ui_YogaNode* self);
@@ -4368,6 +4394,12 @@ ssize_t ui_YogaNode_ref_getFocusIdx_z(ui_YogaNode* self);
 None* ui_YogaNode_ref_height_fo(ui_YogaNode* self, float v);
 
 None* ui_YogaNode_ref_addChild_oo(ui_YogaNode* self, ui_YogaNode* child);
+
+float ui_YogaNode_box_getWidth_f(ui_YogaNode* self);
+
+float ui_YogaNode_ref_getWidth_f(ui_YogaNode* self);
+
+float ui_YogaNode_val_getWidth_f(ui_YogaNode* self);
 
 None* ui_YogaNode_ref_name_oo(ui_YogaNode* self, String* name_);
 
@@ -4694,15 +4726,255 @@ $0$12_U8_val* $0$12_U8_val_val_create_o($0$12_U8_val* self);
 /* Allocate a easings_Easing_F32_val without initialising it. */
 easings_Easing_F32_val* easings_Easing_F32_val_Alloc(void);
 
+float easings_Easing_F32_val_box_tweenQuinticInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenQuinticInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_quadraticIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_quadraticIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_tweenBounceIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenBounceIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_quinticInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_quinticInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_tweenQuarticOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenQuarticOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_exponentialIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_exponentialIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_sineInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_sineInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_bounceIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_bounceIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_exponentialOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_exponentialOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_tweenQuarticIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenQuarticIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_cubicOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_cubicOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_tweenLinear_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenLinear_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenCircularOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenCircularOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_quinticIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_quinticIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_sineIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_sineIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_tweenBounceOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenBounceOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenExponentialIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenExponentialIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenExponentialInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenExponentialInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenBackInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenBackInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenElasticOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenElasticOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenCubicInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenCubicInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_quinticOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_quinticOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_tweenSineInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenSineInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_circularInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_circularInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_tween_Iffff(easings_Easing_F32_val* self, uint32_t id, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tween_Iffff(easings_Easing_F32_val* self, uint32_t id, float a, float b, float t);
+
+float easings_Easing_F32_val_box_quarticIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_quarticIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_elasticInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_elasticInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_tweenBounceInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenBounceInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_backInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_backInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_tweenExponentialOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenExponentialOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_backIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_backIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_tweenBackOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenBackOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_quarticInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_quarticInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_tweenCircularInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenCircularInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_circularOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_circularOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_tweenQuadraticInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenQuadraticInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_cubicIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_cubicIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_tweenCircularIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenCircularIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenQuinticIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenQuinticIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_backOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_backOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_bounceOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_bounceOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_sineOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_sineOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_tweenQuarticInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenQuarticInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenSineIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenSineIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_elasticIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_elasticIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_tweenElasticInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenElasticInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenCubicIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenCubicIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenQuadraticOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenQuadraticOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenElasticIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenElasticIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_circularIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_circularIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_cubicInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_cubicInOut_ff(easings_Easing_F32_val* self, float p);
+
 easings_Easing_F32_val* easings_Easing_F32_val_val_create_o(easings_Easing_F32_val* self);
 
-float easings_Easing_F32_val_val_quadraticEaseOut_ff(easings_Easing_F32_val* self, float p);
+float easings_Easing_F32_val_val_exponentialInOut_ff(easings_Easing_F32_val* self, float p);
 
-float easings_Easing_F32_val_box_quadraticEaseOut_ff(easings_Easing_F32_val* self, float p);
+float easings_Easing_F32_val_box_exponentialInOut_ff(easings_Easing_F32_val* self, float p);
 
-float easings_Easing_F32_val_box_tweenQuadraticEaseOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+float easings_Easing_F32_val_val_tweenCubicOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
 
-float easings_Easing_F32_val_val_tweenQuadraticEaseOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+float easings_Easing_F32_val_box_tweenCubicOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenBackIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenBackIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenQuinticOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenQuinticOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_elasticOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_elasticOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_bounceInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_bounceInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_quadraticInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_quadraticInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_tweenSineOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenSineOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenQuadraticIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenQuadraticIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_quadraticOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_quadraticOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_quarticOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_quarticOut_ff(easings_Easing_F32_val* self, float p);
 
 /* Allocate a u4_ui_NullEvent_val_ui_TouchEvent_val_ui_ScrollEvent_val_ui_KeyEvent_val without initialising it. */
 u4_ui_NullEvent_val_ui_TouchEvent_val_ui_ScrollEvent_val_ui_KeyEvent_val* u4_ui_NullEvent_val_ui_TouchEvent_val_ui_ScrollEvent_val_ui_KeyEvent_val_Alloc(void);
