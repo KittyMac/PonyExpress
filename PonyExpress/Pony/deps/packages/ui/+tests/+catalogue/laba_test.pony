@@ -70,7 +70,8 @@ actor LabaTest is Controllerable
                   
                       YogaNode.>fit().>rows().>wrap()
                               .>addChildren([
-                                  sample3("!f!~!>|~d0|~d0|~d0", "!f!~!>|~d0|~d0", "!f!~!>|~d0")
+                                  sample3("!fI!>|id0|id0|id0", "!fI!>|id0|id0", "!fI!>|id0")
+                                  sample3("!f!I!>|id0", "!f!I!>|id0|id0", "!f!I!>|id0|id0|id0")
                                   sample1("<|^|>|v")
                                   sample1("e0<|^|>|v")
                               ])

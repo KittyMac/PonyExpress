@@ -2640,7 +2640,7 @@ float laba_LabaTarget_ref_getY_f(laba_LabaTarget* self);
 
 None* laba_LabaTarget_ref_setAlpha_fo(laba_LabaTarget* self, float a);
 
-size_t laba_LabaTarget_ref_getSiblingIdx_Z(laba_LabaTarget* self);
+size_t laba_LabaTarget_ref_getSiblingIdx_bZ(laba_LabaTarget* self, bool inverted);
 
 None* laba_LabaTarget_ref_setX_fo(laba_LabaTarget* self, float x);
 

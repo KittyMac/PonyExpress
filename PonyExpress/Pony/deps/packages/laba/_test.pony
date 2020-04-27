@@ -60,8 +60,8 @@ class iso _TestLaba2 is UnitTest
     
     let tests:Array[(F32,String,String)] = [
       (LabaConst.duration, "", """<div layout="width: 100; height: 100; top: 0; left: 0;" style="width: 100px; height: 100px; " ></div>""")
-      (0.27+0.1+0.2+0.3, "~d0.1|d0.2|d0.3", """<div layout="width: 100; height: 100; top: 0; left: 0;" style="width: 100px; height: 100px; " ></div>""")
-      (0.5+0.1+0.2+0.3, "~0.5d0.1|d0.2|d0.3", """<div layout="width: 100; height: 100; top: 0; left: 0;" style="width: 100px; height: 100px; " ></div>""")
+      (0.27+0.1+0.2+0.3, "id0.1|d0.2|d0.3", """<div layout="width: 100; height: 100; top: 0; left: 0;" style="width: 100px; height: 100px; " ></div>""")
+      (0.5+0.1+0.2+0.3, "i0.5d0.1|d0.2|d0.3", """<div layout="width: 100; height: 100; top: 0; left: 0;" style="width: 100px; height: 100px; " ></div>""")
       (0.1+0.2+0.3, "d0.1|d0.2|d0.3", """<div layout="width: 100; height: 100; top: 0; left: 0;" style="width: 100px; height: 100px; " ></div>""")
       (0.23, "d0.23<100", """<div layout="width: 100; height: 100; top: 0; left: -100;" style="width: 100px; height: 100px; left: -100px; " ></div>""")
       (0.23+0.7, "d0.23<100|d0.7>100", """<div layout="width: 100; height: 100; top: 0; left: 0;" style="width: 100px; height: 100px; left: 0px; " ></div>""")
@@ -97,8 +97,8 @@ class iso _TestLaba3 is UnitTest
     h.long_test(30_000_000_000)
 
     let tests:Array[(F32,String,String)] = [
-      (3.0*3, "!d3.0", """<div layout="width: 100; height: 100; top: 200; left: 0;" style="width: 100px; height: 100px; " ></div>""")
-      ((3.0*3)+LabaConst.duration, "!~3.0", """<div layout="width: 100; height: 100; top: 200; left: 0;" style="width: 100px; height: 100px; " ></div>""")
+      (3.0*3, "D3.0", """<div layout="width: 100; height: 100; top: 200; left: 0;" style="width: 100px; height: 100px; " ></div>""")
+      ((3.0*3)+LabaConst.duration, "I3.0", """<div layout="width: 100; height: 100; top: 200; left: 0;" style="width: 100px; height: 100px; " ></div>""")
     ]
 
     var testIdx:USize = 0

@@ -4,7 +4,8 @@
  *
  * ? argument replacement, replaced in order by arguments supplied to the constructor such as node.laba("d?<?", duration, movement)
  *
- * ~ delay (inverted means staggered based on child index)
+ * I staggered interlude (delay) for the current pipe. Inverting meand reverse child order.
+ * i interlude (delay) for the current pipe
  *
  * w width
  * h height
@@ -25,7 +26,8 @@
  * p pitch
  * a yaw
  *
- * d duration for current pipe (inverted means staggered based on child index)
+ * D staggered duration for current pipe. Inverting meand reverse child order.
+ * d duration for current pipe
  *
  * L loop (absolute) this segment (value is number of times to loop, -1 means loop infinitely)
  *
@@ -36,8 +38,6 @@
  * | pipe animations (chain)
  *
  * ! invert an action (instead of move left, its move to current position from the right)
- *
- * [] concurrent Laba animations ( example: [>d2][!fd1] )
  *
  */
 
@@ -113,8 +113,15 @@ class LabaTarget
   new create(target':YogaNode) =>
     target = target'
   
-  fun ref getSiblingIdx():USize => 
-    target.sibling_index + 1
+  fun ref getSiblingIdx(inverted:Bool = false):USize => 
+    if inverted then
+      (target.sibling_count + 1) - (target.sibling_index + 1)
+    else
+      target.sibling_index + 1
+    end
+  
+  fun ref getSiblingCount():USize => 
+    target.sibling_count + 1
   
   fun ref getX():F32 => _x
   fun ref setX(x:F32) => _x = x; x_sync = true
@@ -222,20 +229,17 @@ class Laba
         
         | 'e' => easing = try parser.i32()?.u32() else EasingID.cubicInOut end; group.easing = easing
         
-        | 'd' => 
-          if inverted then
-            group.duration = (try parser.f32()? else LabaConst.duration end) * target.getSiblingIdx().f32()
-          else
-            group.duration = try parser.f32()? else LabaConst.duration end
-          end
+        | 'D' =>
+          group.duration = (try parser.f32()? else LabaConst.duration end) * target.getSiblingIdx(inverted).f32()
+          inverted = false
+        | 'd' =>
+          group.duration = try parser.f32()? else LabaConst.duration end
           inverted = false
         
-        | '~' =>
-          if inverted then
-            group.delay = (try parser.f32()? else LabaConst.delay end) * target.getSiblingIdx().f32()
-          else
-            group.delay = try parser.f32()? else LabaConst.delay end
-          end
+        | 'I' =>
+          group.delay = (try parser.f32()? else LabaConst.delay end) * target.getSiblingIdx(inverted).f32()
+        | 'i' =>
+          group.delay = try parser.f32()? else LabaConst.delay end
           inverted = false
         
         | '|' =>

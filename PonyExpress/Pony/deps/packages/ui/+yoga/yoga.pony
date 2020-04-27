@@ -18,6 +18,7 @@ class YogaNode
   var last_matrix:M4 = M4fun.id()
   
   var sibling_index:USize = 0
+  var sibling_count:USize = 0
   
   var _content_offset:V2 = V2fun.zero()
   var _rotation:V3 = V3fun.zero()
@@ -194,8 +195,10 @@ class YogaNode
     if _safeRight then padding(YGEdge.right, SafeEdges.right()) end  
     
     var idx:USize = 0
+    let n:USize = children.size()
     for child in children.values() do
       child.sibling_index = idx
+      child.sibling_count = n
       child.preLayout()
       idx = idx + 1
     end
