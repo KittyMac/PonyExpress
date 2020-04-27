@@ -12,8 +12,9 @@ primitive SwitchToScroll is Action
 primitive SwitchToAnimation is Action
 primitive SwitchToTextField is Action
 primitive SwitchToImageSearch is Action
+primitive SwitchToLaba is Action
 
-type CatalogAction is (SwitchToColors | SwitchToButtons | SwitchToImages | SwitchToFonts | SwitchToFonts2 | SwitchToClips | SwitchToScroll | SwitchToAnimation | SwitchToTextField | SwitchToImageSearch)
+type CatalogAction is (SwitchToColors | SwitchToButtons | SwitchToImages | SwitchToFonts | SwitchToFonts2 | SwitchToClips | SwitchToScroll | SwitchToAnimation | SwitchToTextField | SwitchToImageSearch | SwitchToLaba)
   
 
 actor Catalog is Controllerable
@@ -46,6 +47,7 @@ actor Catalog is Controllerable
               menuButton("Animation", font, SwitchToAnimation)
               menuButton("Text Field", font, SwitchToTextField)
               menuButton("Image Search", font, SwitchToImageSearch)
+              menuButton("Laba", font, SwitchToLaba)
           ])
           
         ]
@@ -79,6 +81,7 @@ actor Catalog is Controllerable
         | SwitchToAnimation => AnimationTest.load(engine, "Panel")
         | SwitchToTextField => TextFieldTest.load(engine, "Panel")
         | SwitchToImageSearch => ImageSearchTest.load(engine, "Panel")
+        | SwitchToLaba => LabaTest.load(engine, "Panel")
         end
     end
     

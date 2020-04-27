@@ -298,6 +298,7 @@ actor@ RenderEngine
       
         let frameContext = FrameContext(this, renderContext, node.id(), focusedNodeID, frameNumber, 0, M4fun.id(), V2fun.zero(), node.nodeSize(), node.contentSize(), R4fun.big(), screenBounds, last_animation_delta)
         waitingOnViewsToRender = node.render(frameContext)
+                
       else
         Log.println("renderNeeded required but waitingOnViewsToRender is not 0 (it is %s) \n", waitingOnViewsToRender)
         markRenderFinished()

@@ -32,6 +32,10 @@ class SampleYogaNode
   
   fun print() =>
     @YGNodePrint(node, YGPrintOptions.layout or YGPrintOptions.style or YGPrintOptions.children)
+  
+  fun string():String iso^ =>
+    let nodeTag:YGNodeRef tag = node
+    recover String.copy_cstring(@YGNodePrintString(nodeTag, YGPrintOptions.layout or YGPrintOptions.style or YGPrintOptions.children)) end
 
     
     

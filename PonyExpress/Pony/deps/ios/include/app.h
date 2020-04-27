@@ -17,8 +17,6 @@ typedef struct __uint128_t { uint64_t low; uint64_t high; } __uint128_t;
 
 typedef struct t3_t2_F32_val_F32_val_F32_val_F32_val t3_t2_F32_val_F32_val_F32_val_F32_val;
 
-typedef struct ui_$2$33 ui_$2$33;
-
 typedef struct ArrayPairs_U8_val_Array_U8_val_val ArrayPairs_U8_val_Array_U8_val_val;
 
 typedef struct ui_NullEvent ui_NullEvent;
@@ -185,6 +183,8 @@ A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
 included in a union or intersection, or be a subtype of any interface. Most
 functions on a Pointer[A] are private to maintain memory safety.
 */
+typedef struct ui_$2$36 ui_$2$36;
+
 /*
 Worker type providing simple to string conversions for numbers.
 */
@@ -934,9 +934,9 @@ typedef struct utility_UUID utility_UUID;
 
 typedef struct ui_TouchEvent ui_TouchEvent;
 
-typedef struct ui_$2$32 ui_$2$32;
-
 typedef struct format_FormatHexBare format_FormatHexBare;
+
+typedef struct ui_$2$37 ui_$2$37;
 
 typedef struct ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref;
 
@@ -1146,15 +1146,6 @@ typedef struct _SignedCheckedArithmetic _SignedCheckedArithmetic;
 
 /* Allocate a t3_t2_F32_val_F32_val_F32_val_F32_val without initialising it. */
 t3_t2_F32_val_F32_val_F32_val_F32_val* t3_t2_F32_val_F32_val_F32_val_F32_val_Alloc(void);
-
-/* Allocate a ui_$2$33 without initialising it. */
-ui_$2$33* ui_$2$33_Alloc(void);
-
-None* ui_$2$33_val_apply_oo(ui_$2$33* self, ui_RenderEngine* p1);
-
-None* ui_$2$33_box_apply_oo(ui_$2$33* self, ui_RenderEngine* p1);
-
-None* ui_$2$33_ref_apply_oo(ui_$2$33* self, ui_RenderEngine* p1);
 
 /* Allocate a ArrayPairs_U8_val_Array_U8_val_val without initialising it. */
 ArrayPairs_U8_val_Array_U8_val_val* ArrayPairs_U8_val_Array_U8_val_val_Alloc(void);
@@ -1460,6 +1451,10 @@ None* ui_Viewable_ref_performAnimation_oo(ui_Viewable* self, ui_FrameContext* fr
 
 None* ui_Viewable_ref_invalidate_oo(ui_Viewable* self, ui_FrameContext* frameContext);
 
+None* ui_Viewable_ref_finish_o(ui_Viewable* self);
+
+None* ui_Viewable_tag_viewable_finish_o(ui_Viewable* self);
+
 None* ui_Viewable_ref_animate_fo(ui_Viewable* self, float delta);
 
 /* Allocate a u2_ui_YogaNode_ref_None_val without initialising it. */
@@ -1725,6 +1720,15 @@ size_t Pointer_yoga_YGNode_val_ref_usize_Z(yoga_YGNode** self);
 Convert the pointer into an integer.
 */
 size_t Pointer_yoga_YGNode_val_tag_usize_Z(yoga_YGNode** self);
+
+/* Allocate a ui_$2$36 without initialising it. */
+ui_$2$36* ui_$2$36_Alloc(void);
+
+void* ui_$2$36_val_apply_oo(ui_$2$36* self, void* p1);
+
+void* ui_$2$36_box_apply_oo(ui_$2$36* self, void* p1);
+
+void* ui_$2$36_ref_apply_oo(ui_$2$36* self, void* p1);
 
 /* Allocate a _ToString without initialising it. */
 _ToString* _ToString_Alloc(void);
@@ -2813,7 +2817,7 @@ collections_HashMap_String_val_$1$0_val_collections_HashEq_String_val_val* colle
 /* Allocate a ui_RenderEngine without initialising it. */
 ui_RenderEngine* ui_RenderEngine_Alloc(void);
 
-None* ui_RenderEngine_tag_getNodeByName_ooo__send(ui_RenderEngine* self, String* nodeName, ui_$2$32* callback);
+None* ui_RenderEngine_tag_getNodeByName_ooo__send(ui_RenderEngine* self, String* nodeName, ui_$2$36* callback);
 
 float ui_RenderEngine_ref_nanoToSec_Wf(ui_RenderEngine* self, uint64_t nano);
 
@@ -2823,7 +2827,7 @@ float ui_RenderEngine_val_nanoToSec_Wf(ui_RenderEngine* self, uint64_t nano);
 
 uint64_t ui_RenderEngine_box__priority_W(ui_RenderEngine* self);
 
-None* ui_RenderEngine_tag_getNodeByID_Zoo__send(ui_RenderEngine* self, size_t id, ui_$2$32* callback);
+None* ui_RenderEngine_tag_getNodeByID_Zoo__send(ui_RenderEngine* self, size_t id, ui_$2$36* callback);
 
 None* ui_RenderEngine_ref_invalidateNodeByID_Zo(ui_RenderEngine* self, size_t id);
 
@@ -2857,7 +2861,7 @@ None* ui_RenderEngine_tag_createTextureFromUrl_oo__send(ui_RenderEngine* self, S
 
 None* ui_RenderEngine_tag_setNeedsRendered_o__send(ui_RenderEngine* self);
 
-None* ui_RenderEngine_tag_run_oo__send(ui_RenderEngine* self, ui_$2$33* callback);
+None* ui_RenderEngine_tag_run_oo__send(ui_RenderEngine* self, ui_$2$37* callback);
 
 None* ui_RenderEngine_ref_markRenderFinished_o(ui_RenderEngine* self);
 
@@ -3677,6 +3681,8 @@ None* ui_YogaNode_ref_layout_o(ui_YogaNode* self);
 
 uint64_t ui_YogaNode_ref_render_oW(ui_YogaNode* self, ui_FrameContext* frameContext);
 
+None* ui_YogaNode_ref_finish_o(ui_YogaNode* self);
+
 None* ui_YogaNode_box__final_o(ui_YogaNode* self);
 
 void* ui_YogaNode_ref_getNodeByFocusIdx_zo(ui_YogaNode* self, ssize_t idx);
@@ -3731,15 +3737,6 @@ ui_TouchEvent* ui_TouchEvent_Alloc(void);
 
 ui_TouchEvent* ui_TouchEvent_val_create_Zbffo(ui_TouchEvent* self, size_t id_, bool pressed_, float x, float y);
 
-/* Allocate a ui_$2$32 without initialising it. */
-ui_$2$32* ui_$2$32_Alloc(void);
-
-void* ui_$2$32_val_apply_oo(ui_$2$32* self, void* p1);
-
-void* ui_$2$32_box_apply_oo(ui_$2$32* self, void* p1);
-
-void* ui_$2$32_ref_apply_oo(ui_$2$32* self, void* p1);
-
 /* Allocate a format_FormatHexBare without initialising it. */
 format_FormatHexBare* format_FormatHexBare_Alloc(void);
 
@@ -3748,6 +3745,15 @@ format_FormatHexBare* format_FormatHexBare_val_create_o(format_FormatHexBare* se
 bool format_FormatHexBare_box_eq_ob(format_FormatHexBare* self, format_FormatHexBare* that);
 
 bool format_FormatHexBare_val_eq_ob(format_FormatHexBare* self, format_FormatHexBare* that);
+
+/* Allocate a ui_$2$37 without initialising it. */
+ui_$2$37* ui_$2$37_Alloc(void);
+
+None* ui_$2$37_val_apply_oo(ui_$2$37* self, ui_RenderEngine* p1);
+
+None* ui_$2$37_box_apply_oo(ui_$2$37* self, ui_RenderEngine* p1);
+
+None* ui_$2$37_ref_apply_oo(ui_$2$37* self, ui_RenderEngine* p1);
 
 /* Allocate a ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref without initialising it. */
 ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref* ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref_Alloc(void);

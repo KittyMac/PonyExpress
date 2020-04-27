@@ -107,6 +107,7 @@ typedef struct {
 
 
 size_t RenderEngine_alignedSize(size_t size);
+
 void * RenderEngine_malloc(size_t * size);
 void * RenderEngine_retain(void * ptr, size_t size);
 void RenderEngine_release(void * ptr, size_t size);

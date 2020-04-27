@@ -118,6 +118,8 @@ WIN_EXPORT void YGNodeMarkDirtyAndPropogateToDescendants(YGNodeRef node);
 
 WIN_EXPORT void YGNodePrint(YGNodeRef node, YGPrintOptions options);
 
+WIN_EXPORT const char * YGNodePrintString(YGNodeRef node, YGPrintOptions options);
+
 WIN_EXPORT bool YGFloatIsUndefined(float value);
 
 WIN_EXPORT bool YGNodeCanUseCachedMeasurement(

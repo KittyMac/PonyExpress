@@ -23,6 +23,7 @@ use @YGNodeCalculateLayout[None](node:Pointer[YGNode] tag, availableWidth:F32, a
 use @YGNodeMarkDirty[None](node:Pointer[YGNode] tag)
 use @YGNodeMarkDirtyAndPropogateToDescendants[None](node:Pointer[YGNode] tag)
 use @YGNodePrint[None](node:Pointer[YGNode] tag, options:U32)
+use @YGNodePrintString[Pointer[U8]](node:Pointer[YGNode] tag, options:U32)
 use @YGFloatIsUndefined[U32](value:F32)
 use @YGNodeCanUseCachedMeasurement[U32](widthMode:U32, width:F32, heightMode:U32, height:F32, lastWidthMode:U32, lastWidth:F32, lastHeightMode:U32, lastHeight:F32, lastComputedWidth:F32, lastComputedHeight:F32, marginRow:F32, marginColumn:F32, config:Pointer[YGConfig] tag)
 use @YGNodeCopyStyle[None](dstNode:Pointer[YGNode] tag, srcNode:Pointer[YGNode] tag)

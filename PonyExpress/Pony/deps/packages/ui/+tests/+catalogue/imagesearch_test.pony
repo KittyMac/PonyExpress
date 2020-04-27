@@ -1,7 +1,6 @@
 use "yoga"
 use "utility"
 use "collections"
-use "http"
 
 primitive PerformImageSearch is Action
 

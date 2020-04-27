@@ -94,6 +94,7 @@ framework_packages: confirm
 	$(call copy_framework_package,regex,regex,libpcre2-8-ios.a,libpcre2-8-osx.a)
 	$(call copy_framework_package,pony.easings,easings)
 	$(call copy_framework_package,pony.utility,utility)
+	$(call copy_framework_package,pony.laba,laba)
 	$(call copy_framework_package,pony.yoga,yoga,libyoga-ios.a,libyoga-osx.a)
 
 .PHONY: framework_packages

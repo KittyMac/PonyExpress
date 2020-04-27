@@ -4,6 +4,7 @@ use "collections"
 use "linal"
 use "promises"
 use "utility"
+use "laba"
 
 type YogaNodeID is USize
 
@@ -16,6 +17,8 @@ class YogaNode
   var last_bounds:R4 = R4fun.zero()
   var last_matrix:M4 = M4fun.id()
   
+  var sibling_index:USize = 0
+  
   var _content_offset:V2 = V2fun.zero()
   var _rotation:V3 = V3fun.zero()
   
@@ -27,6 +30,8 @@ class YogaNode
   var _safeLeft:Bool = false
   var _safeBottom:Bool = false
   var _safeRight:Bool = false
+  
+  var labaAnimations:Array[Laba] = Array[Laba](32)
   
   var _focusIdx:ISize = -1
   
@@ -43,6 +48,10 @@ class YogaNode
   
   fun id():YogaNodeID =>
     node.usize()
+  
+  fun string():String iso^ =>
+    let nodeTag:YGNodeRef tag = node
+    recover String.copy_cstring(@YGNodePrintString(nodeTag, YGPrintOptions.layout or YGPrintOptions.style or YGPrintOptions.children)) end
   
   fun ref getChildren():Array[YogaNode] => children
   
@@ -182,8 +191,11 @@ class YogaNode
     if _safeBottom then padding(YGEdge.bottom, SafeEdges.bottom()) end
     if _safeRight then padding(YGEdge.right, SafeEdges.right()) end  
     
+    var idx:USize = 0
     for child in children.values() do
+      child.sibling_index = idx
       child.preLayout()
+      idx = idx + 1
     end
   
   // Called when distributing events to nodes
@@ -319,6 +331,12 @@ class YogaNode
     
     end
     
+    animate(frameContext.animation_delta)
+    
+    if isAnimating() then
+      frameContext.engine.setNeedsLayout()
+    end
+    
     n
   
   
@@ -361,8 +379,43 @@ class YogaNode
                            _pushedClippingVertices.cpointer(),
                            _pushedClippingVertices.allocSize().u32() )
     RenderPrimitive.renderFinished(frameContext)
+
+  fun ref isAnimating():Bool =>
+    labaAnimations.size() > 0
   
+  fun ref laba(labaStr:String val,arg0:LabaArgument = None,
+                                  arg1:LabaArgument = None, 
+                                  arg2:LabaArgument = None,
+                          				arg3:LabaArgument = None,
+                          				arg4:LabaArgument = None,
+                          				arg5:LabaArgument = None,
+                          				arg6:LabaArgument = None,
+                          				arg7:LabaArgument = None,
+                          				arg8:LabaArgument = None,
+                          				arg9:LabaArgument = None,
+                          				arg10:LabaArgument = None,
+                          				arg11:LabaArgument = None, 
+                          				arg12:LabaArgument = None,
+                          				arg13:LabaArgument = None,
+                          				arg14:LabaArgument = None,
+                          				arg15:LabaArgument = None,
+                          				arg16:LabaArgument = None,
+                          				arg17:LabaArgument = None,
+                          				arg18:LabaArgument = None,
+                          				arg19:LabaArgument = None) =>
+    labaAnimations.push(Laba(this, labaStr, arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19))
   
+  fun ref animate(delta:F32 val) =>
+    try
+      let n = labaAnimations.size()
+      for i in Range(0,n) do
+        let animation = labaAnimations((n - i) - 1)?
+        if animation.animate(delta) then
+          labaAnimations.deleteAll(animation)
+        end
+      end
+    end
+
   
   fun ref view(local_view:Viewable) =>
     _views.push(local_view)
@@ -372,7 +425,6 @@ class YogaNode
   
   fun ref clips(_clips':Bool) =>
     _clips = _clips'
-  
   
   fun getFocusIdx():ISize =>
     _focusIdx
@@ -537,11 +589,12 @@ class YogaNode
   fun ref aspectRatio(v:F32) => @YGNodeStyleSetAspectRatio(node, v)
   
   
+  fun _handleNAN(v:F32):F32 => if v.nan() then 0.0 else v end
   
-  
-  fun getWidth():F32 => @YGNodeStyleGetWidth(node)
-  fun getHeight():F32 => @YGNodeStyleGetHeight(node)
-  
+  fun getWidth():F32 => _handleNAN(@YGNodeStyleGetWidth(node))
+  fun getHeight():F32 => _handleNAN(@YGNodeStyleGetHeight(node))
+  fun getTop():F32 => _handleNAN(@YGNodeStyleGetPosition(node, YGEdge.top))
+  fun getLeft():F32 => _handleNAN(@YGNodeStyleGetPosition(node, YGEdge.left))
   
   /*
 
