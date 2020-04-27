@@ -19,41 +19,51 @@ actor LabaTest is Controllerable
 	fun ref mainNode():YogaNode iso^ =>
     
     recover iso 
-      let sample1 = {(laba1:String val): YogaNode =>
-        YogaNode.>center().>size(200,200)
+      let sampleBox = {(title:String val, children:Array[YogaNode]): YogaNode =>
+        YogaNode.>columns().>size(200,240).>marginAll(2)
+                .>view(Border.>gray())
                 .>addChildren([
-                    YogaNode.>name("Red")
-                            .>size(50,50)
-                            .>laba(laba1, None, {(node:YogaNode, self:Laba) => self.reset()})
-                            .>view( Color.>red() )
+                    YogaNode.>height(40)
+                            .>view(Color.>gray())
+                            .>view(Label.>value(title).>font(font, 18).>center().>renderInsetAll(4))
+                    
+                    YogaNode.>center().>shrink()
+                            .>addChildren(children)
                 ])
+      }
+      
+      let sample1 = {(title:String val, laba1:String val): YogaNode =>
+        sampleBox(title, [
+            YogaNode.>name("Red")
+                    .>size(50,50)
+                    .>laba(laba1, None, {(node:YogaNode, self:Laba) => self.reset()})
+                    .>view( Color.>red() )
+        ])
       }
       /*
       let sample2 = {(laba1:String val, laba2:String val): YogaNode =>
-        YogaNode.>center().>size(200,200)
-                .>addChildren([
-                    YogaNode.>size(50,50)
-                            .>laba(laba1)
-                            .>view( Color.>blue() )
-                    YogaNode.>size(50,50)
-                            .>laba(laba2)
-                            .>view( Color.>red() )
-                ])
+        sampleBox([
+            YogaNode.>size(50,50)
+                    .>laba(laba1)
+                    .>view( Color.>blue() )
+            YogaNode.>size(50,50)
+                    .>laba(laba2)
+                    .>view( Color.>red() )
+        ])
       }
       */
-      let sample3 = {(laba1:String val, laba2:String val, laba3:String val): YogaNode =>
-        YogaNode.>center().>size(200,200)
-                .>addChildren([
-                    YogaNode.>size(50,50)
-                            .>laba(laba1, None, {(node:YogaNode, self:Laba) => self.reset()})
-                            .>view( Color.>blue() )
-                    YogaNode.>size(50,50)
-                            .>laba(laba2, None, {(node:YogaNode, self:Laba) => self.reset()})
-                            .>view( Color.>red() )
-                    YogaNode.>size(50,50)
-                            .>laba(laba3, None, {(node:YogaNode, self:Laba) => self.reset()})
-                            .>view( Color.>yellow() )
-                ])
+      let sample3 = {(title:String val, laba1:String val, laba2:String val, laba3:String val): YogaNode =>
+        sampleBox(title, [
+            YogaNode.>size(50,50)
+                    .>laba(laba1, None, {(node:YogaNode, self:Laba) => self.reset()})
+                    .>view( Color.>blue() )
+            YogaNode.>size(50,50)
+                    .>laba(laba2, None, {(node:YogaNode, self:Laba) => self.reset()})
+                    .>view( Color.>red() )
+            YogaNode.>size(50,50)
+                    .>laba(laba3, None, {(node:YogaNode, self:Laba) => self.reset()})
+                    .>view( Color.>yellow() )
+        ])
       }
       
       
@@ -70,10 +80,10 @@ actor LabaTest is Controllerable
                   
                       YogaNode.>fit().>rows().>wrap()
                               .>addChildren([
-                                  sample3("!fI!>|id0|id0|id0", "!fI!>|id0|id0", "!fI!>|id0")
-                                  sample3("!f!I!>|id0", "!f!I!>|id0|id0", "!f!I!>|id0|id0|id0")
-                                  sample1("<|^|>|v")
-                                  sample1("e0<|^|>|v")
+                                  sample3("Staggered Delay", "!fI!>|id0|id0|id0", "!fI!>|id0|id0", "!fI!>|id0")
+                                  sample3("Invert Staggered Delay", "!f!I!>|id0", "!f!I!>|id0|id0", "!f!I!>|id0|id0|id0")
+                                  sample1("Simple Movement", "<|^|>|v100|>|^|<")
+                                  sample1("Linear Movement", "e0<|^|>|v100|>|^|<")
                               ])
                           
                     ])

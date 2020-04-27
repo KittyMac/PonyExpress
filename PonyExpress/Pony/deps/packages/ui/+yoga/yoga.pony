@@ -496,7 +496,16 @@ class YogaNode
   fun ref itemsBetween() => @YGNodeStyleSetAlignItems(node, YGAlign.spacebetween)
   fun ref itemsAround() => @YGNodeStyleSetAlignItems(node, YGAlign.spacearound)
   fun ref itemsBaseline() => @YGNodeStyleSetAlignItems(node, YGAlign.baseline)  
-  fun ref itemsStretch() => @YGNodeStyleSetAlignItems(node, YGAlign.stretch)  
+  fun ref itemsStretch() => @YGNodeStyleSetAlignItems(node, YGAlign.stretch)
+  
+  fun ref selfAuto(v:U32) => @YGNodeStyleSetAlignSelf(node, YGAlign.auto)
+  fun ref selfStart() => @YGNodeStyleSetAlignSelf(node, YGAlign.flexstart)
+  fun ref selfCenter() => @YGNodeStyleSetAlignSelf(node, YGAlign.center)
+  fun ref selfEnd() => @YGNodeStyleSetAlignSelf(node, YGAlign.flexend)
+  fun ref selfBetween() => @YGNodeStyleSetAlignSelf(node, YGAlign.spacebetween)
+  fun ref selfAround() => @YGNodeStyleSetAlignSelf(node, YGAlign.spacearound)
+  fun ref selfBaseline() => @YGNodeStyleSetAlignSelf(node, YGAlign.baseline)  
+  fun ref selfStretch() => @YGNodeStyleSetAlignSelf(node, YGAlign.stretch)
   
   fun ref absolute() => @YGNodeStyleSetPositionType(node, YGPositionType.absolute)
   fun ref relative() => @YGNodeStyleSetPositionType(node, YGPositionType.relative)
