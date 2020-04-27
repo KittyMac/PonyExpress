@@ -21,6 +21,8 @@ typedef struct ArrayPairs_U8_val_Array_U8_val_val ArrayPairs_U8_val_Array_U8_val
 
 typedef struct ui_NullEvent ui_NullEvent;
 
+typedef struct ui_$2$40 ui_$2$40;
+
 typedef struct URLDownload URLDownload;
 
 typedef struct ui_RGBA ui_RGBA;
@@ -149,6 +151,8 @@ typedef struct PlatformOSX PlatformOSX;
 typedef struct u3_format_AlignLeft_val_format_AlignRight_val_format_AlignCenter_val u3_format_AlignLeft_val_format_AlignRight_val_format_AlignCenter_val;
 
 typedef struct $0$16_laba_Laba_ref $0$16_laba_Laba_ref;
+
+typedef struct ui_$2$39 ui_$2$39;
 
 typedef struct format_FormatBinary format_FormatBinary;
 
@@ -405,6 +409,8 @@ no guarantees that the GC will actually reclaim any space.
 */
 typedef struct Array_U8_val Array_U8_val;
 
+typedef struct ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_box ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_box;
+
 /*
 A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
 included in a union or intersection, or be a subtype of any interface. Most
@@ -536,6 +542,8 @@ typedef struct InputStream InputStream;
 typedef struct ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_ref ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_ref;
 
 typedef struct _UTF32Encoder _UTF32Encoder;
+
+typedef struct ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_val ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_val;
 
 typedef struct $1$0 $1$0;
 
@@ -705,6 +713,8 @@ A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
 included in a union or intersection, or be a subtype of any interface. Most
 functions on a Pointer[A] are private to maintain memory safety.
 */
+typedef struct ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_ref ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_ref;
+
 typedef struct utility_Log utility_Log;
 
 /*
@@ -1151,8 +1161,6 @@ typedef struct ui_TouchEvent ui_TouchEvent;
 
 typedef struct format_FormatHexBare format_FormatHexBare;
 
-typedef struct ui_$2$37 ui_$2$37;
-
 typedef struct ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref;
 
 typedef struct $0$9_U32_val $0$9_U32_val;
@@ -1168,8 +1176,6 @@ typedef struct laba_Laba laba_Laba;
 typedef struct collections__MapDeleted collections__MapDeleted;
 
 typedef struct u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val;
-
-typedef struct ui_$2$38 ui_$2$38;
 
 /*
 Contiguous, resizable memory to store elements of type A.
@@ -1490,6 +1496,15 @@ bool ArrayPairs_U8_val_Array_U8_val_val_val_has_next_b(ArrayPairs_U8_val_Array_U
 
 /* Allocate a ui_NullEvent without initialising it. */
 ui_NullEvent* ui_NullEvent_Alloc(void);
+
+/* Allocate a ui_$2$40 without initialising it. */
+ui_$2$40* ui_$2$40_Alloc(void);
+
+None* ui_$2$40_val_apply_oo(ui_$2$40* self, ui_RenderEngine* p1);
+
+None* ui_$2$40_box_apply_oo(ui_$2$40* self, ui_RenderEngine* p1);
+
+None* ui_$2$40_ref_apply_oo(ui_$2$40* self, ui_RenderEngine* p1);
 
 /* Allocate a URLDownload without initialising it. */
 URLDownload* URLDownload_Alloc(void);
@@ -1919,6 +1934,15 @@ bool $0$16_laba_Laba_ref_ref_apply_oob($0$16_laba_Laba_ref* self, laba_Laba* l, 
 bool $0$16_laba_Laba_ref_box_apply_oob($0$16_laba_Laba_ref* self, laba_Laba* l, laba_Laba* r);
 
 $0$16_laba_Laba_ref* $0$16_laba_Laba_ref_val_create_o($0$16_laba_Laba_ref* self);
+
+/* Allocate a ui_$2$39 without initialising it. */
+ui_$2$39* ui_$2$39_Alloc(void);
+
+void* ui_$2$39_val_apply_oo(ui_$2$39* self, void* p1);
+
+void* ui_$2$39_box_apply_oo(ui_$2$39* self, void* p1);
+
+void* ui_$2$39_ref_apply_oo(ui_$2$39* self, void* p1);
 
 /* Allocate a format_FormatBinary without initialising it. */
 format_FormatBinary* format_FormatBinary_Alloc(void);
@@ -2521,6 +2545,11 @@ Copy copy_len elements from this to that at specified offsets.
 */
 None* Array_U8_val_box__copy_to_oZZZo(Array_U8_val* self, char* ptr, size_t copy_len, size_t from_offset, size_t to_offset);
 
+/* Allocate a ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_box without initialising it. */
+ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_box* ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_box_Alloc(void);
+
+ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_box* ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_box_ref_create_oZo(ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_box* self, Array_laba_Laba_ref* array, size_t offset);
+
 /*
 Space for len instances of A.
 */
@@ -2727,6 +2756,11 @@ int8_t I8_val_create_cc(int8_t self, int8_t value);
 bool I8_val_lt_cb(int8_t self, int8_t y);
 
 bool I8_box_lt_cb(int8_t self, int8_t y);
+
+/* Allocate a ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_val without initialising it. */
+ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_val* ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_val_Alloc(void);
+
+ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_val* ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_val_ref_create_oZo(ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_val* self, Array_laba_Laba_ref* array, size_t offset);
 
 /* Allocate a $1$0 without initialising it. */
 $1$0* $1$0_Alloc(void);
@@ -3327,6 +3361,17 @@ Returns the first deleted element.
 */
 laba_Laba* Pointer_laba_Laba_ref_ref__delete_ZZo(laba_Laba** self, size_t n, size_t len);
 
+/* Allocate a ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_ref without initialising it. */
+ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_ref* ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_ref_Alloc(void);
+
+ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_ref* ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_ref_ref_create_oZo(ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_ref* self, Array_laba_Laba_ref* array, size_t offset);
+
+bool ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_ref_box_has_next_b(ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_ref* self);
+
+bool ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_ref_ref_has_next_b(ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_ref* self);
+
+bool ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_ref_val_has_next_b(ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_ref* self);
+
 /* Allocate a utility_Log without initialising it. */
 utility_Log* utility_Log_Alloc(void);
 
@@ -3466,7 +3511,7 @@ None* Array_laba_LabaActionGroup_ref_ref_push_oo(Array_laba_LabaActionGroup_ref*
 /* Allocate a ui_RenderEngine without initialising it. */
 ui_RenderEngine* ui_RenderEngine_Alloc(void);
 
-None* ui_RenderEngine_tag_getNodeByName_ooo__send(ui_RenderEngine* self, String* nodeName, ui_$2$37* callback);
+None* ui_RenderEngine_tag_getNodeByName_ooo__send(ui_RenderEngine* self, String* nodeName, ui_$2$39* callback);
 
 float ui_RenderEngine_ref_nanoToSec_Wf(ui_RenderEngine* self, uint64_t nano);
 
@@ -3476,7 +3521,7 @@ float ui_RenderEngine_val_nanoToSec_Wf(ui_RenderEngine* self, uint64_t nano);
 
 uint64_t ui_RenderEngine_box__priority_W(ui_RenderEngine* self);
 
-None* ui_RenderEngine_tag_getNodeByID_Zoo__send(ui_RenderEngine* self, size_t id, ui_$2$37* callback);
+None* ui_RenderEngine_tag_getNodeByID_Zoo__send(ui_RenderEngine* self, size_t id, ui_$2$39* callback);
 
 None* ui_RenderEngine_ref_invalidateNodeByID_Zo(ui_RenderEngine* self, size_t id);
 
@@ -3510,7 +3555,7 @@ None* ui_RenderEngine_tag_createTextureFromUrl_oo__send(ui_RenderEngine* self, S
 
 None* ui_RenderEngine_tag_setNeedsRendered_o__send(ui_RenderEngine* self);
 
-None* ui_RenderEngine_tag_run_oo__send(ui_RenderEngine* self, ui_$2$38* callback);
+None* ui_RenderEngine_tag_run_oo__send(ui_RenderEngine* self, ui_$2$40* callback);
 
 None* ui_RenderEngine_ref_markRenderFinished_o(ui_RenderEngine* self);
 
@@ -4384,11 +4429,15 @@ None* ui_YogaNode_ref_top_fo(ui_YogaNode* self, float p);
 
 None* ui_YogaNode_ref_left_fo(ui_YogaNode* self, float p);
 
+None* ui_YogaNode_ref_labaAnimate_fo(ui_YogaNode* self, float delta);
+
 float ui_YogaNode_ref_getLeft_f(ui_YogaNode* self);
 
 float ui_YogaNode_val_getLeft_f(ui_YogaNode* self);
 
 float ui_YogaNode_box_getLeft_f(ui_YogaNode* self);
+
+None* ui_YogaNode_ref_updateSiblingCounts_o(ui_YogaNode* self);
 
 float ui_YogaNode_box__handleNAN_ff(ui_YogaNode* self, float v);
 
@@ -4458,7 +4507,7 @@ None* ui_YogaNode_box__final_o(ui_YogaNode* self);
 
 bool ui_YogaNode_ref_isAnimating_b(ui_YogaNode* self);
 
-None* ui_YogaNode_ref_animate_fo(ui_YogaNode* self, float delta);
+None* ui_YogaNode_ref_labaStart_o(ui_YogaNode* self);
 
 /* Allocate a utility_UUID without initialising it. */
 utility_UUID* utility_UUID_Alloc(void);
@@ -4511,15 +4560,6 @@ bool format_FormatHexBare_box_eq_ob(format_FormatHexBare* self, format_FormatHex
 
 bool format_FormatHexBare_val_eq_ob(format_FormatHexBare* self, format_FormatHexBare* that);
 
-/* Allocate a ui_$2$37 without initialising it. */
-ui_$2$37* ui_$2$37_Alloc(void);
-
-void* ui_$2$37_val_apply_oo(ui_$2$37* self, void* p1);
-
-void* ui_$2$37_box_apply_oo(ui_$2$37* self, void* p1);
-
-void* ui_$2$37_ref_apply_oo(ui_$2$37* self, void* p1);
-
 /* Allocate a ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref without initialising it. */
 ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref* ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref_Alloc(void);
 
@@ -4564,15 +4604,6 @@ bool collections__MapDeleted_val_eq_ob(collections__MapDeleted* self, collection
 /* Allocate a u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val without initialising it. */
 u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val* u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_Alloc(void);
 
-/* Allocate a ui_$2$38 without initialising it. */
-ui_$2$38* ui_$2$38_Alloc(void);
-
-None* ui_$2$38_val_apply_oo(ui_$2$38* self, ui_RenderEngine* p1);
-
-None* ui_$2$38_box_apply_oo(ui_$2$38* self, ui_RenderEngine* p1);
-
-None* ui_$2$38_ref_apply_oo(ui_$2$38* self, ui_RenderEngine* p1);
-
 /* Allocate a Array_laba_Laba_ref without initialising it. */
 Array_laba_Laba_ref* Array_laba_Laba_ref_Alloc(void);
 
@@ -4590,6 +4621,21 @@ size_t Array_laba_Laba_ref_val_size_Z(Array_laba_Laba_ref* self);
 The number of elements in the array.
 */
 size_t Array_laba_Laba_ref_box_size_Z(Array_laba_Laba_ref* self);
+
+/*
+Return an iterator over the values in the array.
+*/
+ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_ref* Array_laba_Laba_ref_ref_values_o(Array_laba_Laba_ref* self);
+
+/*
+Return an iterator over the values in the array.
+*/
+ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_box* Array_laba_Laba_ref_box_values_o(Array_laba_Laba_ref* self);
+
+/*
+Return an iterator over the values in the array.
+*/
+ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_val* Array_laba_Laba_ref_val_values_o(Array_laba_Laba_ref* self);
 
 /*
 Find and delete the first item matching item

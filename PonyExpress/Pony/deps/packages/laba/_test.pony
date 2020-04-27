@@ -29,10 +29,12 @@ primitive LabaTestShared
   fun advanceLabaAnimationOnNode(node:YogaNode ref):F32 =>
     node.layout()
     
+    node.labaAnimate(0)
+    
     var total_time:F32 = 0.0
     while node.isAnimating() do
       total_time = total_time + delta_time
-      node.animate(delta_time)
+      node.labaAnimate(delta_time)
       node.layout()
     end
     

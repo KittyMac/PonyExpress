@@ -128,6 +128,8 @@ functions on a Pointer[A] are private to maintain memory safety.
 */
 typedef struct format_PrefixSpace format_PrefixSpace;
 
+typedef struct u2_laba_$25$0_ref_None_val u2_laba_$25$0_ref_None_val;
+
 /*
 A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
 included in a union or intersection, or be a subtype of any interface. Most
@@ -139,9 +141,18 @@ typedef struct ui_Viewable ui_Viewable;
 
 typedef struct u2_ui_YogaNode_ref_None_val u2_ui_YogaNode_ref_None_val;
 
+/*
+A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
+included in a union or intersection, or be a subtype of any interface. Most
+functions on a Pointer[A] are private to maintain memory safety.
+*/
 typedef struct PlatformOSX PlatformOSX;
 
 typedef struct u3_format_AlignLeft_val_format_AlignRight_val_format_AlignCenter_val u3_format_AlignLeft_val_format_AlignRight_val_format_AlignCenter_val;
+
+typedef struct $0$16_laba_Laba_ref $0$16_laba_Laba_ref;
+
+typedef struct ui_$2$39 ui_$2$39;
 
 typedef struct format_FormatBinary format_FormatBinary;
 
@@ -160,11 +171,21 @@ unlimited access.
 */
 typedef struct AmbientAuth AmbientAuth;
 
+typedef struct laba_LabaActionGroup laba_LabaActionGroup;
+
 /*
 tuple based Vector 4 functions - see VectorFun for details*/
 typedef struct linal_V4fun linal_V4fun;
 
 typedef struct format_PrefixSign format_PrefixSign;
+
+/*
+^100 is move the target 100 units up
+v100 is move the target 100 units down
+*/
+typedef struct laba_LabaActionMoveY laba_LabaActionMoveY;
+
+typedef struct $0$8_laba_Laba_ref $0$8_laba_Laba_ref;
 
 typedef struct format_AlignLeft format_AlignLeft;
 
@@ -174,17 +195,21 @@ typedef struct t4_t4_F32_val_F32_val_F32_val_F32_val_t4_F32_val_F32_val_F32_val_
 tuple based Vector 2 functions - see VectorFun for details*/
 typedef struct linal_V2fun linal_V2fun;
 
+typedef struct ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_val ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_val;
+
 typedef struct _SignedPartialArithmetic _SignedPartialArithmetic;
 
+typedef struct laba_$25$0 laba_$25$0;
+
 typedef struct format_AlignRight format_AlignRight;
+
+typedef struct stringext_StringParser stringext_StringParser;
 
 /*
 A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
 included in a union or intersection, or be a subtype of any interface. Most
 functions on a Pointer[A] are private to maintain memory safety.
 */
-typedef struct ui_$2$36 ui_$2$36;
-
 /*
 Worker type providing simple to string conversions for numbers.
 */
@@ -197,6 +222,8 @@ functions on a Pointer[A] are private to maintain memory safety.
 */
 typedef struct ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_box ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_box;
 
+typedef struct $0$9_U8_val $0$9_U8_val;
+
 typedef struct format_FormatHexSmall format_FormatHexSmall;
 
 typedef struct t4_F32_val_F32_val_F32_val_F32_val t4_F32_val_F32_val_F32_val_F32_val;
@@ -204,9 +231,96 @@ typedef struct t4_F32_val_F32_val_F32_val_F32_val t4_F32_val_F32_val_F32_val_F32
 typedef struct collections__MapEmpty collections__MapEmpty;
 
 /*
+Contiguous, resizable memory to store elements of type A.
+
+## Usage
+
+Creating an Array of String:
+```pony
+  let array: Array[String] = ["dog"; "cat"; "wombat"]
+  // array.size() == 3
+  // array.space() >= 3
+```
+
+Creating an empty Array of String, which may hold at least 10 elements before
+requesting more space:
+```pony
+  let array = Array[String](10)
+  // array.size() == 0
+  // array.space() >= 10
+```
+
+Accessing elements can be done via the `apply(i: USize): this->A ?` method.
+The provided index might be out of bounds so `apply` is partial and has to be
+called within a try-catch block or inside another partial method:
+```pony
+  let array: Array[String] = ["dog"; "cat"; "wombat"]
+  let is_second_element_wobat = try
+    // indexes start from 0, so 1 is the second element
+    array(1)? == "wombat"
+  else
+    false
+  end
+```
+
+Adding and removing elements to and from the end of the Array can be done via
+`push` and `pop` methods. You could treat the array as a LIFO stack using
+those methods:
+```pony
+  while (array.size() > 0) do
+    let elem = array.pop()?
+    // do something with element
+  end
+```
+
+Modifying the Array can be done via `update`, `insert` and `delete` methods
+which alter the Array at an arbitrary index, moving elements left (when
+deleting) or right (when inserting) as necessary.
+
+Iterating over the elements of an Array can be done using the `values` method:
+```pony
+  for element in array.values() do
+      // do something with element
+  end
+```
+
+## Memory allocation
+Array allocates contiguous memory. It always allocates at least enough memory
+space to hold all of its elements. Space is the number of elements the Array
+can hold without allocating more memory. The `space()` method returns the
+number of elements an Array can hold. The `size()` method returns the number
+of elements the Array holds.
+
+Different data types require different amounts of memory. Array[U64] with size
+of 6 will take more memory than an Array[U8] of the same size.
+
+When creating an Array or adding more elements will calculate the next power
+of 2 of the requested number of elements and allocate that much space, with a
+lower bound of space for 8 elements.
+
+Here's a few examples of the space allocated when initialising an Array with
+various number of elements:
+
+| size | space |
+|------|-------|
+| 0    | 0     |
+| 1    | 8     |
+| 8    | 8     |
+| 9    | 16    |
+| 16   | 16    |
+| 17   | 32    |
+
+Call the `compact()` method to ask the GC to reclaim unused space. There are
+no guarantees that the GC will actually reclaim any space.
+*/
+typedef struct Array_laba_LabaAction_ref Array_laba_LabaAction_ref;
+
+/*
 Liek AlignedArray, but optimized for floating point geomtry submission
 */
 typedef struct ui_FloatAlignedArray ui_FloatAlignedArray;
+
+typedef struct ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_ref ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_ref;
 
 typedef struct format_FormatOctal format_FormatOctal;
 
@@ -294,6 +408,8 @@ Call the `compact()` method to ask the GC to reclaim unused space. There are
 no guarantees that the GC will actually reclaim any space.
 */
 typedef struct Array_U8_val Array_U8_val;
+
+typedef struct ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_box ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_box;
 
 /*
 A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
@@ -407,6 +523,11 @@ typedef struct format_PrefixDefault format_PrefixDefault;
 typedef struct _UnsignedPartialArithmetic _UnsignedPartialArithmetic;
 
 /*
+Stores and then simulates changes to target animatable properties over time
+*/
+typedef struct laba_LabaTarget laba_LabaTarget;
+
+/*
 Things that can be turned into a String.
 */
 typedef struct Stringable Stringable;
@@ -421,6 +542,8 @@ typedef struct InputStream InputStream;
 typedef struct ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_ref ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_ref;
 
 typedef struct _UTF32Encoder _UTF32Encoder;
+
+typedef struct ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_val ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_val;
 
 typedef struct $1$0 $1$0;
 
@@ -585,6 +708,13 @@ data if nothing has changed
 */
 typedef struct ui_Geometry ui_Geometry;
 
+/*
+A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
+included in a union or intersection, or be a subtype of any interface. Most
+functions on a Pointer[A] are private to maintain memory safety.
+*/
+typedef struct ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_ref ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_ref;
+
 typedef struct utility_Log utility_Log;
 
 /*
@@ -607,7 +737,11 @@ typedef struct format_Format format_Format;
 
 typedef struct None None;
 
+typedef struct u2_laba_LabaAction_ref_None_val u2_laba_LabaAction_ref_None_val;
+
 typedef struct t2_U64_val_Bool_val t2_U64_val_Bool_val;
+
+typedef struct ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_box ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_box;
 
 /*
 Worker type providing to string conversions for integers.
@@ -620,6 +754,91 @@ resized map has 2 times the space. The hash function can be plugged in to the
 type to create different kinds of maps.
 */
 typedef struct collections_HashMap_String_val_$1$0_val_collections_HashEq_String_val_val collections_HashMap_String_val_$1$0_val_collections_HashEq_String_val_val;
+
+/*
+Contiguous, resizable memory to store elements of type A.
+
+## Usage
+
+Creating an Array of String:
+```pony
+  let array: Array[String] = ["dog"; "cat"; "wombat"]
+  // array.size() == 3
+  // array.space() >= 3
+```
+
+Creating an empty Array of String, which may hold at least 10 elements before
+requesting more space:
+```pony
+  let array = Array[String](10)
+  // array.size() == 0
+  // array.space() >= 10
+```
+
+Accessing elements can be done via the `apply(i: USize): this->A ?` method.
+The provided index might be out of bounds so `apply` is partial and has to be
+called within a try-catch block or inside another partial method:
+```pony
+  let array: Array[String] = ["dog"; "cat"; "wombat"]
+  let is_second_element_wobat = try
+    // indexes start from 0, so 1 is the second element
+    array(1)? == "wombat"
+  else
+    false
+  end
+```
+
+Adding and removing elements to and from the end of the Array can be done via
+`push` and `pop` methods. You could treat the array as a LIFO stack using
+those methods:
+```pony
+  while (array.size() > 0) do
+    let elem = array.pop()?
+    // do something with element
+  end
+```
+
+Modifying the Array can be done via `update`, `insert` and `delete` methods
+which alter the Array at an arbitrary index, moving elements left (when
+deleting) or right (when inserting) as necessary.
+
+Iterating over the elements of an Array can be done using the `values` method:
+```pony
+  for element in array.values() do
+      // do something with element
+  end
+```
+
+## Memory allocation
+Array allocates contiguous memory. It always allocates at least enough memory
+space to hold all of its elements. Space is the number of elements the Array
+can hold without allocating more memory. The `space()` method returns the
+number of elements an Array can hold. The `size()` method returns the number
+of elements the Array holds.
+
+Different data types require different amounts of memory. Array[U64] with size
+of 6 will take more memory than an Array[U8] of the same size.
+
+When creating an Array or adding more elements will calculate the next power
+of 2 of the requested number of elements and allocate that much space, with a
+lower bound of space for 8 elements.
+
+Here's a few examples of the space allocated when initialising an Array with
+various number of elements:
+
+| size | space |
+|------|-------|
+| 0    | 0     |
+| 1    | 8     |
+| 8    | 8     |
+| 9    | 16    |
+| 16   | 16    |
+| 17   | 32    |
+
+Call the `compact()` method to ask the GC to reclaim unused space. There are
+no guarantees that the GC will actually reclaim any space.
+*/
+typedef struct Array_laba_LabaActionGroup_ref Array_laba_LabaActionGroup_ref;
 
 /*
 The render engine is responsible for sending "renderable chunks" across the FFI to the 3D engine
@@ -674,6 +893,12 @@ typedef struct t5_USize_val_U8_val_U8_val_U8_val_U8_val t5_USize_val_U8_val_U8_v
 typedef struct u2_$1$0_val_None_val u2_$1$0_val_None_val;
 
 typedef struct PlatformIOS PlatformIOS;
+
+/*
+<100 is move the target 100 units to the left
+>100 is move the target 100 units to the right
+*/
+typedef struct laba_LabaActionMoveX laba_LabaActionMoveX;
 
 /*
   A String is an ordered collection of characters.
@@ -936,17 +1161,108 @@ typedef struct ui_TouchEvent ui_TouchEvent;
 
 typedef struct format_FormatHexBare format_FormatHexBare;
 
-typedef struct ui_$2$37 ui_$2$37;
-
 typedef struct ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref;
 
 typedef struct $0$9_U32_val $0$9_U32_val;
 
 typedef struct ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_val ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_val;
 
+/*
+Parses a Laba animation string into groups of Laba actions and effectuates the
+actual animation process (an outside entity calls animate with timing deltas)
+*/
+typedef struct laba_Laba laba_Laba;
+
 typedef struct collections__MapDeleted collections__MapDeleted;
 
 typedef struct u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val;
+
+typedef struct ui_$2$38 ui_$2$38;
+
+/*
+Contiguous, resizable memory to store elements of type A.
+
+## Usage
+
+Creating an Array of String:
+```pony
+  let array: Array[String] = ["dog"; "cat"; "wombat"]
+  // array.size() == 3
+  // array.space() >= 3
+```
+
+Creating an empty Array of String, which may hold at least 10 elements before
+requesting more space:
+```pony
+  let array = Array[String](10)
+  // array.size() == 0
+  // array.space() >= 10
+```
+
+Accessing elements can be done via the `apply(i: USize): this->A ?` method.
+The provided index might be out of bounds so `apply` is partial and has to be
+called within a try-catch block or inside another partial method:
+```pony
+  let array: Array[String] = ["dog"; "cat"; "wombat"]
+  let is_second_element_wobat = try
+    // indexes start from 0, so 1 is the second element
+    array(1)? == "wombat"
+  else
+    false
+  end
+```
+
+Adding and removing elements to and from the end of the Array can be done via
+`push` and `pop` methods. You could treat the array as a LIFO stack using
+those methods:
+```pony
+  while (array.size() > 0) do
+    let elem = array.pop()?
+    // do something with element
+  end
+```
+
+Modifying the Array can be done via `update`, `insert` and `delete` methods
+which alter the Array at an arbitrary index, moving elements left (when
+deleting) or right (when inserting) as necessary.
+
+Iterating over the elements of an Array can be done using the `values` method:
+```pony
+  for element in array.values() do
+      // do something with element
+  end
+```
+
+## Memory allocation
+Array allocates contiguous memory. It always allocates at least enough memory
+space to hold all of its elements. Space is the number of elements the Array
+can hold without allocating more memory. The `space()` method returns the
+number of elements an Array can hold. The `size()` method returns the number
+of elements the Array holds.
+
+Different data types require different amounts of memory. Array[U64] with size
+of 6 will take more memory than an Array[U8] of the same size.
+
+When creating an Array or adding more elements will calculate the next power
+of 2 of the requested number of elements and allocate that much space, with a
+lower bound of space for 8 elements.
+
+Here's a few examples of the space allocated when initialising an Array with
+various number of elements:
+
+| size | space |
+|------|-------|
+| 0    | 0     |
+| 1    | 8     |
+| 8    | 8     |
+| 9    | 16    |
+| 16   | 16    |
+| 17   | 32    |
+
+Call the `compact()` method to ask the GC to reclaim unused space. There are
+no guarantees that the GC will actually reclaim any space.
+*/
+typedef struct Array_laba_Laba_ref Array_laba_Laba_ref;
 
 typedef struct ArrayPairs_U8_val_Array_U8_val_box ArrayPairs_U8_val_Array_U8_val_box;
 
@@ -966,6 +1282,15 @@ A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
 included in a union or intersection, or be a subtype of any interface. Most
 functions on a Pointer[A] are private to maintain memory safety.
 */
+typedef struct $0$12_U8_val $0$12_U8_val;
+
+/*
+A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
+included in a union or intersection, or be a subtype of any interface. Most
+functions on a Pointer[A] are private to maintain memory safety.
+*/
+typedef struct easings_Easing_F32_val easings_Easing_F32_val;
+
 typedef struct u4_ui_NullEvent_val_ui_TouchEvent_val_ui_ScrollEvent_val_ui_KeyEvent_val u4_ui_NullEvent_val_ui_TouchEvent_val_ui_ScrollEvent_val_ui_KeyEvent_val;
 
 /*
@@ -974,6 +1299,13 @@ included in a union or intersection, or be a subtype of any interface. Most
 functions on a Pointer[A] are private to maintain memory safety.
 */
 typedef struct u2_String_box_Array_U8_val_box u2_String_box_Array_U8_val_box;
+
+/*
+f0 is fade the alpha from current value to zero
+f1 is fade the alpha from current value to one
+!f is fade alpha from zero to current value
+*/
+typedef struct laba_LabaActionFade laba_LabaActionFade;
 
 typedef struct t2_ISize_val_Bool_val t2_ISize_val_Bool_val;
 
@@ -1048,6 +1380,12 @@ typedef struct t2_USize_val_U8_val t2_USize_val_U8_val;
 typedef struct stringext_StringExt stringext_StringExt;
 
 typedef struct u2_AmbientAuth_val_None_val u2_AmbientAuth_val_None_val;
+
+/*
+actions are animatable commands. All of them store their from and to values, and provide the
+interpolated animation value using the easing function provided
+*/
+typedef struct laba_LabaAction laba_LabaAction;
 
 /*
 Contiguous, resizable memory to store elements of type A.
@@ -1297,6 +1635,15 @@ bool format_PrefixSpace_box_eq_ob(format_PrefixSpace* self, format_PrefixSpace* 
 
 bool format_PrefixSpace_val_eq_ob(format_PrefixSpace* self, format_PrefixSpace* that);
 
+/* Allocate a u2_laba_$25$0_ref_None_val without initialising it. */
+u2_laba_$25$0_ref_None_val* u2_laba_$25$0_ref_None_val_Alloc(void);
+
+None* u2_laba_$25$0_ref_None_val_box_apply_ooo(void* self, ui_YogaNode* p1, laba_Laba* p2);
+
+None* u2_laba_$25$0_ref_None_val_ref_apply_ooo(void* self, ui_YogaNode* p1, laba_Laba* p2);
+
+None* u2_laba_$25$0_ref_None_val_val_apply_ooo(void* self, ui_YogaNode* p1, laba_Laba* p2);
+
 /*
 Space for len instances of A.
 */
@@ -1494,6 +1841,10 @@ uint32_t U32_val_shl_II(uint32_t self, uint32_t y);
 
 uint32_t U32_box_shl_II(uint32_t self, uint32_t y);
 
+bool U32_val_ne_Ib(uint32_t self, uint32_t y);
+
+bool U32_box_ne_Ib(uint32_t self, uint32_t y);
+
 String* U32_ref_string_o(uint32_t self);
 
 String* U32_val_string_o(uint32_t self);
@@ -1503,6 +1854,10 @@ String* U32_box_string_o(uint32_t self);
 uint32_t U32_val_add_II(uint32_t self, uint32_t y);
 
 uint32_t U32_box_add_II(uint32_t self, uint32_t y);
+
+bool U32_box_eq_Ib(uint32_t self, uint32_t y);
+
+bool U32_val_eq_Ib(uint32_t self, uint32_t y);
 
 char U32_box_u8_C(uint32_t self);
 
@@ -1522,6 +1877,41 @@ __uint128_t U32_box_u128_Q(uint32_t self);
 
 __uint128_t U32_val_u128_Q(uint32_t self);
 
+/*
+Space for len instances of A.
+*/
+laba_LabaAction** Pointer_laba_LabaAction_ref_ref__alloc_Zo(laba_LabaAction** self, size_t len);
+
+/*
+Keep the contents, but reserve space for len instances of A.
+*/
+laba_LabaAction** Pointer_laba_LabaAction_ref_ref__realloc_Zo(laba_LabaAction** self, size_t len);
+
+/*
+Set index i and return the previous value.
+*/
+laba_LabaAction* Pointer_laba_LabaAction_ref_ref__update_Zoo(laba_LabaAction** self, size_t i, laba_LabaAction* value);
+
+/*
+Retrieve index i.
+*/
+laba_LabaAction* Pointer_laba_LabaAction_ref_box__apply_Zo(laba_LabaAction** self, size_t i);
+
+/*
+Retrieve index i.
+*/
+laba_LabaAction* Pointer_laba_LabaAction_ref_val__apply_Zo(laba_LabaAction** self, size_t i);
+
+/*
+Retrieve index i.
+*/
+laba_LabaAction* Pointer_laba_LabaAction_ref_ref__apply_Zo(laba_LabaAction** self, size_t i);
+
+/*
+A null pointer.
+*/
+laba_LabaAction** Pointer_laba_LabaAction_ref_ref_create_o(laba_LabaAction** self);
+
 /* Allocate a PlatformOSX without initialising it. */
 PlatformOSX* PlatformOSX_Alloc(void);
 
@@ -1536,6 +1926,26 @@ bool PlatformOSX_box__use_main_thread_b(PlatformOSX* self);
 /* Allocate a u3_format_AlignLeft_val_format_AlignRight_val_format_AlignCenter_val without initialising it. */
 u3_format_AlignLeft_val_format_AlignRight_val_format_AlignCenter_val* u3_format_AlignLeft_val_format_AlignRight_val_format_AlignCenter_val_Alloc(void);
 
+/* Allocate a $0$16_laba_Laba_ref without initialising it. */
+$0$16_laba_Laba_ref* $0$16_laba_Laba_ref_Alloc(void);
+
+bool $0$16_laba_Laba_ref_val_apply_oob($0$16_laba_Laba_ref* self, laba_Laba* l, laba_Laba* r);
+
+bool $0$16_laba_Laba_ref_ref_apply_oob($0$16_laba_Laba_ref* self, laba_Laba* l, laba_Laba* r);
+
+bool $0$16_laba_Laba_ref_box_apply_oob($0$16_laba_Laba_ref* self, laba_Laba* l, laba_Laba* r);
+
+$0$16_laba_Laba_ref* $0$16_laba_Laba_ref_val_create_o($0$16_laba_Laba_ref* self);
+
+/* Allocate a ui_$2$39 without initialising it. */
+ui_$2$39* ui_$2$39_Alloc(void);
+
+None* ui_$2$39_val_apply_oo(ui_$2$39* self, ui_RenderEngine* p1);
+
+None* ui_$2$39_box_apply_oo(ui_$2$39* self, ui_RenderEngine* p1);
+
+None* ui_$2$39_ref_apply_oo(ui_$2$39* self, ui_RenderEngine* p1);
+
 /* Allocate a format_FormatBinary without initialising it. */
 format_FormatBinary* format_FormatBinary_Alloc(void);
 
@@ -1547,6 +1957,23 @@ bool format_FormatBinary_val_eq_ob(format_FormatBinary* self, format_FormatBinar
 
 /* Allocate a AmbientAuth without initialising it. */
 AmbientAuth* AmbientAuth_Alloc(void);
+
+/* Allocate a laba_LabaActionGroup without initialising it. */
+laba_LabaActionGroup* laba_LabaActionGroup_Alloc(void);
+
+bool laba_LabaActionGroup_ref_update_ofb(laba_LabaActionGroup* self, laba_LabaTarget* target, float animationValue);
+
+None* laba_LabaActionGroup_ref_commit_oo(laba_LabaActionGroup* self, laba_LabaTarget* target);
+
+float laba_LabaActionGroup_box_totalDuration_f(laba_LabaActionGroup* self);
+
+float laba_LabaActionGroup_ref_totalDuration_f(laba_LabaActionGroup* self);
+
+float laba_LabaActionGroup_val_totalDuration_f(laba_LabaActionGroup* self);
+
+None* laba_LabaActionGroup_ref_push_oo(laba_LabaActionGroup* self, laba_LabaAction* action);
+
+laba_LabaActionGroup* laba_LabaActionGroup_ref_create_o(laba_LabaActionGroup* self);
 
 /* Allocate a linal_V4fun without initialising it. */
 linal_V4fun* linal_V4fun_Alloc(void);
@@ -1561,6 +1988,17 @@ format_PrefixSign* format_PrefixSign_val_create_o(format_PrefixSign* self);
 bool format_PrefixSign_box_eq_ob(format_PrefixSign* self, format_PrefixSign* that);
 
 bool format_PrefixSign_val_eq_ob(format_PrefixSign* self, format_PrefixSign* that);
+
+/* Allocate a laba_LabaActionMoveY without initialising it. */
+laba_LabaActionMoveY* laba_LabaActionMoveY_Alloc(void);
+
+laba_LabaActionMoveY* laba_LabaActionMoveY_ref_create_CoofbIo(laba_LabaActionMoveY* self, char operator_, laba_LabaTarget* target, stringext_StringParser* parser, float mod, bool inverted_, uint32_t easing_);
+
+None* laba_LabaActionMoveY_box_update_ofo(laba_LabaActionMoveY* self, laba_LabaTarget* target, float animationValue);
+
+None* laba_LabaActionMoveY_ref_update_ofo(laba_LabaActionMoveY* self, laba_LabaTarget* target, float animationValue);
+
+None* laba_LabaActionMoveY_val_update_ofo(laba_LabaActionMoveY* self, laba_LabaTarget* target, float animationValue);
 
 size_t USize_box_op_and_ZZ(size_t self, size_t y);
 
@@ -1658,6 +2096,10 @@ size_t USize_val_shl_ZZ(size_t self, size_t y);
 
 size_t USize_box_shl_ZZ(size_t self, size_t y);
 
+float USize_val_f32_f(size_t self);
+
+float USize_box_f32_f(size_t self);
+
 size_t USize_box_clz_Z(size_t self);
 
 size_t USize_val_clz_Z(size_t self);
@@ -1669,6 +2111,15 @@ size_t USize_box_max_ZZ(size_t self, size_t y);
 size_t USize_val_min_ZZ(size_t self, size_t y);
 
 size_t USize_box_min_ZZ(size_t self, size_t y);
+
+/* Allocate a $0$8_laba_Laba_ref without initialising it. */
+$0$8_laba_Laba_ref* $0$8_laba_Laba_ref_Alloc(void);
+
+bool $0$8_laba_Laba_ref_val_apply_oob($0$8_laba_Laba_ref* self, laba_Laba* p1, laba_Laba* p2);
+
+bool $0$8_laba_Laba_ref_ref_apply_oob($0$8_laba_Laba_ref* self, laba_Laba* p1, laba_Laba* p2);
+
+bool $0$8_laba_Laba_ref_box_apply_oob($0$8_laba_Laba_ref* self, laba_Laba* p1, laba_Laba* p2);
 
 /* Allocate a format_AlignLeft without initialising it. */
 format_AlignLeft* format_AlignLeft_Alloc(void);
@@ -1687,10 +2138,18 @@ linal_V2fun* linal_V2fun_Alloc(void);
 
 linal_V2fun* linal_V2fun_val_create_o(linal_V2fun* self);
 
+/* Allocate a ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_val without initialising it. */
+ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_val* ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_val_Alloc(void);
+
+ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_val* ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_val_ref_create_oZo(ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_val* self, Array_laba_LabaAction_ref* array, size_t offset);
+
 /* Allocate a _SignedPartialArithmetic without initialising it. */
 _SignedPartialArithmetic* _SignedPartialArithmetic_Alloc(void);
 
 _SignedPartialArithmetic* _SignedPartialArithmetic_val_create_o(_SignedPartialArithmetic* self);
+
+/* Allocate a laba_$25$0 without initialising it. */
+laba_$25$0* laba_$25$0_Alloc(void);
 
 /* Allocate a format_AlignRight without initialising it. */
 format_AlignRight* format_AlignRight_Alloc(void);
@@ -1700,6 +2159,13 @@ format_AlignRight* format_AlignRight_val_create_o(format_AlignRight* self);
 bool format_AlignRight_box_eq_ob(format_AlignRight* self, format_AlignRight* that);
 
 bool format_AlignRight_val_eq_ob(format_AlignRight* self, format_AlignRight* that);
+
+/* Allocate a stringext_StringParser without initialising it. */
+stringext_StringParser* stringext_StringParser_Alloc(void);
+
+size_t stringext_StringParser_ref_advance_oZ(stringext_StringParser* self, Array_U8_val* set);
+
+stringext_StringParser* stringext_StringParser_ref_create_oo(stringext_StringParser* self, String* string_);
 
 /*
 Convert the pointer into an integer.
@@ -1720,15 +2186,6 @@ size_t Pointer_yoga_YGNode_val_ref_usize_Z(yoga_YGNode** self);
 Convert the pointer into an integer.
 */
 size_t Pointer_yoga_YGNode_val_tag_usize_Z(yoga_YGNode** self);
-
-/* Allocate a ui_$2$36 without initialising it. */
-ui_$2$36* ui_$2$36_Alloc(void);
-
-void* ui_$2$36_val_apply_oo(ui_$2$36* self, void* p1);
-
-void* ui_$2$36_box_apply_oo(ui_$2$36* self, void* p1);
-
-void* ui_$2$36_ref_apply_oo(ui_$2$36* self, void* p1);
 
 /* Allocate a _ToString without initialising it. */
 _ToString* _ToString_Alloc(void);
@@ -1787,6 +2244,15 @@ ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_box* ArrayValues_ui_YogaNode_r
 
 ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_box* ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_box_ref_create_oZo(ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_box* self, Array_ui_YogaNode_ref* array, size_t offset);
 
+/* Allocate a $0$9_U8_val without initialising it. */
+$0$9_U8_val* $0$9_U8_val_Alloc(void);
+
+bool $0$9_U8_val_ref_apply_CCb($0$9_U8_val* self, char p1, char p2);
+
+bool $0$9_U8_val_val_apply_CCb($0$9_U8_val* self, char p1, char p2);
+
+bool $0$9_U8_val_box_apply_CCb($0$9_U8_val* self, char p1, char p2);
+
 /* Allocate a format_FormatHexSmall without initialising it. */
 format_FormatHexSmall* format_FormatHexSmall_Alloc(void);
 
@@ -1807,6 +2273,63 @@ collections__MapEmpty* collections__MapEmpty_val_create_o(collections__MapEmpty*
 bool collections__MapEmpty_box_eq_ob(collections__MapEmpty* self, collections__MapEmpty* that);
 
 bool collections__MapEmpty_val_eq_ob(collections__MapEmpty* self, collections__MapEmpty* that);
+
+/* Allocate a Array_laba_LabaAction_ref without initialising it. */
+Array_laba_LabaAction_ref* Array_laba_LabaAction_ref_Alloc(void);
+
+/*
+The number of elements in the array.
+*/
+size_t Array_laba_LabaAction_ref_ref_size_Z(Array_laba_LabaAction_ref* self);
+
+/*
+The number of elements in the array.
+*/
+size_t Array_laba_LabaAction_ref_val_size_Z(Array_laba_LabaAction_ref* self);
+
+/*
+The number of elements in the array.
+*/
+size_t Array_laba_LabaAction_ref_box_size_Z(Array_laba_LabaAction_ref* self);
+
+/*
+Return an iterator over the values in the array.
+*/
+ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_ref* Array_laba_LabaAction_ref_ref_values_o(Array_laba_LabaAction_ref* self);
+
+/*
+Return an iterator over the values in the array.
+*/
+ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_box* Array_laba_LabaAction_ref_box_values_o(Array_laba_LabaAction_ref* self);
+
+/*
+Return an iterator over the values in the array.
+*/
+ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_val* Array_laba_LabaAction_ref_val_values_o(Array_laba_LabaAction_ref* self);
+
+/*
+Reserve space for len elements, including whatever elements are already in
+the array. Array space grows geometrically.
+*/
+None* Array_laba_LabaAction_ref_ref_reserve_Zo(Array_laba_LabaAction_ref* self, size_t len);
+
+size_t Array_laba_LabaAction_ref_ref_next_growth_size_ZZ(Array_laba_LabaAction_ref* self, size_t s);
+
+size_t Array_laba_LabaAction_ref_val_next_growth_size_ZZ(Array_laba_LabaAction_ref* self, size_t s);
+
+size_t Array_laba_LabaAction_ref_box_next_growth_size_ZZ(Array_laba_LabaAction_ref* self, size_t s);
+
+size_t Array_laba_LabaAction_ref_tag_next_growth_size_ZZ(Array_laba_LabaAction_ref* self, size_t s);
+
+/*
+Add an element to the end of the array.
+*/
+None* Array_laba_LabaAction_ref_ref_push_oo(Array_laba_LabaAction_ref* self, laba_LabaAction* value);
+
+/*
+Create an array with zero elements, but space for len elements.
+*/
+Array_laba_LabaAction_ref* Array_laba_LabaAction_ref_ref_create_Zo(Array_laba_LabaAction_ref* self, size_t len);
 
 /* Allocate a ui_FloatAlignedArray without initialising it. */
 ui_FloatAlignedArray* ui_FloatAlignedArray_Alloc(void);
@@ -1874,6 +2397,17 @@ Create an array with zero elements, but space for len elements.
 */
 ui_FloatAlignedArray* ui_FloatAlignedArray_ref_create_Zo(ui_FloatAlignedArray* self, size_t len);
 
+/* Allocate a ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_ref without initialising it. */
+ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_ref* ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_ref_Alloc(void);
+
+ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_ref* ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_ref_ref_create_oZo(ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_ref* self, Array_laba_LabaAction_ref* array, size_t offset);
+
+bool ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_ref_box_has_next_b(ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_ref* self);
+
+bool ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_ref_ref_has_next_b(ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_ref* self);
+
+bool ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_ref_val_has_next_b(ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_ref* self);
+
 /* Allocate a format_FormatOctal without initialising it. */
 format_FormatOctal* format_FormatOctal_Alloc(void);
 
@@ -1885,6 +2419,30 @@ bool format_FormatOctal_val_eq_ob(format_FormatOctal* self, format_FormatOctal* 
 
 /* Allocate a Array_U8_val without initialising it. */
 Array_U8_val* Array_U8_val_Alloc(void);
+
+/*
+Returns true if the array contains `value`, false otherwise.
+
+The default predicate checks for matches by identity. To search for matches
+by structural equality, pass an object literal such as `{(l, r) => l == r}`.
+*/
+bool Array_U8_val_ref_contains_Cob(Array_U8_val* self, char value, $0$9_U8_val* predicate);
+
+/*
+Returns true if the array contains `value`, false otherwise.
+
+The default predicate checks for matches by identity. To search for matches
+by structural equality, pass an object literal such as `{(l, r) => l == r}`.
+*/
+bool Array_U8_val_val_contains_Cob(Array_U8_val* self, char value, $0$9_U8_val* predicate);
+
+/*
+Returns true if the array contains `value`, false otherwise.
+
+The default predicate checks for matches by identity. To search for matches
+by structural equality, pass an object literal such as `{(l, r) => l == r}`.
+*/
+bool Array_U8_val_box_contains_Cob(Array_U8_val* self, char value, $0$9_U8_val* predicate);
 
 /*
 Return a shared portion of this array, covering `from` until `to`.
@@ -1988,6 +2546,11 @@ None* Array_U8_val_val__copy_to_oZZZo(Array_U8_val* self, char* ptr, size_t copy
 Copy copy_len elements from this to that at specified offsets.
 */
 None* Array_U8_val_box__copy_to_oZZZo(Array_U8_val* self, char* ptr, size_t copy_len, size_t from_offset, size_t to_offset);
+
+/* Allocate a ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_box without initialising it. */
+ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_box* ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_box_Alloc(void);
+
+ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_box* ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_box_ref_create_oZo(ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_box* self, Array_laba_Laba_ref* array, size_t offset);
 
 /*
 Space for len instances of A.
@@ -2099,6 +2662,31 @@ _UnsignedPartialArithmetic* _UnsignedPartialArithmetic_Alloc(void);
 
 _UnsignedPartialArithmetic* _UnsignedPartialArithmetic_val_create_o(_UnsignedPartialArithmetic* self);
 
+/* Allocate a laba_LabaTarget without initialising it. */
+laba_LabaTarget* laba_LabaTarget_Alloc(void);
+
+float laba_LabaTarget_ref_getHeight_f(laba_LabaTarget* self);
+
+float laba_LabaTarget_ref_getY_f(laba_LabaTarget* self);
+
+None* laba_LabaTarget_ref_setAlpha_fo(laba_LabaTarget* self, float a);
+
+size_t laba_LabaTarget_ref_getSiblingIdx_bZ(laba_LabaTarget* self, bool inverted);
+
+None* laba_LabaTarget_ref_setX_fo(laba_LabaTarget* self, float x);
+
+None* laba_LabaTarget_ref_syncFromNode_o(laba_LabaTarget* self);
+
+float laba_LabaTarget_ref_getWidth_f(laba_LabaTarget* self);
+
+float laba_LabaTarget_ref_getAlpha_f(laba_LabaTarget* self);
+
+None* laba_LabaTarget_ref_setY_fo(laba_LabaTarget* self, float y);
+
+float laba_LabaTarget_ref_getX_f(laba_LabaTarget* self);
+
+None* laba_LabaTarget_ref_syncToNode_o(laba_LabaTarget* self);
+
 /* Allocate a Stringable without initialising it. */
 Stringable* Stringable_Alloc(void);
 
@@ -2170,6 +2758,11 @@ int8_t I8_val_create_cc(int8_t self, int8_t value);
 bool I8_val_lt_cb(int8_t self, int8_t y);
 
 bool I8_box_lt_cb(int8_t self, int8_t y);
+
+/* Allocate a ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_val without initialising it. */
+ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_val* ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_val_Alloc(void);
+
+ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_val* ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_val_ref_create_oZo(ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_val* self, Array_laba_Laba_ref* array, size_t offset);
 
 /* Allocate a $1$0 without initialising it. */
 $1$0* $1$0_Alloc(void);
@@ -2723,6 +3316,64 @@ ui_Geometry* ui_Geometry_Alloc(void);
 
 ui_Geometry* ui_Geometry_iso_create_o(ui_Geometry* self);
 
+/*
+Space for len instances of A.
+*/
+laba_Laba** Pointer_laba_Laba_ref_ref__alloc_Zo(laba_Laba** self, size_t len);
+
+/*
+Retrieve index i.
+*/
+laba_Laba* Pointer_laba_Laba_ref_box__apply_Zo(laba_Laba** self, size_t i);
+
+/*
+Retrieve index i.
+*/
+laba_Laba* Pointer_laba_Laba_ref_val__apply_Zo(laba_Laba** self, size_t i);
+
+/*
+Retrieve index i.
+*/
+laba_Laba* Pointer_laba_Laba_ref_ref__apply_Zo(laba_Laba** self, size_t i);
+
+/*
+Return a pointer to the n-th element.
+*/
+laba_Laba** Pointer_laba_Laba_ref_val__offset_Zo(laba_Laba** self, size_t n);
+
+/*
+Return a pointer to the n-th element.
+*/
+laba_Laba** Pointer_laba_Laba_ref_box__offset_Zo(laba_Laba** self, size_t n);
+
+/*
+Return a pointer to the n-th element.
+*/
+laba_Laba** Pointer_laba_Laba_ref_ref__offset_Zo(laba_Laba** self, size_t n);
+
+/*
+A null pointer.
+*/
+laba_Laba** Pointer_laba_Laba_ref_ref_create_o(laba_Laba** self);
+
+/*
+Delete n elements from the head of pointer, compact remaining elements of
+the underlying array. The array length before this should be n + len.
+Returns the first deleted element.
+*/
+laba_Laba* Pointer_laba_Laba_ref_ref__delete_ZZo(laba_Laba** self, size_t n, size_t len);
+
+/* Allocate a ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_ref without initialising it. */
+ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_ref* ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_ref_Alloc(void);
+
+ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_ref* ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_ref_ref_create_oZo(ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_ref* self, Array_laba_Laba_ref* array, size_t offset);
+
+bool ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_ref_box_has_next_b(ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_ref* self);
+
+bool ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_ref_ref_has_next_b(ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_ref* self);
+
+bool ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_ref_val_has_next_b(ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_ref* self);
+
 /* Allocate a utility_Log without initialising it. */
 utility_Log* utility_Log_Alloc(void);
 
@@ -2762,8 +3413,16 @@ String* None_box_string_o(None* self);
 
 None* None_val_create_o(None* self);
 
+/* Allocate a u2_laba_LabaAction_ref_None_val without initialising it. */
+u2_laba_LabaAction_ref_None_val* u2_laba_LabaAction_ref_None_val_Alloc(void);
+
 /* Allocate a t2_U64_val_Bool_val without initialising it. */
 t2_U64_val_Bool_val* t2_U64_val_Bool_val_Alloc(void);
+
+/* Allocate a ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_box without initialising it. */
+ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_box* ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_box_Alloc(void);
+
+ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_box* ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_box_ref_create_oZo(ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_box* self, Array_laba_LabaAction_ref* array, size_t offset);
 
 /* Allocate a format__FormatInt without initialising it. */
 format__FormatInt* format__FormatInt_Alloc(void);
@@ -2814,10 +3473,47 @@ resize. Defaults to 6.
 */
 collections_HashMap_String_val_$1$0_val_collections_HashEq_String_val_val* collections_HashMap_String_val_$1$0_val_collections_HashEq_String_val_val_ref_create_Zo(collections_HashMap_String_val_$1$0_val_collections_HashEq_String_val_val* self, size_t prealloc);
 
+/* Allocate a Array_laba_LabaActionGroup_ref without initialising it. */
+Array_laba_LabaActionGroup_ref* Array_laba_LabaActionGroup_ref_Alloc(void);
+
+/*
+The number of elements in the array.
+*/
+size_t Array_laba_LabaActionGroup_ref_ref_size_Z(Array_laba_LabaActionGroup_ref* self);
+
+/*
+The number of elements in the array.
+*/
+size_t Array_laba_LabaActionGroup_ref_val_size_Z(Array_laba_LabaActionGroup_ref* self);
+
+/*
+The number of elements in the array.
+*/
+size_t Array_laba_LabaActionGroup_ref_box_size_Z(Array_laba_LabaActionGroup_ref* self);
+
+/*
+Reserve space for len elements, including whatever elements are already in
+the array. Array space grows geometrically.
+*/
+None* Array_laba_LabaActionGroup_ref_ref_reserve_Zo(Array_laba_LabaActionGroup_ref* self, size_t len);
+
+size_t Array_laba_LabaActionGroup_ref_ref_next_growth_size_ZZ(Array_laba_LabaActionGroup_ref* self, size_t s);
+
+size_t Array_laba_LabaActionGroup_ref_val_next_growth_size_ZZ(Array_laba_LabaActionGroup_ref* self, size_t s);
+
+size_t Array_laba_LabaActionGroup_ref_box_next_growth_size_ZZ(Array_laba_LabaActionGroup_ref* self, size_t s);
+
+size_t Array_laba_LabaActionGroup_ref_tag_next_growth_size_ZZ(Array_laba_LabaActionGroup_ref* self, size_t s);
+
+/*
+Add an element to the end of the array.
+*/
+None* Array_laba_LabaActionGroup_ref_ref_push_oo(Array_laba_LabaActionGroup_ref* self, laba_LabaActionGroup* value);
+
 /* Allocate a ui_RenderEngine without initialising it. */
 ui_RenderEngine* ui_RenderEngine_Alloc(void);
 
-None* ui_RenderEngine_tag_getNodeByName_ooo__send(ui_RenderEngine* self, String* nodeName, ui_$2$36* callback);
+None* ui_RenderEngine_tag_getNodeByName_ooo__send(ui_RenderEngine* self, String* nodeName, ui_$2$38* callback);
 
 float ui_RenderEngine_ref_nanoToSec_Wf(ui_RenderEngine* self, uint64_t nano);
 
@@ -2827,7 +3523,7 @@ float ui_RenderEngine_val_nanoToSec_Wf(ui_RenderEngine* self, uint64_t nano);
 
 uint64_t ui_RenderEngine_box__priority_W(ui_RenderEngine* self);
 
-None* ui_RenderEngine_tag_getNodeByID_Zoo__send(ui_RenderEngine* self, size_t id, ui_$2$36* callback);
+None* ui_RenderEngine_tag_getNodeByID_Zoo__send(ui_RenderEngine* self, size_t id, ui_$2$38* callback);
 
 None* ui_RenderEngine_ref_invalidateNodeByID_Zo(ui_RenderEngine* self, size_t id);
 
@@ -2861,7 +3557,7 @@ None* ui_RenderEngine_tag_createTextureFromUrl_oo__send(ui_RenderEngine* self, S
 
 None* ui_RenderEngine_tag_setNeedsRendered_o__send(ui_RenderEngine* self);
 
-None* ui_RenderEngine_tag_run_oo__send(ui_RenderEngine* self, ui_$2$37* callback);
+None* ui_RenderEngine_tag_run_oo__send(ui_RenderEngine* self, ui_$2$39* callback);
 
 None* ui_RenderEngine_ref_markRenderFinished_o(ui_RenderEngine* self);
 
@@ -2950,6 +3646,17 @@ None* PlatformIOS_val_poll_o(PlatformIOS* self);
 None* PlatformIOS_ref_register_oo(PlatformIOS* self, PonyPlatform* platform);
 
 bool PlatformIOS_box__use_main_thread_b(PlatformIOS* self);
+
+/* Allocate a laba_LabaActionMoveX without initialising it. */
+laba_LabaActionMoveX* laba_LabaActionMoveX_Alloc(void);
+
+laba_LabaActionMoveX* laba_LabaActionMoveX_ref_create_CoofbIo(laba_LabaActionMoveX* self, char operator_, laba_LabaTarget* target, stringext_StringParser* parser, float mod, bool inverted_, uint32_t easing_);
+
+None* laba_LabaActionMoveX_box_update_ofo(laba_LabaActionMoveX* self, laba_LabaTarget* target, float animationValue);
+
+None* laba_LabaActionMoveX_ref_update_ofo(laba_LabaActionMoveX* self, laba_LabaTarget* target, float animationValue);
+
+None* laba_LabaActionMoveX_val_update_ofo(laba_LabaActionMoveX* self, laba_LabaTarget* target, float animationValue);
 
 /* Allocate a String without initialising it. */
 String* String_Alloc(void);
@@ -3171,6 +3878,21 @@ String* String_box_clone_o(String* self);
 Append the elements from a sequence, starting from the given offset.
 */
 None* String_ref_append_oZZo(String* self, ReadSeq_U8_val* seq, size_t offset, size_t len);
+
+/*
+Returns a C compatible pointer to the underlying string allocation.
+*/
+char* String_box_cpointer_Zo(String* self, size_t offset);
+
+/*
+Returns a C compatible pointer to the underlying string allocation.
+*/
+char* String_val_cpointer_Zo(String* self, size_t offset);
+
+/*
+Returns a C compatible pointer to the underlying string allocation.
+*/
+char* String_ref_cpointer_Zo(String* self, size_t offset);
 
 /*
 Split the string into an array of strings with any character in the
@@ -3450,6 +4172,10 @@ float ui_SafeEdges_box_top_f(ui_SafeEdges* self);
 
 ui_SafeEdges* ui_SafeEdges_val_create_o(ui_SafeEdges* self);
 
+bool F32_box_ge_fb(float self, float y);
+
+bool F32_val_ge_fb(float self, float y);
+
 float F32_val_sqrt_f(float self);
 
 float F32_box_sqrt_f(float self);
@@ -3457,6 +4183,10 @@ float F32_box_sqrt_f(float self);
 float F32_val_sub_ff(float self, float y);
 
 float F32_box_sub_ff(float self, float y);
+
+uint32_t F32_val_bits_I(float self);
+
+uint32_t F32_box_bits_I(float self);
 
 bool F32_val_ne_fb(float self, float y);
 
@@ -3472,6 +4202,10 @@ float F32_box_add_ff(float self, float y);
 
 float F32_val_add_ff(float self, float y);
 
+float F32_box_cos_f(float self);
+
+float F32_val_cos_f(float self);
+
 /*
 Minimum positive value such that (1 + epsilon) != 1.
 */
@@ -3480,6 +4214,28 @@ float F32_val_epsilon_f(float self);
 float F32_box_mul_ff(float self, float y);
 
 float F32_val_mul_ff(float self, float y);
+
+float F32_box_pow_ff(float self, float y);
+
+float F32_val_pow_ff(float self, float y);
+
+/*
+Check whether this number is NaN.
+*/
+bool F32_val_nan_b(float self);
+
+/*
+Check whether this number is NaN.
+*/
+bool F32_box_nan_b(float self);
+
+bool F32_val_eq_fb(float self, float y);
+
+bool F32_box_eq_fb(float self, float y);
+
+float F32_box_sin_f(float self);
+
+float F32_val_sin_f(float self);
 
 float F32_val__nan_f(float self);
 
@@ -3490,6 +4246,10 @@ float F32_val_div_ff(float self, float y);
 double F32_val_f64_d(float self);
 
 double F32_box_f64_d(float self);
+
+float F32_box_max_ff(float self, float y);
+
+float F32_val_max_ff(float self, float y);
 
 float F32_val_from_bits_If(float self, uint32_t i);
 
@@ -3641,11 +4401,21 @@ ui_ScrollEvent* ui_ScrollEvent_val_create_Zffffo(ui_ScrollEvent* self, size_t id
 /* Allocate a ui_YogaNode without initialising it. */
 ui_YogaNode* ui_YogaNode_Alloc(void);
 
+None* ui_YogaNode_ref_fill_o(ui_YogaNode* self);
+
+uint64_t ui_YogaNode_ref_render_oW(ui_YogaNode* self, ui_FrameContext* frameContext);
+
+None* ui_YogaNode_ref_width_fo(ui_YogaNode* self, float v);
+
 void* ui_YogaNode_ref_getNodeByName_oo(ui_YogaNode* self, String* nodeName);
 
-None* ui_YogaNode_ref_widthPercent_fo(ui_YogaNode* self, float v);
-
 void* ui_YogaNode_ref_getNodeByID_Zo(ui_YogaNode* self, size_t nodeID);
+
+float ui_YogaNode_box_getHeight_f(ui_YogaNode* self);
+
+float ui_YogaNode_val_getHeight_f(ui_YogaNode* self);
+
+float ui_YogaNode_ref_getHeight_f(ui_YogaNode* self);
 
 size_t ui_YogaNode_val_id_Z(ui_YogaNode* self);
 
@@ -3653,23 +4423,75 @@ size_t ui_YogaNode_box_id_Z(ui_YogaNode* self);
 
 size_t ui_YogaNode_ref_id_Z(ui_YogaNode* self);
 
+uint64_t ui_YogaNode_ref_event_ooW(ui_YogaNode* self, ui_FrameContext* frameContext, void* anyEvent);
+
+uint64_t ui_YogaNode_ref_start_oW(ui_YogaNode* self, ui_FrameContext* frameContext);
+
+None* ui_YogaNode_ref_top_fo(ui_YogaNode* self, float p);
+
+None* ui_YogaNode_ref_left_fo(ui_YogaNode* self, float p);
+
+None* ui_YogaNode_ref_labaAnimate_fo(ui_YogaNode* self, float delta);
+
+float ui_YogaNode_ref_getLeft_f(ui_YogaNode* self);
+
+float ui_YogaNode_val_getLeft_f(ui_YogaNode* self);
+
+float ui_YogaNode_box_getLeft_f(ui_YogaNode* self);
+
+float ui_YogaNode_box__handleNAN_ff(ui_YogaNode* self, float v);
+
+float ui_YogaNode_val__handleNAN_ff(ui_YogaNode* self, float v);
+
+float ui_YogaNode_ref__handleNAN_ff(ui_YogaNode* self, float v);
+
+float ui_YogaNode_box_getAlpha_f(ui_YogaNode* self);
+
+float ui_YogaNode_ref_getAlpha_f(ui_YogaNode* self);
+
+float ui_YogaNode_val_getAlpha_f(ui_YogaNode* self);
+
+None* ui_YogaNode_ref_padding_Ifo(ui_YogaNode* self, uint32_t v1, float v2);
+
+String* ui_YogaNode_ref_string_o(ui_YogaNode* self);
+
+String* ui_YogaNode_val_string_o(ui_YogaNode* self);
+
+String* ui_YogaNode_box_string_o(ui_YogaNode* self);
+
+None* ui_YogaNode_ref_alpha_fo(ui_YogaNode* self, float a);
+
+float ui_YogaNode_ref_getTop_f(ui_YogaNode* self);
+
+float ui_YogaNode_box_getTop_f(ui_YogaNode* self);
+
+float ui_YogaNode_val_getTop_f(ui_YogaNode* self);
+
+void* ui_YogaNode_ref_getNodeByFocusIdx_zo(ui_YogaNode* self, ssize_t idx);
+
 ssize_t ui_YogaNode_val_getFocusIdx_z(ui_YogaNode* self);
 
 ssize_t ui_YogaNode_box_getFocusIdx_z(ui_YogaNode* self);
 
 ssize_t ui_YogaNode_ref_getFocusIdx_z(ui_YogaNode* self);
 
-None* ui_YogaNode_ref_removeChildren_o(ui_YogaNode* self);
-
-uint64_t ui_YogaNode_ref_event_ooW(ui_YogaNode* self, ui_FrameContext* frameContext, void* anyEvent);
-
 None* ui_YogaNode_ref_height_fo(ui_YogaNode* self, float v);
-
-None* ui_YogaNode_ref_fill_o(ui_YogaNode* self);
 
 None* ui_YogaNode_ref_addChild_oo(ui_YogaNode* self, ui_YogaNode* child);
 
-uint64_t ui_YogaNode_ref_start_oW(ui_YogaNode* self, ui_FrameContext* frameContext);
+float ui_YogaNode_box_getWidth_f(ui_YogaNode* self);
+
+float ui_YogaNode_ref_getWidth_f(ui_YogaNode* self);
+
+float ui_YogaNode_val_getWidth_f(ui_YogaNode* self);
+
+None* ui_YogaNode_ref_name_oo(ui_YogaNode* self, String* name_);
+
+None* ui_YogaNode_ref_widthPercent_fo(ui_YogaNode* self, float v);
+
+ui_YogaNode* ui_YogaNode_ref_create_o(ui_YogaNode* self);
+
+None* ui_YogaNode_ref_removeChildren_o(ui_YogaNode* self);
 
 None* ui_YogaNode_ref_preLayout_o(ui_YogaNode* self);
 
@@ -3679,21 +4501,13 @@ None* ui_YogaNode_ref_invalidate_oo(ui_YogaNode* self, ui_FrameContext* frameCon
 
 None* ui_YogaNode_ref_layout_o(ui_YogaNode* self);
 
-uint64_t ui_YogaNode_ref_render_oW(ui_YogaNode* self, ui_FrameContext* frameContext);
-
 None* ui_YogaNode_ref_finish_o(ui_YogaNode* self);
 
 None* ui_YogaNode_box__final_o(ui_YogaNode* self);
 
-void* ui_YogaNode_ref_getNodeByFocusIdx_zo(ui_YogaNode* self, ssize_t idx);
+bool ui_YogaNode_ref_isAnimating_b(ui_YogaNode* self);
 
-None* ui_YogaNode_ref_width_fo(ui_YogaNode* self, float v);
-
-ui_YogaNode* ui_YogaNode_ref_create_o(ui_YogaNode* self);
-
-None* ui_YogaNode_ref_padding_Ifo(ui_YogaNode* self, uint32_t v1, float v2);
-
-None* ui_YogaNode_ref_name_oo(ui_YogaNode* self, String* name_);
+None* ui_YogaNode_ref_labaStart_o(ui_YogaNode* self);
 
 /* Allocate a utility_UUID without initialising it. */
 utility_UUID* utility_UUID_Alloc(void);
@@ -3746,15 +4560,6 @@ bool format_FormatHexBare_box_eq_ob(format_FormatHexBare* self, format_FormatHex
 
 bool format_FormatHexBare_val_eq_ob(format_FormatHexBare* self, format_FormatHexBare* that);
 
-/* Allocate a ui_$2$37 without initialising it. */
-ui_$2$37* ui_$2$37_Alloc(void);
-
-None* ui_$2$37_val_apply_oo(ui_$2$37* self, ui_RenderEngine* p1);
-
-None* ui_$2$37_box_apply_oo(ui_$2$37* self, ui_RenderEngine* p1);
-
-None* ui_$2$37_ref_apply_oo(ui_$2$37* self, ui_RenderEngine* p1);
-
 /* Allocate a ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref without initialising it. */
 ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref* ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref_Alloc(void);
 
@@ -3780,6 +4585,13 @@ ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_val* ArrayValues_ui_YogaNode_r
 
 ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_val* ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_val_ref_create_oZo(ArrayValues_ui_YogaNode_ref_Array_ui_YogaNode_ref_val* self, Array_ui_YogaNode_ref* array, size_t offset);
 
+/* Allocate a laba_Laba without initialising it. */
+laba_Laba* laba_Laba_Alloc(void);
+
+None* laba_Laba_ref_parse_o(laba_Laba* self);
+
+bool laba_Laba_ref_animate_fb(laba_Laba* self, float delta);
+
 /* Allocate a collections__MapDeleted without initialising it. */
 collections__MapDeleted* collections__MapDeleted_Alloc(void);
 
@@ -3791,6 +4603,66 @@ bool collections__MapDeleted_val_eq_ob(collections__MapDeleted* self, collection
 
 /* Allocate a u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val without initialising it. */
 u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val* u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_Alloc(void);
+
+/* Allocate a ui_$2$38 without initialising it. */
+ui_$2$38* ui_$2$38_Alloc(void);
+
+void* ui_$2$38_val_apply_oo(ui_$2$38* self, void* p1);
+
+void* ui_$2$38_box_apply_oo(ui_$2$38* self, void* p1);
+
+void* ui_$2$38_ref_apply_oo(ui_$2$38* self, void* p1);
+
+/* Allocate a Array_laba_Laba_ref without initialising it. */
+Array_laba_Laba_ref* Array_laba_Laba_ref_Alloc(void);
+
+/*
+The number of elements in the array.
+*/
+size_t Array_laba_Laba_ref_ref_size_Z(Array_laba_Laba_ref* self);
+
+/*
+The number of elements in the array.
+*/
+size_t Array_laba_Laba_ref_val_size_Z(Array_laba_Laba_ref* self);
+
+/*
+The number of elements in the array.
+*/
+size_t Array_laba_Laba_ref_box_size_Z(Array_laba_Laba_ref* self);
+
+/*
+Return an iterator over the values in the array.
+*/
+ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_ref* Array_laba_Laba_ref_ref_values_o(Array_laba_Laba_ref* self);
+
+/*
+Return an iterator over the values in the array.
+*/
+ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_box* Array_laba_Laba_ref_box_values_o(Array_laba_Laba_ref* self);
+
+/*
+Return an iterator over the values in the array.
+*/
+ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_val* Array_laba_Laba_ref_val_values_o(Array_laba_Laba_ref* self);
+
+/*
+Find and delete the first item matching item
+*/
+None* Array_laba_Laba_ref_ref_deleteAll_oo(Array_laba_Laba_ref* self, laba_Laba* item);
+
+size_t Array_laba_Laba_ref_ref_next_growth_size_ZZ(Array_laba_Laba_ref* self, size_t s);
+
+size_t Array_laba_Laba_ref_val_next_growth_size_ZZ(Array_laba_Laba_ref* self, size_t s);
+
+size_t Array_laba_Laba_ref_box_next_growth_size_ZZ(Array_laba_Laba_ref* self, size_t s);
+
+size_t Array_laba_Laba_ref_tag_next_growth_size_ZZ(Array_laba_Laba_ref* self, size_t s);
+
+/*
+Create an array with zero elements, but space for len elements.
+*/
+Array_laba_Laba_ref* Array_laba_Laba_ref_ref_create_Zo(Array_laba_Laba_ref* self, size_t len);
 
 __uint128_t U128_box_op_and_QQ(__uint128_t self, __uint128_t y);
 
@@ -3883,6 +4755,317 @@ size_t utility_Size_box_apply_Z(utility_Size* self);
 
 utility_Size* utility_Size_val_create_o(utility_Size* self);
 
+/*
+Keep the contents, but reserve space for len instances of A.
+*/
+laba_LabaActionGroup** Pointer_laba_LabaActionGroup_ref_ref__realloc_Zo(laba_LabaActionGroup** self, size_t len);
+
+/*
+Set index i and return the previous value.
+*/
+laba_LabaActionGroup* Pointer_laba_LabaActionGroup_ref_ref__update_Zoo(laba_LabaActionGroup** self, size_t i, laba_LabaActionGroup* value);
+
+/*
+Retrieve index i.
+*/
+laba_LabaActionGroup* Pointer_laba_LabaActionGroup_ref_box__apply_Zo(laba_LabaActionGroup** self, size_t i);
+
+/*
+Retrieve index i.
+*/
+laba_LabaActionGroup* Pointer_laba_LabaActionGroup_ref_val__apply_Zo(laba_LabaActionGroup** self, size_t i);
+
+/*
+Retrieve index i.
+*/
+laba_LabaActionGroup* Pointer_laba_LabaActionGroup_ref_ref__apply_Zo(laba_LabaActionGroup** self, size_t i);
+
+/*
+Return a pointer to the n-th element.
+*/
+laba_LabaActionGroup** Pointer_laba_LabaActionGroup_ref_val__offset_Zo(laba_LabaActionGroup** self, size_t n);
+
+/*
+Return a pointer to the n-th element.
+*/
+laba_LabaActionGroup** Pointer_laba_LabaActionGroup_ref_box__offset_Zo(laba_LabaActionGroup** self, size_t n);
+
+/*
+Return a pointer to the n-th element.
+*/
+laba_LabaActionGroup** Pointer_laba_LabaActionGroup_ref_ref__offset_Zo(laba_LabaActionGroup** self, size_t n);
+
+/*
+Delete n elements from the head of pointer, compact remaining elements of
+the underlying array. The array length before this should be n + len.
+Returns the first deleted element.
+*/
+laba_LabaActionGroup* Pointer_laba_LabaActionGroup_ref_ref__delete_ZZo(laba_LabaActionGroup** self, size_t n, size_t len);
+
+/* Allocate a $0$12_U8_val without initialising it. */
+$0$12_U8_val* $0$12_U8_val_Alloc(void);
+
+bool $0$12_U8_val_ref_apply_CCb($0$12_U8_val* self, char l, char r);
+
+bool $0$12_U8_val_val_apply_CCb($0$12_U8_val* self, char l, char r);
+
+bool $0$12_U8_val_box_apply_CCb($0$12_U8_val* self, char l, char r);
+
+$0$12_U8_val* $0$12_U8_val_val_create_o($0$12_U8_val* self);
+
+/* Allocate a easings_Easing_F32_val without initialising it. */
+easings_Easing_F32_val* easings_Easing_F32_val_Alloc(void);
+
+float easings_Easing_F32_val_box_tweenQuinticInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenQuinticInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_quadraticIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_quadraticIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_tweenBounceIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenBounceIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_quinticInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_quinticInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_tweenQuarticOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenQuarticOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_exponentialIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_exponentialIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_sineInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_sineInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_bounceIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_bounceIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_exponentialOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_exponentialOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_tweenQuarticIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenQuarticIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_cubicOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_cubicOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_tweenLinear_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenLinear_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenCircularOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenCircularOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_quinticIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_quinticIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_sineIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_sineIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_tweenBounceOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenBounceOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenExponentialIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenExponentialIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenExponentialInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenExponentialInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenBackInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenBackInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenElasticOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenElasticOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenCubicInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenCubicInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_quinticOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_quinticOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_tweenSineInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenSineInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_circularInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_circularInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_tween_Iffff(easings_Easing_F32_val* self, uint32_t id, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tween_Iffff(easings_Easing_F32_val* self, uint32_t id, float a, float b, float t);
+
+float easings_Easing_F32_val_box_quarticIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_quarticIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_elasticInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_elasticInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_tweenBounceInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenBounceInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_backInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_backInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_tweenExponentialOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenExponentialOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_backIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_backIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_tweenBackOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenBackOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_quarticInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_quarticInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_tweenCircularInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenCircularInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_circularOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_circularOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_tweenQuadraticInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenQuadraticInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_cubicIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_cubicIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_tweenCircularIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenCircularIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenQuinticIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenQuinticIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_backOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_backOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_bounceOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_bounceOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_sineOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_sineOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_tweenQuarticInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenQuarticInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenSineIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenSineIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_elasticIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_elasticIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_tweenElasticInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenElasticInOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenCubicIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenCubicIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenQuadraticOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenQuadraticOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenElasticIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenElasticIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_circularIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_circularIn_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_cubicInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_cubicInOut_ff(easings_Easing_F32_val* self, float p);
+
+easings_Easing_F32_val* easings_Easing_F32_val_val_create_o(easings_Easing_F32_val* self);
+
+float easings_Easing_F32_val_val_exponentialInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_exponentialInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_tweenCubicOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenCubicOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenBackIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenBackIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenQuinticOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenQuinticOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_elasticOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_elasticOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_bounceInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_bounceInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_quadraticInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_quadraticInOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_tweenSineOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenSineOut_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_tweenQuadraticIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_val_tweenQuadraticIn_ffff(easings_Easing_F32_val* self, float a, float b, float t);
+
+float easings_Easing_F32_val_box_quadraticOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_quadraticOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_box_quarticOut_ff(easings_Easing_F32_val* self, float p);
+
+float easings_Easing_F32_val_val_quarticOut_ff(easings_Easing_F32_val* self, float p);
+
 /* Allocate a u4_ui_NullEvent_val_ui_TouchEvent_val_ui_ScrollEvent_val_ui_KeyEvent_val without initialising it. */
 u4_ui_NullEvent_val_ui_TouchEvent_val_ui_ScrollEvent_val_ui_KeyEvent_val* u4_ui_NullEvent_val_ui_TouchEvent_val_ui_ScrollEvent_val_ui_KeyEvent_val_Alloc(void);
 
@@ -3953,6 +5136,17 @@ Copy copy_len characters from this to that at specified offsets.
 */
 None* u2_String_box_Array_U8_val_box_box__copy_to_oZZZo(void* self, char* ptr, size_t copy_len, size_t from_offset, size_t to_offset);
 
+/* Allocate a laba_LabaActionFade without initialising it. */
+laba_LabaActionFade* laba_LabaActionFade_Alloc(void);
+
+laba_LabaActionFade* laba_LabaActionFade_ref_create_CoobIo(laba_LabaActionFade* self, char operator_, laba_LabaTarget* target, stringext_StringParser* parser, bool inverted_, uint32_t easing_);
+
+None* laba_LabaActionFade_box_update_ofo(laba_LabaActionFade* self, laba_LabaTarget* target, float animationValue);
+
+None* laba_LabaActionFade_ref_update_ofo(laba_LabaActionFade* self, laba_LabaTarget* target, float animationValue);
+
+None* laba_LabaActionFade_val_update_ofo(laba_LabaActionFade* self, laba_LabaTarget* target, float animationValue);
+
 /* Allocate a t2_ISize_val_Bool_val without initialising it. */
 t2_ISize_val_Bool_val* t2_ISize_val_Bool_val_Alloc(void);
 
@@ -3983,6 +5177,15 @@ String* stringext_StringExt_val_format_oooooooooooooooooooooo(stringext_StringEx
 
 /* Allocate a u2_AmbientAuth_val_None_val without initialising it. */
 u2_AmbientAuth_val_None_val* u2_AmbientAuth_val_None_val_Alloc(void);
+
+/* Allocate a laba_LabaAction without initialising it. */
+laba_LabaAction* laba_LabaAction_Alloc(void);
+
+None* laba_LabaAction_box_update_ofo(laba_LabaAction* self, laba_LabaTarget* target, float animationValue);
+
+None* laba_LabaAction_ref_update_ofo(laba_LabaAction* self, laba_LabaTarget* target, float animationValue);
+
+None* laba_LabaAction_val_update_ofo(laba_LabaAction* self, laba_LabaTarget* target, float animationValue);
 
 /* Allocate a Array_ui_Geometry_ref without initialising it. */
 Array_ui_Geometry_ref* Array_ui_Geometry_ref_Alloc(void);

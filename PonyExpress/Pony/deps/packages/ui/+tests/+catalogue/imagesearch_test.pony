@@ -99,6 +99,7 @@ actor ImageSearchTest is Controllerable
                 selfTag.createTextureFromUrl(mediaURL)
                 
                 let resultView = YogaNode.>height(200).>maxHeight(200).>widthAuto().>grow().>marginAll(2).>aspectRatio(item.thumb_width / item.thumb_height)
+                                         .>laba("I0.005!f")
                                          .>view( Color.>gray() )
                                          .>view( Image.>path(mediaURL).>aspectFill() )
                                          

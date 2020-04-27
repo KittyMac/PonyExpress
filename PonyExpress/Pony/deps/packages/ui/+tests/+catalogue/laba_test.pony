@@ -87,24 +87,6 @@ actor LabaTest is Controllerable
                               ])
                           
                     ])
-            
-            /*
-            // Top bar containing the search field
-            YogaNode.>height(60).>minWidth(200).>rows().>paddingAll(6)
-                    .>view( Image.>path("dialog_background").>stretchAll(12).>renderInset(-100,-200,-5,-30) )
-                    .>addChildren( [ 
-                      
-                        YogaNode.>focusIdx(0).>itemsStart().>justifyCenter()
-                                .>view( Image.>path("dialog_field").>pathFocused("dialog_field_focused").>stretchAll(5).>renderInset(0,0,0,-6) )
-                                .>view( TextField.>placeholder("Enter a Laba string here").>font(font, 18).>renderInset(2,50,2,4).>eventInsetAll(-6).>action(this, PerformLabaAnimation).>sync(this, labaKey) )
-                                .>addChild(
-                                  YogaNode.>left(10).>size(24,24)
-                                          .>view( Image.>path("search").>aspectFit().>renderInset(0,0,0,0) )
-                                
-                                )
-                      
-                      ] )
-            */     
              
           ])
       end

@@ -61,16 +61,19 @@ class YogaNode
   fun ref addChild(child:YogaNode) =>
     children.push(child)
     @YGNodeInsertChild(node, child.node, @YGNodeGetChildCount(node))
+    updateSiblingCounts()
   
   fun ref addChildren(new_children:Array[YogaNode]) =>
     for child in new_children.values() do
       addChild(child)
     end
+    updateSiblingCounts()
   
   fun ref removeChild(child:YogaNode) =>
     child.finish()
     @YGNodeRemoveChild(node, child.node)
     children.deleteOne(child)
+    updateSiblingCounts()
   
   fun ref removeChildren() =>
     for child in children.values() do
@@ -78,6 +81,7 @@ class YogaNode
     end
     children.clear()
     @YGNodeRemoveAllChildren(node)
+    updateSiblingCounts()
     
   
   fun ref layout() =>
@@ -155,6 +159,15 @@ class YogaNode
     end
     None
   
+  fun ref updateSiblingCounts() =>
+    var idx:USize = 0
+    let n:USize = children.size()
+    for child in children.values() do
+      child.sibling_index = idx
+      child.sibling_count = n
+      idx = idx + 1
+    end
+  
   // Called when the node is first added to the render engine hierarchy
   fun ref start(frameContext:FrameContext):U64 =>
     var n:U64 = frameContext.renderNumber
@@ -169,6 +182,8 @@ class YogaNode
       frameContext.nodeSize = nodeSize()
       
       local_view.viewable_start( frameContext.clone() )
+      
+      labaStart()
       
     end
     
@@ -194,13 +209,8 @@ class YogaNode
     if _safeBottom then padding(YGEdge.bottom, SafeEdges.bottom()) end
     if _safeRight then padding(YGEdge.right, SafeEdges.right()) end  
     
-    var idx:USize = 0
-    let n:USize = children.size()
     for child in children.values() do
-      child.sibling_index = idx
-      child.sibling_count = n
       child.preLayout()
-      idx = idx + 1
     end
   
   // Called when distributing events to nodes
@@ -218,7 +228,7 @@ class YogaNode
     
       local_view.viewable_event( frameContext.clone(), anyEvent, last_bounds )
     end
-  
+    
     for child in children.values() do
       n = child.event(frameContext, anyEvent)
       frameContext.renderNumber = n
@@ -252,6 +262,12 @@ class YogaNode
     let local_top:F32 = @YGNodeLayoutGetTop(node)
     let local_width:F32 = @YGNodeLayoutGetWidth(node)
     let local_height:F32 = @YGNodeLayoutGetHeight(node)
+    
+    labaAnimate(frameContext.animation_delta)
+    
+    if isAnimating() then
+      frameContext.engine.setNeedsLayout()
+    end
     
     if (local_width > 0) and (local_height > 0) then
     
@@ -315,7 +331,7 @@ class YogaNode
             M4fun.trans_v3(V3fun(parentContentOffset._1, -parentContentOffset._2, 0))
           )
       end
-    
+      
       for child in children.values() do
         n = child._renderRecursive(frameContext, _content_offset, local_matrix)
         frameContext.renderNumber = n
@@ -339,12 +355,6 @@ class YogaNode
       
       frameContext.alpha = savedAlpha
     
-    end
-    
-    animate(frameContext.animation_delta)
-    
-    if isAnimating() then
-      frameContext.engine.setNeedsLayout()
     end
     
     n
@@ -396,7 +406,7 @@ class YogaNode
   fun ref laba(labaStr:String val, args:(Array[F32]|None) = None, callback:(LabaCompleteCallback|None) = None) =>
     labaAnimations.push(Laba(this, labaStr, args, callback))
   
-  fun ref animate(delta:F32 val) =>
+  fun ref labaAnimate(delta:F32 val) =>
     try
       let n = labaAnimations.size()
       for i in Range(0,n) do
@@ -407,6 +417,10 @@ class YogaNode
       end
     end
 
+  fun ref labaStart() =>
+    for animation in labaAnimations.values() do
+      animation.animate(0)
+    end
   
   fun ref view(local_view:Viewable) =>
     _views.push(local_view)
