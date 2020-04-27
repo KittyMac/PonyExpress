@@ -131,7 +131,7 @@ class iso _TestLaba4 is UnitTest
 
     let compare = """<div layout="width: 100; height: 100; top: 0; left: -999;" style="width: 100px; height: 100px; left: -999px; " ></div>"""
 
-    let node = YogaNode.>laba("d?<?", 5.0, 999.0).>size(100,100)
+    let node = YogaNode.>laba("d?<?", [5.0; 999.0]).>size(100,100)
 
     let t = LabaTestShared.advanceLabaAnimationOnNode(node)
     if LabaTestShared.compareResults(0, node.string(), compare, 5.0, t) == false then

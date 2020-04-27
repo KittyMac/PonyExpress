@@ -383,27 +383,8 @@ class YogaNode
   fun ref isAnimating():Bool =>
     labaAnimations.size() > 0
   
-  fun ref laba(labaStr:String val,arg0:LabaArgument = None,
-                                  arg1:LabaArgument = None, 
-                                  arg2:LabaArgument = None,
-                          				arg3:LabaArgument = None,
-                          				arg4:LabaArgument = None,
-                          				arg5:LabaArgument = None,
-                          				arg6:LabaArgument = None,
-                          				arg7:LabaArgument = None,
-                          				arg8:LabaArgument = None,
-                          				arg9:LabaArgument = None,
-                          				arg10:LabaArgument = None,
-                          				arg11:LabaArgument = None, 
-                          				arg12:LabaArgument = None,
-                          				arg13:LabaArgument = None,
-                          				arg14:LabaArgument = None,
-                          				arg15:LabaArgument = None,
-                          				arg16:LabaArgument = None,
-                          				arg17:LabaArgument = None,
-                          				arg18:LabaArgument = None,
-                          				arg19:LabaArgument = None) =>
-    labaAnimations.push(Laba(this, labaStr, arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19))
+  fun ref laba(labaStr:String val, args:(Array[F32]|None) = None, callback:(LabaCompleteCallback|None) = None) =>
+    labaAnimations.push(Laba(this, labaStr, args, callback))
   
   fun ref animate(delta:F32 val) =>
     try

@@ -24,7 +24,7 @@ actor LabaTest is Controllerable
                 .>addChildren([
                     YogaNode.>name("Red")
                             .>size(50,50)
-                            .>laba(laba1)
+                            .>laba(laba1, None, {(node:YogaNode, self:Laba) => self.reset()})
                             .>view( Color.>red() )
                 ])
       }
@@ -45,13 +45,13 @@ actor LabaTest is Controllerable
         YogaNode.>center().>size(200,200)
                 .>addChildren([
                     YogaNode.>size(50,50)
-                            .>laba(laba1)
+                            .>laba(laba1, None, {(node:YogaNode, self:Laba) => self.reset()})
                             .>view( Color.>blue() )
                     YogaNode.>size(50,50)
-                            .>laba(laba2)
+                            .>laba(laba2, None, {(node:YogaNode, self:Laba) => self.reset()})
                             .>view( Color.>red() )
                     YogaNode.>size(50,50)
-                            .>laba(laba3)
+                            .>laba(laba3, None, {(node:YogaNode, self:Laba) => self.reset()})
                             .>view( Color.>yellow() )
                 ])
       }
@@ -70,7 +70,7 @@ actor LabaTest is Controllerable
                   
                       YogaNode.>fit().>rows().>wrap()
                               .>addChildren([
-                                  sample3("!~!>", "!~!>", "!~!>")
+                                  sample3("!~!>|~d0|~d0|~d0", "!~!>|~d0|~d0", "!~!>|~d0")
                                   sample1("<|^|>|v")
                                   sample1("e0<|^|>|v")
                               ])

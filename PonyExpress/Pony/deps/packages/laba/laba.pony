@@ -49,8 +49,7 @@ use "linal"
 use "utility"
 use "stringext"
 
-// Note: we cannot just use None here, because None is Stringable
-type LabaArgument is (F32|None)
+type LabaCompleteCallback is {(YogaNode,Laba)}
 
 primitive LabaConst
   let duration:F32 = 0.87
@@ -145,6 +144,7 @@ class Laba
   Parses a Laba animation string into groups of Laba actions and effectuates the
   actual animation process (an outside entity calls animate with timing deltas)
 """  
+  let onCompleteCallback:(LabaCompleteCallback|None)
   let groups:Array[LabaActionGroup]
   let target:LabaTarget
   let animationString:String val
@@ -153,53 +153,17 @@ class Laba
   var animationValue:F32 = 0.0
   
   
-  new create(node:YogaNode, animationString':String val,  arg0:LabaArgument = None,
-                                                  				arg1:LabaArgument = None, 
-                                                  				arg2:LabaArgument = None,
-                                                  				arg3:LabaArgument = None,
-                                                  				arg4:LabaArgument = None,
-                                                  				arg5:LabaArgument = None,
-                                                  				arg6:LabaArgument = None,
-                                                  				arg7:LabaArgument = None,
-                                                  				arg8:LabaArgument = None,
-                                                  				arg9:LabaArgument = None,
-                                                  				arg10:LabaArgument = None,
-                                                  				arg11:LabaArgument = None, 
-                                                  				arg12:LabaArgument = None,
-                                                  				arg13:LabaArgument = None,
-                                                  				arg14:LabaArgument = None,
-                                                  				arg15:LabaArgument = None,
-                                                  				arg16:LabaArgument = None,
-                                                  				arg17:LabaArgument = None,
-                                                  				arg18:LabaArgument = None,
-                                                  				arg19:LabaArgument = None) =>
-        
-    if arg0 as F32 then
+  new create(node:YogaNode, animationString':String val, args:(Array[F32]|None) = None, onCompleteCallback':(LabaCompleteCallback|None) = None) =>
+    onCompleteCallback = onCompleteCallback'
+    
+    if args as Array[F32] then
       // User supplied arguments exist, we need to replace ? in the animation strings with those arguments
       let newAnimationString:String trn = animationString'.clone()
       
-      newAnimationString.replace("?", arg0.string(), 1)
-      
-      if arg1 as F32 then newAnimationString.replace("?", arg1.string(), 1) end
-      if arg2 as F32 then newAnimationString.replace("?", arg2.string(), 1) end
-      if arg3 as F32 then newAnimationString.replace("?", arg3.string(), 1) end
-      if arg4 as F32 then newAnimationString.replace("?", arg4.string(), 1) end
-      if arg5 as F32 then newAnimationString.replace("?", arg5.string(), 1) end
-      if arg6 as F32 then newAnimationString.replace("?", arg6.string(), 1) end
-      if arg7 as F32 then newAnimationString.replace("?", arg7.string(), 1) end
-      if arg8 as F32 then newAnimationString.replace("?", arg8.string(), 1) end
-      if arg9 as F32 then newAnimationString.replace("?", arg9.string(), 1) end
-      if arg10 as F32 then newAnimationString.replace("?", arg10.string(), 1) end
-      if arg11 as F32 then newAnimationString.replace("?", arg11.string(), 1) end
-      if arg12 as F32 then newAnimationString.replace("?", arg12.string(), 1) end
-      if arg13 as F32 then newAnimationString.replace("?", arg13.string(), 1) end
-      if arg14 as F32 then newAnimationString.replace("?", arg14.string(), 1) end
-      if arg15 as F32 then newAnimationString.replace("?", arg15.string(), 1) end
-      if arg16 as F32 then newAnimationString.replace("?", arg16.string(), 1) end
-      if arg17 as F32 then newAnimationString.replace("?", arg17.string(), 1) end
-      if arg18 as F32 then newAnimationString.replace("?", arg18.string(), 1) end
-      if arg19 as F32 then newAnimationString.replace("?", arg19.string(), 1) end
-      
+      for arg in args.values() do
+        newAnimationString.replace("?", arg.string(), 1)
+      end
+            
       animationString = consume newAnimationString
     else
       animationString = animationString'
@@ -208,6 +172,9 @@ class Laba
     
     target = LabaTarget(node)
     groups = Array[LabaActionGroup](32)
+    
+  fun ref reset() =>
+    parse()
   
   fun ref print() =>
     var string:String ref = String(2048)
@@ -228,6 +195,8 @@ class Laba
     var inverted:Bool = false
     var action:(LabaAction|None) = None
     var group = LabaActionGroup
+    
+    animationValue = 0.0
     
     target.syncFromNode()
     
@@ -303,6 +272,10 @@ class Laba
     else
       Log.println("animate failed with %s", animationValue)
       return true
+    end
+    
+    if (onCompleteCallback as LabaCompleteCallback) and (groups.size() == 0) then
+      onCompleteCallback(target.target, this)
     end
     
     (groups.size() == 0)    

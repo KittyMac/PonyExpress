@@ -126,6 +126,8 @@ functions on a Pointer[A] are private to maintain memory safety.
 */
 typedef struct format_PrefixSpace format_PrefixSpace;
 
+typedef struct u2_laba_$25$0_ref_None_val u2_laba_$25$0_ref_None_val;
+
 /*
 A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
 included in a union or intersection, or be a subtype of any interface. Most
@@ -192,6 +194,8 @@ typedef struct linal_V2fun linal_V2fun;
 typedef struct ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_val ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_val;
 
 typedef struct _SignedPartialArithmetic _SignedPartialArithmetic;
+
+typedef struct laba_$25$0 laba_$25$0;
 
 typedef struct format_AlignRight format_AlignRight;
 
@@ -1607,6 +1611,15 @@ bool format_PrefixSpace_box_eq_ob(format_PrefixSpace* self, format_PrefixSpace* 
 
 bool format_PrefixSpace_val_eq_ob(format_PrefixSpace* self, format_PrefixSpace* that);
 
+/* Allocate a u2_laba_$25$0_ref_None_val without initialising it. */
+u2_laba_$25$0_ref_None_val* u2_laba_$25$0_ref_None_val_Alloc(void);
+
+None* u2_laba_$25$0_ref_None_val_box_apply_ooo(void* self, ui_YogaNode* p1, laba_Laba* p2);
+
+None* u2_laba_$25$0_ref_None_val_ref_apply_ooo(void* self, ui_YogaNode* p1, laba_Laba* p2);
+
+None* u2_laba_$25$0_ref_None_val_val_apply_ooo(void* self, ui_YogaNode* p1, laba_Laba* p2);
+
 /*
 Space for len instances of A.
 */
@@ -2101,6 +2114,9 @@ ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_val* ArrayValues_laba_
 _SignedPartialArithmetic* _SignedPartialArithmetic_Alloc(void);
 
 _SignedPartialArithmetic* _SignedPartialArithmetic_val_create_o(_SignedPartialArithmetic* self);
+
+/* Allocate a laba_$25$0 without initialising it. */
+laba_$25$0* laba_$25$0_Alloc(void);
 
 /* Allocate a format_AlignRight without initialising it. */
 format_AlignRight* format_AlignRight_Alloc(void);
