@@ -22,6 +22,7 @@ class YogaNode
   
   var _content_offset:V2 = V2fun.zero()
   var _rotation:V3 = V3fun.zero()
+  var _scale:V3 = V3fun(1.0, 1.0, 1.0)
   
   var _clips:Bool = false
   var _clippingGeometry:BufferedGeometry = BufferedGeometry
@@ -287,6 +288,12 @@ class YogaNode
                 M4fun.rot(Q4fun.from_euler(_rotation))
               )
       end
+      if (_scale._1 != 0) or (_scale._2 != 0) or (_scale._3 != 0) then
+        local_matrix = M4fun.mul_m4(
+                local_matrix,
+                M4fun.scale_v3(_scale)
+              )
+      end
       
       let savedAlpha = frameContext.alpha
       
@@ -479,6 +486,12 @@ class YogaNode
   fun ref safeBottom(v:Bool=true) => _safeBottom = v
   fun ref safeRight(v:Bool=true) => _safeRight = v
   
+  fun ref scaleX(v:F32) => _scale = V3fun(v, _scale._2, _scale._3)
+  fun ref scaleY(v:F32) => _scale = V3fun(_scale._1, v, _scale._3)
+  fun ref scaleZ(v:F32) => _scale = V3fun(_scale._1, _scale._2, v)
+  fun ref scaleAll(v:F32) => _scale = V3fun(v, v, v)
+  fun ref scale(v:V3) => _scale = v
+  
   fun ref rotateX(v:F32) => _rotation = V3fun(v, _rotation._2, _rotation._3)
   fun ref rotateY(v:F32) => _rotation = V3fun(_rotation._1, v, _rotation._3)
   fun ref rotateZ(v:F32) => _rotation = V3fun(_rotation._1, _rotation._2, v)
@@ -611,6 +624,7 @@ class YogaNode
   
   fun _handleNAN(v:F32):F32 => if v.nan() then 0.0 else v end
   
+  fun getScale():V3 => _scale
   fun getWidth():F32 => _handleNAN(@YGNodeLayoutGetWidth(node))
   fun getHeight():F32 => _handleNAN(@YGNodeLayoutGetHeight(node))
   fun getTop():F32 => _handleNAN(@YGNodeStyleGetPosition(node, YGEdge.top))

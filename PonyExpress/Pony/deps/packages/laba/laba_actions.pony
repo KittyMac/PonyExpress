@@ -139,3 +139,75 @@ class LabaActionFade is LabaAction
   fun update(target:LabaTarget, animationValue:F32) =>
     target.setAlpha( Easing.tween(easing,from,to,animationValue) )
     //Log.println("%s: from %s,  to %s,  v %s", target.getAlpha(), from, to, animationValue)
+
+class LabaActionWidth is LabaAction
+"""
+  w100 is animate the width to 100 units wide
+  !w100 is animate the width from 100 units wide to the current width
+"""
+  new create(operator':U8, target:LabaTarget, parser:StringParser, inverted':Bool, easing':U32) =>
+    operator = operator'
+    inverted = inverted'
+    easing = easing'
+    
+    let v = target.getWidth()
+    value = try parser.f32()? else v end
+    if inverted then
+      to = v
+      from = value
+    else
+      from = v
+      to = value
+    end
+
+  fun update(target:LabaTarget, animationValue:F32) =>
+    target.setWidth( Easing.tween(easing,from,to,animationValue) )
+    //Log.println("%s: from %s,  to %s,  v %s", target.getAlpha(), from, to, animationValue)
+
+class LabaActionHeight is LabaAction
+"""
+  w100 is animate the high to 100 units wide
+  !w100 is animate the high from 100 units wide to the current high
+"""
+  new create(operator':U8, target:LabaTarget, parser:StringParser, inverted':Bool, easing':U32) =>
+    operator = operator'
+    inverted = inverted'
+    easing = easing'
+    
+    let v = target.getHeight()
+    value = try parser.f32()? else v end
+    if inverted then
+      to = v
+      from = value
+    else
+      from = v
+      to = value
+    end
+
+  fun update(target:LabaTarget, animationValue:F32) =>
+    target.setHeight( Easing.tween(easing,from,to,animationValue) )
+    //Log.println("%s: from %s,  to %s,  v %s", target.getAlpha(), from, to, animationValue)
+
+class LabaActionScale is LabaAction
+"""
+  s0.8 is animate to 0.8 scale
+  !s0.8 is animate from 0.8 scale to the current scale
+"""
+  new create(operator':U8, target:LabaTarget, parser:StringParser, inverted':Bool, easing':U32) =>
+    operator = operator'
+    inverted = inverted'
+    easing = easing'
+
+    let v = target.getScale()
+    value = try parser.f32()? else v end
+    if inverted then
+      to = v
+      from = value
+    else
+      from = v
+      to = value
+    end
+
+  fun update(target:LabaTarget, animationValue:F32) =>
+    target.setScale( Easing.tween(easing,from,to,animationValue) )
+    //Log.println("%s: from %s,  to %s,  v %s", target.getAlpha(), from, to, animationValue)

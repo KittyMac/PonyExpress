@@ -142,6 +142,12 @@ typedef struct ui_Viewable ui_Viewable;
 typedef struct u2_ui_YogaNode_ref_None_val u2_ui_YogaNode_ref_None_val;
 
 /*
+w100 is animate the high to 100 units wide
+!w100 is animate the high from 100 units wide to the current high
+*/
+typedef struct laba_LabaActionHeight laba_LabaActionHeight;
+
+/*
 A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
 included in a union or intersection, or be a subtype of any interface. Most
 functions on a Pointer[A] are private to maintain memory safety.
@@ -675,6 +681,12 @@ typedef struct StringRunes StringRunes;
 typedef struct format_AlignCenter format_AlignCenter;
 
 typedef struct yoga_YGNode yoga_YGNode;
+
+/*
+w100 is animate the width to 100 units wide
+!w100 is animate the width from 100 units wide to the current width
+*/
+typedef struct laba_LabaActionWidth laba_LabaActionWidth;
 
 typedef struct ui_RenderContext ui_RenderContext;
 
@@ -1273,6 +1285,12 @@ typedef struct ui_RenderPrimitive ui_RenderPrimitive;
 
 typedef struct ui_KeyEvent ui_KeyEvent;
 
+/*
+s0.8 is animate to 0.8 scale
+!s0.8 is animate from 0.8 scale to the current scale
+*/
+typedef struct laba_LabaActionScale laba_LabaActionScale;
+
 typedef struct utility_Size utility_Size;
 
 /*
@@ -1818,6 +1836,17 @@ size_t u2_ui_YogaNode_ref_None_val_val_id_Z(void* self);
 size_t u2_ui_YogaNode_ref_None_val_box_id_Z(void* self);
 
 size_t u2_ui_YogaNode_ref_None_val_ref_id_Z(void* self);
+
+/* Allocate a laba_LabaActionHeight without initialising it. */
+laba_LabaActionHeight* laba_LabaActionHeight_Alloc(void);
+
+laba_LabaActionHeight* laba_LabaActionHeight_ref_create_CoobIo(laba_LabaActionHeight* self, char operator_, laba_LabaTarget* target, stringext_StringParser* parser, bool inverted_, uint32_t easing_);
+
+None* laba_LabaActionHeight_box_update_ofo(laba_LabaActionHeight* self, laba_LabaTarget* target, float animationValue);
+
+None* laba_LabaActionHeight_ref_update_ofo(laba_LabaActionHeight* self, laba_LabaTarget* target, float animationValue);
+
+None* laba_LabaActionHeight_val_update_ofo(laba_LabaActionHeight* self, laba_LabaTarget* target, float animationValue);
 
 uint32_t U32_val_shr_II(uint32_t self, uint32_t y);
 
@@ -2665,13 +2694,21 @@ laba_LabaTarget* laba_LabaTarget_Alloc(void);
 
 float laba_LabaTarget_ref_getHeight_f(laba_LabaTarget* self);
 
+None* laba_LabaTarget_ref_setHeight_fo(laba_LabaTarget* self, float h);
+
 float laba_LabaTarget_ref_getY_f(laba_LabaTarget* self);
+
+float laba_LabaTarget_ref_getScale_f(laba_LabaTarget* self);
 
 None* laba_LabaTarget_ref_setAlpha_fo(laba_LabaTarget* self, float a);
 
 size_t laba_LabaTarget_ref_getSiblingIdx_bZ(laba_LabaTarget* self, bool inverted);
 
+None* laba_LabaTarget_ref_setScale_fo(laba_LabaTarget* self, float s);
+
 None* laba_LabaTarget_ref_setX_fo(laba_LabaTarget* self, float x);
+
+None* laba_LabaTarget_ref_setWidth_fo(laba_LabaTarget* self, float w);
 
 None* laba_LabaTarget_ref_syncFromNode_o(laba_LabaTarget* self);
 
@@ -3133,6 +3170,17 @@ bool format_AlignCenter_val_eq_ob(format_AlignCenter* self, format_AlignCenter* 
 
 /* Allocate a yoga_YGNode without initialising it. */
 yoga_YGNode* yoga_YGNode_Alloc(void);
+
+/* Allocate a laba_LabaActionWidth without initialising it. */
+laba_LabaActionWidth* laba_LabaActionWidth_Alloc(void);
+
+laba_LabaActionWidth* laba_LabaActionWidth_ref_create_CoobIo(laba_LabaActionWidth* self, char operator_, laba_LabaTarget* target, stringext_StringParser* parser, bool inverted_, uint32_t easing_);
+
+None* laba_LabaActionWidth_box_update_ofo(laba_LabaActionWidth* self, laba_LabaTarget* target, float animationValue);
+
+None* laba_LabaActionWidth_ref_update_ofo(laba_LabaActionWidth* self, laba_LabaTarget* target, float animationValue);
+
+None* laba_LabaActionWidth_val_update_ofo(laba_LabaActionWidth* self, laba_LabaTarget* target, float animationValue);
 
 /* Allocate a ui_RenderContext without initialising it. */
 ui_RenderContext* ui_RenderContext_Alloc(void);
@@ -4491,6 +4539,8 @@ None* ui_YogaNode_ref_widthPercent_fo(ui_YogaNode* self, float v);
 
 ui_YogaNode* ui_YogaNode_ref_create_o(ui_YogaNode* self);
 
+None* ui_YogaNode_ref_scaleAll_fo(ui_YogaNode* self, float v);
+
 None* ui_YogaNode_ref_removeChildren_o(ui_YogaNode* self);
 
 None* ui_YogaNode_ref_preLayout_o(ui_YogaNode* self);
@@ -4736,6 +4786,17 @@ None* ui_RenderPrimitive_box_startFinished_oo(ui_RenderPrimitive* self, ui_Frame
 ui_KeyEvent* ui_KeyEvent_Alloc(void);
 
 ui_KeyEvent* ui_KeyEvent_val_create_bSoffo(ui_KeyEvent* self, bool pressed_, uint16_t keyCode_, String* characters_, float x, float y);
+
+/* Allocate a laba_LabaActionScale without initialising it. */
+laba_LabaActionScale* laba_LabaActionScale_Alloc(void);
+
+laba_LabaActionScale* laba_LabaActionScale_ref_create_CoobIo(laba_LabaActionScale* self, char operator_, laba_LabaTarget* target, stringext_StringParser* parser, bool inverted_, uint32_t easing_);
+
+None* laba_LabaActionScale_box_update_ofo(laba_LabaActionScale* self, laba_LabaTarget* target, float animationValue);
+
+None* laba_LabaActionScale_ref_update_ofo(laba_LabaActionScale* self, laba_LabaTarget* target, float animationValue);
+
+None* laba_LabaActionScale_val_update_ofo(laba_LabaActionScale* self, laba_LabaTarget* target, float animationValue);
 
 /* Allocate a utility_Size without initialising it. */
 utility_Size* utility_Size_Alloc(void);

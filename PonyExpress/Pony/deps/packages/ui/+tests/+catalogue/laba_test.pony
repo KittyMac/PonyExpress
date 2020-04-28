@@ -40,18 +40,16 @@ actor LabaTest is Controllerable
                     .>view( Color.>red() )
         ])
       }
-      /*
-      let sample2 = {(laba1:String val, laba2:String val): YogaNode =>
-        sampleBox([
+      let sample2 = {(title:String val, laba1:String val, laba2:String val): YogaNode =>
+        sampleBox(title, [
             YogaNode.>size(50,50)
-                    .>laba(laba1)
+                    .>laba(laba1, None, {(node:YogaNode, self:Laba) => self.reset()})
                     .>view( Color.>blue() )
             YogaNode.>size(50,50)
-                    .>laba(laba2)
+                    .>laba(laba2, None, {(node:YogaNode, self:Laba) => self.reset()})
                     .>view( Color.>red() )
         ])
       }
-      */
       let sample3 = {(title:String val, laba1:String val, laba2:String val, laba3:String val): YogaNode =>
         sampleBox(title, [
             YogaNode.>size(50,50)
@@ -84,6 +82,8 @@ actor LabaTest is Controllerable
                                   sample3("Invert Staggered Delay", "!f!I!>|id0", "!f!I!>|id0|id0", "!f!I!>|id0|id0|id0")
                                   sample1("Simple Movement", "<|^|>|v100|>|^|<")
                                   sample1("Linear Movement", "e0<|^|>|v100|>|^|<")
+                                  sample2("Width & Height", "", "w100|w50|h100|h50")
+                                  sample2("Scale", "", "!s0.8|s1.2|s0.8")
                               ])
                           
                     ])

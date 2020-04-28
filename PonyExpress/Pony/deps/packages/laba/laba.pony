@@ -102,12 +102,14 @@ class LabaTarget
   var _y:F32 = 0
   var _w:F32 = 0
   var _h:F32 = 0
+  var _s:F32 = 0
   var _a:F32 = 0
   
   var x_sync:Bool = false
   var y_sync:Bool = false
   var w_sync:Bool = false
   var h_sync:Bool = false
+  var s_sync:Bool = false
   var a_sync:Bool = false
 
   new create(target':YogaNode) =>
@@ -135,6 +137,9 @@ class LabaTarget
   fun ref getHeight():F32 => _h
   fun ref setHeight(h:F32) => _h = h; h_sync = true
   
+  fun ref getScale():F32 => _s
+  fun ref setScale(s:F32) => _s = s; s_sync = true
+  
   fun ref getAlpha():F32 => _a
   fun ref setAlpha(a:F32) => _a = a; a_sync = true
   
@@ -143,6 +148,7 @@ class LabaTarget
     _y = target.getTop()
     _w = target.getWidth()
     _h = target.getHeight()
+    _s = target.getScale()._1
     _a = target.getAlpha()
   
   fun ref syncToNode() =>
@@ -150,6 +156,7 @@ class LabaTarget
     if y_sync then target.top(_y); y_sync = false end
     if w_sync then target.width(_w); w_sync = false end
     if h_sync then target.height(_h); h_sync = false end
+    if s_sync then target.scaleAll(_s); s_sync = false end
     if a_sync then target.alpha(_a); a_sync = false end
 
 
@@ -226,6 +233,11 @@ class Laba
         | '^' => action = LabaActionMoveY(c, target, parser, -1, inverted, group.easing)
         | 'v' => action = LabaActionMoveY(c, target, parser, 1, inverted, group.easing)
         | 'f' => action = LabaActionFade(c, target, parser, inverted, group.easing)
+        
+        | 'w' => action = LabaActionWidth(c, target, parser, inverted, group.easing)
+        | 'h' => action = LabaActionHeight(c, target, parser, inverted, group.easing)
+        
+        | 's' => action = LabaActionScale(c, target, parser, inverted, group.easing)
         
         | 'e' => easing = try parser.i32()?.u32() else EasingID.cubicInOut end; group.easing = easing
         
