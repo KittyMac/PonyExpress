@@ -624,6 +624,11 @@ class YogaNode
   
   fun _handleNAN(v:F32):F32 => if v.nan() then 0.0 else v end
   
+  fun getRotateX():F32 => _rotation._1
+  fun getRotateY():F32 => _rotation._2
+  fun getRotateZ():F32 => _rotation._3
+  
+  
   fun getScale():V3 => _scale
   fun getWidth():F32 => _handleNAN(@YGNodeLayoutGetWidth(node))
   fun getHeight():F32 => _handleNAN(@YGNodeLayoutGetHeight(node))

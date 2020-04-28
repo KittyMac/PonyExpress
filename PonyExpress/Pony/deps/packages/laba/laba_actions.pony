@@ -31,7 +31,7 @@
  *
  * l loop (relative) this segment (value is number of times to loop, -1 means loop infinitely)
  *
- * e easing (we allow e# for shorthand or full easeInOutQuad)
+ * e easing (the value is the numeric constant equavalent in pony.easings)
  *
  * | pipe animations (chain)
  *
@@ -63,6 +63,26 @@ trait LabaAction
   
   fun update(target:LabaTarget, animationValue:F32)
   
+  fun ref simpleRelativeValue(parser:StringParser, target:F32, defaultValue:F32, mod:F32 = 1.0) =>
+    value = try parser.f32()? else defaultValue end
+    if inverted then
+      to = target
+      from = to - (mod * value)
+    else
+      from = target
+      to = from + (mod * value)
+    end
+  
+  fun ref simpleAbsoluteValue(parser:StringParser, target:F32, defaultValue:F32) =>
+    value = try parser.f32()? else defaultValue end
+    if inverted then
+      to = target
+      from = value
+    else
+      from = target
+      to = value
+    end
+  
   fun ref toString(string:String ref) =>
     if inverted then
       string.push('!')
@@ -79,14 +99,7 @@ class LabaActionMoveX is LabaAction
     operator = operator'
     inverted = inverted'
     easing = easing'
-    value = try parser.f32()? else target.getWidth() end
-    if inverted then
-      to = target.getX()
-      from = to - (mod * value)
-    else
-      from = target.getX()
-      to = from + (mod * value)
-    end
+    simpleRelativeValue(parser, target.getX(), target.getWidth(), mod)
     
   fun update(target:LabaTarget, animationValue:F32) =>
     target.setX( Easing.tween(easing,from,to,animationValue) )
@@ -101,15 +114,7 @@ class LabaActionMoveY is LabaAction
     operator = operator'
     inverted = inverted'
     easing = easing'
-    value = try parser.f32()? else target.getHeight() end
-    if inverted then
-      to = target.getY()
-      from = to - (mod * value)
-    else
-      from = target.getY()
-      to = from + (mod * value)
-    end
-    
+    simpleRelativeValue(parser, target.getY(), target.getHeight(), mod)    
     
   fun update(target:LabaTarget, animationValue:F32) =>
     target.setY( Easing.tween(easing,from,to,animationValue) )
@@ -126,12 +131,13 @@ class LabaActionFade is LabaAction
     operator = operator'
     inverted = inverted'
     easing = easing'
-    value = try parser.f32()? else target.getAlpha() end
+    let v = target.getAlpha()
+    value = try parser.f32()? else v end
     if inverted then
-      to = target.getAlpha()
+      to = v
       from = if to > 0.5 then 0.0 else 1.0 end
     else
-      from = target.getAlpha()
+      from = v
       to = value
     end
     
@@ -149,16 +155,7 @@ class LabaActionWidth is LabaAction
     operator = operator'
     inverted = inverted'
     easing = easing'
-    
-    let v = target.getWidth()
-    value = try parser.f32()? else v end
-    if inverted then
-      to = v
-      from = value
-    else
-      from = v
-      to = value
-    end
+    simpleAbsoluteValue(parser, target.getWidth(), target.getWidth())
 
   fun update(target:LabaTarget, animationValue:F32) =>
     target.setWidth( Easing.tween(easing,from,to,animationValue) )
@@ -173,16 +170,7 @@ class LabaActionHeight is LabaAction
     operator = operator'
     inverted = inverted'
     easing = easing'
-    
-    let v = target.getHeight()
-    value = try parser.f32()? else v end
-    if inverted then
-      to = v
-      from = value
-    else
-      from = v
-      to = value
-    end
+    simpleAbsoluteValue(parser, target.getHeight(), target.getHeight())
 
   fun update(target:LabaTarget, animationValue:F32) =>
     target.setHeight( Easing.tween(easing,from,to,animationValue) )
@@ -197,17 +185,56 @@ class LabaActionScale is LabaAction
     operator = operator'
     inverted = inverted'
     easing = easing'
-
-    let v = target.getScale()
-    value = try parser.f32()? else v end
-    if inverted then
-      to = v
-      from = value
-    else
-      from = v
-      to = value
-    end
+    simpleAbsoluteValue(parser, target.getScale(), target.getScale())
 
   fun update(target:LabaTarget, animationValue:F32) =>
     target.setScale( Easing.tween(easing,from,to,animationValue) )
+    //Log.println("%s: from %s,  to %s,  v %s", target.getAlpha(), from, to, animationValue)
+
+class LabaActionRoll is LabaAction
+"""
+  Z axis rotation
+  r0.8 is rotate to 0.8 scale
+  !r0.8 is animate from 0.8 scale to the current scale
+"""
+  new create(operator':U8, target:LabaTarget, parser:StringParser, inverted':Bool, easing':U32) =>
+    operator = operator'
+    inverted = inverted'
+    easing = easing'
+    simpleRelativeValue(parser, target.getRoll(), target.getRoll())
+
+  fun update(target:LabaTarget, animationValue:F32) =>
+    target.setRoll( Easing.tween(easing,from,to,animationValue) )
+    //Log.println("%s: from %s,  to %s,  v %s", target.getAlpha(), from, to, animationValue)
+
+class LabaActionPitch is LabaAction
+"""
+  X axis rotation
+  p0.8 is rotate by 0.8 scale
+  !p0.8 is animate from 0.8 scale to the current scale
+"""
+  new create(operator':U8, target:LabaTarget, parser:StringParser, inverted':Bool, easing':U32) =>
+    operator = operator'
+    inverted = inverted'
+    easing = easing'
+    simpleRelativeValue(parser, target.getPitch(), target.getPitch())
+
+  fun update(target:LabaTarget, animationValue:F32) =>
+    target.setPitch( Easing.tween(easing,from,to,animationValue) )
+    //Log.println("%s: from %s,  to %s,  v %s", target.getAlpha(), from, to, animationValue)
+
+class LabaActionYaw is LabaAction
+"""
+  Y axis rotation
+  a0.8 is rotate by 0.8 scale
+  !a0.8 is animate from 0.8 scale to the current scale
+"""
+  new create(operator':U8, target:LabaTarget, parser:StringParser, inverted':Bool, easing':U32) =>
+    operator = operator'
+    inverted = inverted'
+    easing = easing'
+    simpleRelativeValue(parser, target.getYaw(), target.getYaw())
+
+  fun update(target:LabaTarget, animationValue:F32) =>
+    target.setYaw( Easing.tween(easing,from,to,animationValue) )
     //Log.println("%s: from %s,  to %s,  v %s", target.getAlpha(), from, to, animationValue)

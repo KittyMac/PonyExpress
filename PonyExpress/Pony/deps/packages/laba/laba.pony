@@ -103,6 +103,9 @@ class LabaTarget
   var _w:F32 = 0
   var _h:F32 = 0
   var _s:F32 = 0
+  var _f:F32 = 0
+  var _r:F32 = 0
+  var _p:F32 = 0
   var _a:F32 = 0
   
   var x_sync:Bool = false
@@ -110,6 +113,9 @@ class LabaTarget
   var w_sync:Bool = false
   var h_sync:Bool = false
   var s_sync:Bool = false
+  var f_sync:Bool = false
+  var r_sync:Bool = false
+  var p_sync:Bool = false
   var a_sync:Bool = false
 
   new create(target':YogaNode) =>
@@ -140,8 +146,17 @@ class LabaTarget
   fun ref getScale():F32 => _s
   fun ref setScale(s:F32) => _s = s; s_sync = true
   
-  fun ref getAlpha():F32 => _a
-  fun ref setAlpha(a:F32) => _a = a; a_sync = true
+  fun ref getAlpha():F32 => _f
+  fun ref setAlpha(f:F32) => _f = f; f_sync = true
+  
+  fun ref getRoll():F32 => _r
+  fun ref setRoll(r:F32) => _r = r; r_sync = true
+  
+  fun ref getPitch():F32 => _p
+  fun ref setPitch(p:F32) => _p = p; p_sync = true
+  
+  fun ref getYaw():F32 => _a
+  fun ref setYaw(a:F32) => _a = a; a_sync = true
   
   fun ref syncFromNode() =>
     _x = target.getLeft()
@@ -149,7 +164,10 @@ class LabaTarget
     _w = target.getWidth()
     _h = target.getHeight()
     _s = target.getScale()._1
-    _a = target.getAlpha()
+    _f = target.getAlpha()
+    _r = target.getRotateZ()
+    _p = target.getRotateX()
+    _a = target.getRotateY()
   
   fun ref syncToNode() =>
     if x_sync then target.left(_x); x_sync = false end
@@ -157,7 +175,10 @@ class LabaTarget
     if w_sync then target.width(_w); w_sync = false end
     if h_sync then target.height(_h); h_sync = false end
     if s_sync then target.scaleAll(_s); s_sync = false end
-    if a_sync then target.alpha(_a); a_sync = false end
+    if f_sync then target.alpha(_f); f_sync = false end
+    if r_sync then target.rotateZ(_r); r_sync = false end
+    if p_sync then target.rotateX(_p); p_sync = false end
+    if a_sync then target.rotateY(_a); a_sync = false end
 
 
 class Laba
@@ -233,6 +254,10 @@ class Laba
         | '^' => action = LabaActionMoveY(c, target, parser, -1, inverted, group.easing)
         | 'v' => action = LabaActionMoveY(c, target, parser, 1, inverted, group.easing)
         | 'f' => action = LabaActionFade(c, target, parser, inverted, group.easing)
+        
+        | 'r' => action = LabaActionRoll(c, target, parser, inverted, group.easing)
+        | 'p' => action = LabaActionPitch(c, target, parser, inverted, group.easing)
+        | 'a' => action = LabaActionYaw(c, target, parser, inverted, group.easing)
         
         | 'w' => action = LabaActionWidth(c, target, parser, inverted, group.easing)
         | 'h' => action = LabaActionHeight(c, target, parser, inverted, group.easing)

@@ -329,7 +329,7 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             // calculate the field of view such that at a given depth we
             // match the size of the window exactly
             var radtheta:Float = 0.0
-            let distance:Float = 500.0
+            let distance:Float = 5000.0
             
             radtheta = 2.0 * atan2( Float(projectedSize.height) / 2.0, distance );
             
@@ -415,7 +415,7 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             // define the modelview and projection matrics and make them
             // available to the shaders
             var modelViewMatrix = GLKMatrix4Identity
-            modelViewMatrix = GLKMatrix4Translate(modelViewMatrix, Float(projectedSize.width * -0.5), Float(projectedSize.height * 0.5), -500.0)
+            modelViewMatrix = GLKMatrix4Translate(modelViewMatrix, Float(projectedSize.width * -0.5), Float(projectedSize.height * 0.5), -5000.0)
             modelViewMatrix = GLKMatrix4RotateX(modelViewMatrix, Float.pi)
             sceneMatrices.modelviewMatrix = modelViewMatrix
             

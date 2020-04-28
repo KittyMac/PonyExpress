@@ -84,6 +84,7 @@ actor LabaTest is Controllerable
                                   sample1("Linear Movement", "e0<|^|>|v100|>|^|<")
                                   sample2("Width & Height", "", "w100|w50|h100|h50")
                                   sample2("Scale", "", "!s0.8|s1.2|s0.8")
+                                  sample3("Rotation", "e0r3.14", "e0p3.14", "e0a3.14")
                               ])
                           
                     ])

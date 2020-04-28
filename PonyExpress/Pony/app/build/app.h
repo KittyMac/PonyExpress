@@ -27,6 +27,8 @@ typedef struct URLDownload URLDownload;
 
 typedef struct ui_RGBA ui_RGBA;
 
+typedef struct StringEncoding StringEncoding;
+
 /*
 Contiguous, resizable memory to store elements of type A.
 
@@ -1049,6 +1051,13 @@ typedef struct ui_LayoutNeeded ui_LayoutNeeded;
 
 typedef struct ui_SafeEdges ui_SafeEdges;
 
+/*
+Z axis rotation
+r0.8 is rotate to 0.8 scale
+!r0.8 is animate from 0.8 scale to the current scale
+*/
+typedef struct laba_LabaActionRoll laba_LabaActionRoll;
+
 typedef struct linal_Q4fun linal_Q4fun;
 
 /*
@@ -1171,6 +1180,13 @@ typedef struct utility_UUID utility_UUID;
 
 typedef struct ui_TouchEvent ui_TouchEvent;
 
+/*
+X axis rotation
+p0.8 is rotate by 0.8 scale
+!p0.8 is animate from 0.8 scale to the current scale
+*/
+typedef struct laba_LabaActionPitch laba_LabaActionPitch;
+
 typedef struct format_FormatHexBare format_FormatHexBare;
 
 typedef struct ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref ArrayValues_ui_Viewable_tag_Array_ui_Viewable_tag_ref;
@@ -1284,6 +1300,13 @@ Rendering actors can call this concurrently safely to submit geometry to the pla
 typedef struct ui_RenderPrimitive ui_RenderPrimitive;
 
 typedef struct ui_KeyEvent ui_KeyEvent;
+
+/*
+Y axis rotation
+a0.8 is rotate by 0.8 scale
+!a0.8 is animate from 0.8 scale to the current scale
+*/
+typedef struct laba_LabaActionYaw laba_LabaActionYaw;
 
 /*
 s0.8 is animate to 0.8 scale
@@ -1549,6 +1572,15 @@ string format a vector*/
 String* ui_RGBA_box_string_o(ui_RGBA* self);
 
 ui_RGBA* ui_RGBA_val_white_o(ui_RGBA* self);
+
+/* Allocate a StringEncoding without initialising it. */
+StringEncoding* StringEncoding_Alloc(void);
+
+StringEncoding* StringEncoding_val_create_o(StringEncoding* self);
+
+uint32_t StringEncoding_val_utf8_I(StringEncoding* self);
+
+uint32_t StringEncoding_box_utf8_I(StringEncoding* self);
 
 /* Allocate a Array_String_val without initialising it. */
 Array_String_val* Array_String_val_Alloc(void);
@@ -1842,6 +1874,8 @@ laba_LabaActionHeight* laba_LabaActionHeight_Alloc(void);
 
 laba_LabaActionHeight* laba_LabaActionHeight_ref_create_CoobIo(laba_LabaActionHeight* self, char operator_, laba_LabaTarget* target, stringext_StringParser* parser, bool inverted_, uint32_t easing_);
 
+None* laba_LabaActionHeight_ref_simpleAbsoluteValue_offo(laba_LabaActionHeight* self, stringext_StringParser* parser, float target, float defaultValue);
+
 None* laba_LabaActionHeight_box_update_ofo(laba_LabaActionHeight* self, laba_LabaTarget* target, float animationValue);
 
 None* laba_LabaActionHeight_ref_update_ofo(laba_LabaActionHeight* self, laba_LabaTarget* target, float animationValue);
@@ -2020,6 +2054,8 @@ bool format_PrefixSign_val_eq_ob(format_PrefixSign* self, format_PrefixSign* tha
 laba_LabaActionMoveY* laba_LabaActionMoveY_Alloc(void);
 
 laba_LabaActionMoveY* laba_LabaActionMoveY_ref_create_CoofbIo(laba_LabaActionMoveY* self, char operator_, laba_LabaTarget* target, stringext_StringParser* parser, float mod, bool inverted_, uint32_t easing_);
+
+None* laba_LabaActionMoveY_ref_simpleRelativeValue_offfo(laba_LabaActionMoveY* self, stringext_StringParser* parser, float target, float defaultValue, float mod);
 
 None* laba_LabaActionMoveY_box_update_ofo(laba_LabaActionMoveY* self, laba_LabaTarget* target, float animationValue);
 
@@ -2700,13 +2736,17 @@ float laba_LabaTarget_ref_getY_f(laba_LabaTarget* self);
 
 float laba_LabaTarget_ref_getScale_f(laba_LabaTarget* self);
 
-None* laba_LabaTarget_ref_setAlpha_fo(laba_LabaTarget* self, float a);
+None* laba_LabaTarget_ref_setAlpha_fo(laba_LabaTarget* self, float f);
 
 size_t laba_LabaTarget_ref_getSiblingIdx_bZ(laba_LabaTarget* self, bool inverted);
+
+None* laba_LabaTarget_ref_setPitch_fo(laba_LabaTarget* self, float p);
 
 None* laba_LabaTarget_ref_setScale_fo(laba_LabaTarget* self, float s);
 
 None* laba_LabaTarget_ref_setX_fo(laba_LabaTarget* self, float x);
+
+None* laba_LabaTarget_ref_setRoll_fo(laba_LabaTarget* self, float r);
 
 None* laba_LabaTarget_ref_setWidth_fo(laba_LabaTarget* self, float w);
 
@@ -2716,11 +2756,19 @@ float laba_LabaTarget_ref_getWidth_f(laba_LabaTarget* self);
 
 float laba_LabaTarget_ref_getAlpha_f(laba_LabaTarget* self);
 
+float laba_LabaTarget_ref_getPitch_f(laba_LabaTarget* self);
+
 None* laba_LabaTarget_ref_setY_fo(laba_LabaTarget* self, float y);
 
 float laba_LabaTarget_ref_getX_f(laba_LabaTarget* self);
 
+float laba_LabaTarget_ref_getRoll_f(laba_LabaTarget* self);
+
+float laba_LabaTarget_ref_getYaw_f(laba_LabaTarget* self);
+
 None* laba_LabaTarget_ref_syncToNode_o(laba_LabaTarget* self);
+
+None* laba_LabaTarget_ref_setYaw_fo(laba_LabaTarget* self, float a);
 
 /* Allocate a Stringable without initialising it. */
 Stringable* Stringable_Alloc(void);
@@ -3043,11 +3091,11 @@ ssize_t U8_box_isize_z(char self);
 
 ssize_t U8_val_isize_z(char self);
 
+char U8_val_create_CC(char self, char value);
+
 char U8_val_op_or_CC(char self, char y);
 
 char U8_box_op_or_CC(char self, char y);
-
-char U8_val_create_CC(char self, char value);
 
 bool U8_val_lt_Cb(char self, char y);
 
@@ -3175,6 +3223,8 @@ yoga_YGNode* yoga_YGNode_Alloc(void);
 laba_LabaActionWidth* laba_LabaActionWidth_Alloc(void);
 
 laba_LabaActionWidth* laba_LabaActionWidth_ref_create_CoobIo(laba_LabaActionWidth* self, char operator_, laba_LabaTarget* target, stringext_StringParser* parser, bool inverted_, uint32_t easing_);
+
+None* laba_LabaActionWidth_ref_simpleAbsoluteValue_offo(laba_LabaActionWidth* self, stringext_StringParser* parser, float target, float defaultValue);
 
 None* laba_LabaActionWidth_box_update_ofo(laba_LabaActionWidth* self, laba_LabaTarget* target, float animationValue);
 
@@ -3697,6 +3747,8 @@ bool PlatformIOS_box__use_main_thread_b(PlatformIOS* self);
 laba_LabaActionMoveX* laba_LabaActionMoveX_Alloc(void);
 
 laba_LabaActionMoveX* laba_LabaActionMoveX_ref_create_CoofbIo(laba_LabaActionMoveX* self, char operator_, laba_LabaTarget* target, stringext_StringParser* parser, float mod, bool inverted_, uint32_t easing_);
+
+None* laba_LabaActionMoveX_ref_simpleRelativeValue_offfo(laba_LabaActionMoveX* self, stringext_StringParser* parser, float target, float defaultValue, float mod);
 
 None* laba_LabaActionMoveX_box_update_ofo(laba_LabaActionMoveX* self, laba_LabaTarget* target, float animationValue);
 
@@ -4321,6 +4373,19 @@ bool F32_box_gt_fb(float self, float y);
 
 bool F32_val_gt_fb(float self, float y);
 
+/* Allocate a laba_LabaActionRoll without initialising it. */
+laba_LabaActionRoll* laba_LabaActionRoll_Alloc(void);
+
+laba_LabaActionRoll* laba_LabaActionRoll_ref_create_CoobIo(laba_LabaActionRoll* self, char operator_, laba_LabaTarget* target, stringext_StringParser* parser, bool inverted_, uint32_t easing_);
+
+None* laba_LabaActionRoll_ref_simpleRelativeValue_offfo(laba_LabaActionRoll* self, stringext_StringParser* parser, float target, float defaultValue, float mod);
+
+None* laba_LabaActionRoll_box_update_ofo(laba_LabaActionRoll* self, laba_LabaTarget* target, float animationValue);
+
+None* laba_LabaActionRoll_ref_update_ofo(laba_LabaActionRoll* self, laba_LabaTarget* target, float animationValue);
+
+None* laba_LabaActionRoll_val_update_ofo(laba_LabaActionRoll* self, laba_LabaTarget* target, float animationValue);
+
 /* Allocate a linal_Q4fun without initialising it. */
 linal_Q4fun* linal_Q4fun_Alloc(void);
 
@@ -4475,6 +4540,12 @@ uint64_t ui_YogaNode_ref_start_oW(ui_YogaNode* self, ui_FrameContext* frameConte
 
 None* ui_YogaNode_ref_top_fo(ui_YogaNode* self, float p);
 
+float ui_YogaNode_ref_getRotateZ_f(ui_YogaNode* self);
+
+float ui_YogaNode_val_getRotateZ_f(ui_YogaNode* self);
+
+float ui_YogaNode_box_getRotateZ_f(ui_YogaNode* self);
+
 None* ui_YogaNode_ref_left_fo(ui_YogaNode* self, float p);
 
 None* ui_YogaNode_ref_labaAnimate_fo(ui_YogaNode* self, float delta);
@@ -4484,6 +4555,10 @@ float ui_YogaNode_ref_getLeft_f(ui_YogaNode* self);
 float ui_YogaNode_val_getLeft_f(ui_YogaNode* self);
 
 float ui_YogaNode_box_getLeft_f(ui_YogaNode* self);
+
+None* ui_YogaNode_ref_rotateX_fo(ui_YogaNode* self, float v);
+
+None* ui_YogaNode_ref_rotateY_fo(ui_YogaNode* self, float v);
 
 None* ui_YogaNode_ref_updateSiblingCounts_o(ui_YogaNode* self);
 
@@ -4498,6 +4573,12 @@ float ui_YogaNode_box_getAlpha_f(ui_YogaNode* self);
 float ui_YogaNode_ref_getAlpha_f(ui_YogaNode* self);
 
 float ui_YogaNode_val_getAlpha_f(ui_YogaNode* self);
+
+float ui_YogaNode_val_getRotateY_f(ui_YogaNode* self);
+
+float ui_YogaNode_ref_getRotateY_f(ui_YogaNode* self);
+
+float ui_YogaNode_box_getRotateY_f(ui_YogaNode* self);
 
 None* ui_YogaNode_ref_padding_Ifo(ui_YogaNode* self, uint32_t v1, float v2);
 
@@ -4537,11 +4618,19 @@ None* ui_YogaNode_ref_name_oo(ui_YogaNode* self, String* name_);
 
 None* ui_YogaNode_ref_widthPercent_fo(ui_YogaNode* self, float v);
 
+None* ui_YogaNode_ref_rotateZ_fo(ui_YogaNode* self, float v);
+
 ui_YogaNode* ui_YogaNode_ref_create_o(ui_YogaNode* self);
 
 None* ui_YogaNode_ref_scaleAll_fo(ui_YogaNode* self, float v);
 
 None* ui_YogaNode_ref_removeChildren_o(ui_YogaNode* self);
+
+float ui_YogaNode_box_getRotateX_f(ui_YogaNode* self);
+
+float ui_YogaNode_ref_getRotateX_f(ui_YogaNode* self);
+
+float ui_YogaNode_val_getRotateX_f(ui_YogaNode* self);
 
 None* ui_YogaNode_ref_preLayout_o(ui_YogaNode* self);
 
@@ -4600,6 +4689,19 @@ String* utility_UUID_box__hex_string_oZo(utility_UUID* self, Array_U8_val* data,
 ui_TouchEvent* ui_TouchEvent_Alloc(void);
 
 ui_TouchEvent* ui_TouchEvent_val_create_Zbffo(ui_TouchEvent* self, size_t id_, bool pressed_, float x, float y);
+
+/* Allocate a laba_LabaActionPitch without initialising it. */
+laba_LabaActionPitch* laba_LabaActionPitch_Alloc(void);
+
+laba_LabaActionPitch* laba_LabaActionPitch_ref_create_CoobIo(laba_LabaActionPitch* self, char operator_, laba_LabaTarget* target, stringext_StringParser* parser, bool inverted_, uint32_t easing_);
+
+None* laba_LabaActionPitch_ref_simpleRelativeValue_offfo(laba_LabaActionPitch* self, stringext_StringParser* parser, float target, float defaultValue, float mod);
+
+None* laba_LabaActionPitch_box_update_ofo(laba_LabaActionPitch* self, laba_LabaTarget* target, float animationValue);
+
+None* laba_LabaActionPitch_ref_update_ofo(laba_LabaActionPitch* self, laba_LabaTarget* target, float animationValue);
+
+None* laba_LabaActionPitch_val_update_ofo(laba_LabaActionPitch* self, laba_LabaTarget* target, float animationValue);
 
 /* Allocate a format_FormatHexBare without initialising it. */
 format_FormatHexBare* format_FormatHexBare_Alloc(void);
@@ -4787,10 +4889,25 @@ ui_KeyEvent* ui_KeyEvent_Alloc(void);
 
 ui_KeyEvent* ui_KeyEvent_val_create_bSoffo(ui_KeyEvent* self, bool pressed_, uint16_t keyCode_, String* characters_, float x, float y);
 
+/* Allocate a laba_LabaActionYaw without initialising it. */
+laba_LabaActionYaw* laba_LabaActionYaw_Alloc(void);
+
+laba_LabaActionYaw* laba_LabaActionYaw_ref_create_CoobIo(laba_LabaActionYaw* self, char operator_, laba_LabaTarget* target, stringext_StringParser* parser, bool inverted_, uint32_t easing_);
+
+None* laba_LabaActionYaw_ref_simpleRelativeValue_offfo(laba_LabaActionYaw* self, stringext_StringParser* parser, float target, float defaultValue, float mod);
+
+None* laba_LabaActionYaw_box_update_ofo(laba_LabaActionYaw* self, laba_LabaTarget* target, float animationValue);
+
+None* laba_LabaActionYaw_ref_update_ofo(laba_LabaActionYaw* self, laba_LabaTarget* target, float animationValue);
+
+None* laba_LabaActionYaw_val_update_ofo(laba_LabaActionYaw* self, laba_LabaTarget* target, float animationValue);
+
 /* Allocate a laba_LabaActionScale without initialising it. */
 laba_LabaActionScale* laba_LabaActionScale_Alloc(void);
 
 laba_LabaActionScale* laba_LabaActionScale_ref_create_CoobIo(laba_LabaActionScale* self, char operator_, laba_LabaTarget* target, stringext_StringParser* parser, bool inverted_, uint32_t easing_);
+
+None* laba_LabaActionScale_ref_simpleAbsoluteValue_offo(laba_LabaActionScale* self, stringext_StringParser* parser, float target, float defaultValue);
 
 None* laba_LabaActionScale_box_update_ofo(laba_LabaActionScale* self, laba_LabaTarget* target, float animationValue);
 
