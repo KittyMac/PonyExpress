@@ -197,7 +197,7 @@ class Laba
   Parses a Laba animation string into groups of Laba actions and effectuates the
   actual animation process (an outside entity calls animate with timing deltas)
 """  
-  let onCompleteCallback:(LabaCompleteCallback|None)
+  let onCompleteCallback:(LabaCompleteCallback box|None)
   let groups:Array[LabaActionGroup]
   let target:LabaTarget
   let animationString:String val
@@ -206,10 +206,10 @@ class Laba
   var animationValue:F32 = 0.0
   
   
-  new create(node:YogaNode, animationString':String val, args:(Array[F32]|None) = None, onCompleteCallback':(LabaCompleteCallback|None) = None) =>
+  new create(node:YogaNode, animationString':String val, args:(Array[F32] box|None) = None, onCompleteCallback':(LabaCompleteCallback box|None) = None) =>
     onCompleteCallback = onCompleteCallback'
     
-    if args as Array[F32] then
+    if args as Array[F32] box then
       // User supplied arguments exist, we need to replace ? in the animation strings with those arguments
       let newAnimationString:String trn = animationString'.clone()
       
@@ -334,7 +334,7 @@ class Laba
       return true
     end
     
-    if (onCompleteCallback as LabaCompleteCallback) and (groups.size() == 0) then
+    if (onCompleteCallback as LabaCompleteCallback box) and (groups.size() == 0) then
       onCompleteCallback(target.target, this)
     end
     

@@ -422,7 +422,10 @@ class YogaNode
   fun ref isAnimating():Bool =>
     labaAnimations.size() > 0
   
-  fun ref laba(labaStr:String val, args:(Array[F32]|None) = None, callback:(LabaCompleteCallback|None) = None) =>
+  fun ref labaCancel() =>
+    labaAnimations.clear()
+  
+  fun ref laba(labaStr:String val, args:(Array[F32] box|None) = None, callback:(LabaCompleteCallback box|None) = None) =>
     labaAnimations.push(Laba(this, labaStr, args, callback))
   
   fun ref labaAnimate(delta:F32 val) =>

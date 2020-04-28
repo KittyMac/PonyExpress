@@ -58,7 +58,7 @@ actor Catalog is Controllerable
           YogaNode.>absolute().>center()
                   .>addChild(
                       YogaNode.>size(200,200)
-                              .>laba("e0d1.2!<100|e5<f0s0.6", None, {(node:YogaNode, self:Laba) => node.removeParent()})
+                              .>laba("e0d1.2!<100|e5<100f0s0.6", None, {(node:YogaNode, self:Laba) => node.removeParent()})
                               .>view(Image.>path("pony_express"))
                     )
           
@@ -75,9 +75,10 @@ actor Catalog is Controllerable
             .>height(36)
             .>padding(YGEdge.all, 6)
             .>padding(YGEdge.left, 8)
-            .>view( ImageButton( "white", "white").>pressedColor(RGBA.u32( 0x98cbf3ff ))
-                                                  .>color(RGBA.u32( 0xffffff00 ))
-                                                  .>action(this, evt) )
+            .>view( ImageButton.>path("white")
+                               .>pressedColor(RGBA.u32( 0x98cbf3ff ))
+                               .>color(RGBA.u32( 0xffffff00 ))
+                               .>action(this, evt) )
             .>addChild( YogaNode.>view( Label.>value(title).>font(font', 16).>left() ) )
   
   be action(evt:Action) =>

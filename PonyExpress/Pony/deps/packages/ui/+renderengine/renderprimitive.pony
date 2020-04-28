@@ -142,7 +142,7 @@ primitive RenderPrimitive
   fun tag createTextureFromBytes(frameContext:FrameContext val, name:Pointer[U8] tag, bytes:Pointer[U8] tag, bytesCount:USize) =>
     @RenderEngine_createTextureFromBytes(frameContext.renderContext, name, bytes, bytesCount)
   
-  fun tag renderCachedGeometry(frameContext:FrameContext val, partNum:U64, shaderType:U32, vertices:FloatAlignedArray, gc:RGBA val, t:Pointer[U8] tag) =>
+  fun tag renderCachedGeometry(frameContext:FrameContext val, partNum:U64, shaderType:U32, vertices:FloatAlignedArray, gc:RGBA val, t:(String|None)) =>
     if vertices.size() == 0 then
       return
     end
@@ -154,7 +154,7 @@ primitive RenderPrimitive
                           vertices.cpointer(),
                           vertices.allocSize().u32(),
                           gc.r, gc.g, gc.b, gc.a * frameContext.alpha,
-                          t)
+                          if t as String then t.cpointer() else Pointer[U8] end)
     
   
   

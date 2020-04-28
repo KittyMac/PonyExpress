@@ -9,43 +9,55 @@ actor ImageButton is (Imageable & Buttonable)
   Example:
 
   YogaNode.view(ImageButton( "unpressed_button", "pressed_button" ).>sizeToFit()
-                                                               .>onClick({ 
+                                                                   .>onClick({ 
     () =>
       @printf("clicked 3!\n".cstring())
     }))
   """
 
-  var unpressedImage:String
-  var pressedImage:String
+  var _unpressedImage:(String|None) = None
+  var _pressedImage:(String|None) = None
   
-  var _pressedColor:RGBA
-  var _unpressedColor:RGBA
+  var _pressedColor:RGBA = RGBA.white()
+  var _unpressedColor:RGBA = RGBA.white()
     
-	new create(unpressedImage':String, pressedImage':String, pressedColor':RGBA = RGBA.white()) =>
-    unpressedImage = unpressedImage'
-    pressedImage = pressedImage'
-    _pressedColor = pressedColor'
-    _unpressedColor = pressedColor'
+  be pressedPath(_pressedImage':(String|None)) =>
+    _pressedImage = _pressedImage'
+    updateButton(buttonPressed)
+  
+  be unpressedPath(_unpressedImage':(String|None)) =>
+    _unpressedImage = _unpressedImage'
+    updateButton(buttonPressed)
   
   be pressedColor(rgba:RGBA) =>
     _pressedColor = rgba
-    bufferedGeometry.invalidate()
+    updateButton(buttonPressed)
   
   be color(rgba:RGBA) =>
     _unpressedColor = rgba
     _color = rgba
-    bufferedGeometry.invalidate()
+    updateButton(buttonPressed)
   
   fun ref start(frameContext:FrameContext val) =>
-    _textureName = unpressedImage
+    if _unpressedImage as String then
+      _textureName = _unpressedImage
+    end
     imageable_start(frameContext)
   
   fun ref updateButton(pressed:Bool) =>
     if pressed then
-      _textureName = pressedImage
+      if _pressedImage as String then
+        _textureName = _pressedImage
+      else
+        _textureName = _pathImage
+      end
       _color = _pressedColor
     else
-      _textureName = unpressedImage
+      if _unpressedImage as String then
+        _textureName = _unpressedImage
+      else
+        _textureName = _pathImage
+      end
       _color = _unpressedColor
     end
     bufferedGeometry.invalidate()

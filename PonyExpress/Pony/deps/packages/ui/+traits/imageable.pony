@@ -10,24 +10,27 @@ primitive ImageMode
   let stretch:ImageModeType = 3
 
 trait Imageable is (Viewable & Colorable)
-  var _textureName:String = ""
-  var _focusTextureName:String = ""
+  var _textureName:(String|None) = None
+  var _focusTextureName:(String|None) = None
   var _mode:ImageModeType = ImageMode.fill
   var _sizeToFit:Bool = false
   var stretch_insets:V4 = V4fun.zero()
+  
+  var _pathImage:(String|None) = None
   
   var image_width:F32 = 0
   var image_height:F32 = 0
   
   var bufferedGeometry:BufferedGeometry = BufferedGeometry
   
-  be path(textureName:String val) =>
+  be path(textureName:(String|None)) =>
+    _pathImage = textureName
     _textureName = textureName
-    bufferedGeometry.invalidate()
+    setNeedsRendered()
   
   be pathFocused(textureName:String val) =>
     _focusTextureName = textureName
-    bufferedGeometry.invalidate()
+    setNeedsRendered()
   
   be sizeToFit() =>
     _sizeToFit = true
@@ -59,7 +62,7 @@ trait Imageable is (Viewable & Colorable)
     (image_width != 0) or (image_height != 0)
     
   fun ref confirmImageSize(frameContext:FrameContext val) =>
-    if imageLoaded() == false then
+    if (imageLoaded() == false) and (_textureName as String) then
       @RenderEngine_textureInfo(frameContext.renderContext, _textureName.cpointer(), addressof image_width, addressof image_height)
     end
   
@@ -162,10 +165,10 @@ trait Imageable is (Viewable & Colorable)
       end
     end
     
-    if hasFocus(frameContext) and (_focusTextureName.size() > 0) then
-      RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.textured, vertices, RGBA.white(), _focusTextureName.cpointer())
+    if hasFocus(frameContext) and (_focusTextureName as String) then
+      RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.textured, vertices, RGBA.white(), _focusTextureName)
     else
-      RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.textured, vertices, RGBA.white(), _textureName.cpointer())
+      RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.textured, vertices, RGBA.white(), _textureName)
     end
 
 
@@ -269,10 +272,10 @@ trait Imageable is (Viewable & Colorable)
       end
     end
     
-    if hasFocus(frameContext) and (_focusTextureName.size() > 0) then
-      RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.textured, vertices, RGBA.white(), _focusTextureName.cpointer())
+    if hasFocus(frameContext) and (_focusTextureName as String) then
+      RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.textured, vertices, RGBA.white(), _focusTextureName)
     else
-      RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.textured, vertices, RGBA.white(), _textureName.cpointer())
+      RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.textured, vertices, RGBA.white(), _textureName)
     end
     
     

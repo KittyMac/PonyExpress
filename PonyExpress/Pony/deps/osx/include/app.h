@@ -128,8 +128,6 @@ functions on a Pointer[A] are private to maintain memory safety.
 */
 typedef struct format_PrefixSpace format_PrefixSpace;
 
-typedef struct u2_laba_$25$0_ref_None_val u2_laba_$25$0_ref_None_val;
-
 /*
 A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
 included in a union or intersection, or be a subtype of any interface. Most
@@ -1201,6 +1199,8 @@ typedef struct laba_Laba laba_Laba;
 
 typedef struct collections__MapDeleted collections__MapDeleted;
 
+typedef struct u2_laba_$25$0_box_None_val u2_laba_$25$0_box_None_val;
+
 typedef struct u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val;
 
 /*
@@ -1671,15 +1671,6 @@ format_PrefixSpace* format_PrefixSpace_val_create_o(format_PrefixSpace* self);
 bool format_PrefixSpace_box_eq_ob(format_PrefixSpace* self, format_PrefixSpace* that);
 
 bool format_PrefixSpace_val_eq_ob(format_PrefixSpace* self, format_PrefixSpace* that);
-
-/* Allocate a u2_laba_$25$0_ref_None_val without initialising it. */
-u2_laba_$25$0_ref_None_val* u2_laba_$25$0_ref_None_val_Alloc(void);
-
-None* u2_laba_$25$0_ref_None_val_box_apply_ooo(void* self, ui_YogaNode* p1, laba_Laba* p2);
-
-None* u2_laba_$25$0_ref_None_val_ref_apply_ooo(void* self, ui_YogaNode* p1, laba_Laba* p2);
-
-None* u2_laba_$25$0_ref_None_val_val_apply_ooo(void* self, ui_YogaNode* p1, laba_Laba* p2);
 
 /*
 Space for len instances of A.
@@ -4741,6 +4732,15 @@ collections__MapDeleted* collections__MapDeleted_val_create_o(collections__MapDe
 bool collections__MapDeleted_box_eq_ob(collections__MapDeleted* self, collections__MapDeleted* that);
 
 bool collections__MapDeleted_val_eq_ob(collections__MapDeleted* self, collections__MapDeleted* that);
+
+/* Allocate a u2_laba_$25$0_box_None_val without initialising it. */
+u2_laba_$25$0_box_None_val* u2_laba_$25$0_box_None_val_Alloc(void);
+
+None* u2_laba_$25$0_box_None_val_box_apply_ooo(void* self, ui_YogaNode* p1, laba_Laba* p2);
+
+None* u2_laba_$25$0_box_None_val_ref_apply_ooo(void* self, ui_YogaNode* p1, laba_Laba* p2);
+
+None* u2_laba_$25$0_box_None_val_val_apply_ooo(void* self, ui_YogaNode* p1, laba_Laba* p2);
 
 /* Allocate a u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val without initialising it. */
 u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val* u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_Alloc(void);

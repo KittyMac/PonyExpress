@@ -40,4 +40,4 @@ actor SampleRainbow is Viewable
                              color )
     end
   
-    RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.flat, vertices, RGBA.white(), Pointer[U8])
+    RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.flat, vertices, RGBA.white(), None)

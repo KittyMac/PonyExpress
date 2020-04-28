@@ -29,15 +29,18 @@ actor ButtonTest is Controllerable
           ])
           
           // button with images for up and down states
-          YogaNode.>view( ImageButton( "unpressed_button", "pressed_button" ).>sizeToFit()
-                                                                             .>onClick({ () => @printf("clicked 3!\n".cstring()) }) )
+          YogaNode.>view( ImageButton.>sizeToFit()
+                                     .>unpressedPath("unpressed_button")
+                                     .>pressedPath("pressed_button")
+                                     .>onClick({ () => @printf("clicked 3!\n".cstring()) }) )
           
           
           // button with a stretchable image
           YogaNode.>size(300, 80)
-                  .>view( ImageButton( "stretch_button", "stretch_button" ).>stretchAll(32)
-                                                                           .>pressedColor(RGBA(0.8, 0.8, 1.0, 1.0))
-                                                                           .>onClick({ () => @printf("clicked 4!\n".cstring()) }) )
+                  .>view( ImageButton.>stretchAll(32)
+                                     .>path("stretch_button")
+                                     .>pressedColor(RGBA(0.8, 0.8, 1.0, 1.0))
+                                     .>onClick({ () => @printf("clicked 4!\n".cstring()) }) )
                   .>addChild( YogaNode.>view( Label.>value("Click me!").>font(font, 28).>center() ) )
           
         ]

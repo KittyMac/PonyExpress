@@ -50,4 +50,4 @@ actor SampleProgressBar is Viewable
                               _fillColor )
     end
   
-    RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.flat, vertices, RGBA.white(), Pointer[U8])
+    RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.flat, vertices, RGBA.white(), None)

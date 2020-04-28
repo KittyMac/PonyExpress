@@ -130,7 +130,7 @@ trait Fontable is (Colorable & Viewable)
     fontRender.secure = actualSecure(frameContext)
     fontRender.fontColor = actualColor(frameContext)
     let geom = fontRender.geometry(frameContext, actualValue(frameContext), bounds, topOffset)
-    RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.sdf, geom.vertices, fontRender.fontColor, fontRender.font.name.cpointer())
+    RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.sdf, geom.vertices, fontRender.fontColor, fontRender.font.name)
 	
   fun ref fontable_invalidate(frameContext:FrameContext val) =>
     fontRender.invalidate()

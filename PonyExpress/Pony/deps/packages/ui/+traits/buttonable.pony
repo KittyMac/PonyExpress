@@ -1,4 +1,5 @@
 use "linal"
+use "utility"
 
 type ButtonClickedCallback is {()}
 
@@ -14,6 +15,15 @@ trait Buttonable is (Viewable & Actionable)
   var buttonPressed:Bool = false
   
   var focusable:Bool = false
+  
+  var _pressedLaba:(String|None) = None
+  var _unpressedLaba:(String|None) = None
+  
+  be pressedLaba(_pressedLaba':(String|None)) =>
+    _pressedLaba = _pressedLaba'
+  
+  be unpressedLaba(_unpressedLaba':(String|None)) =>
+    _unpressedLaba = _unpressedLaba'
   
   fun ref performClick() =>
     performAction()
@@ -66,6 +76,10 @@ trait Buttonable is (Viewable & Actionable)
       if (buttonPressed == true) and (insideTouches.size() == 0) then
         buttonPressed = false
         updateButton(false)
+        if _unpressedLaba as String then
+          labaCancel()
+          laba(_unpressedLaba)
+        end
         
         if (insideTouches.size() == 0) and (outsideTouches.size() == 0) then
           performClick()
@@ -74,6 +88,10 @@ trait Buttonable is (Viewable & Actionable)
       elseif (buttonPressed == false) and (insideTouches.size() != 0) then
         buttonPressed = true
         updateButton(true)
+        if _pressedLaba as String then
+          labaCancel()
+          laba(_pressedLaba)
+        end
       end
       
       if (buttonPressed == true) and (insideTouches.size() > 0) then

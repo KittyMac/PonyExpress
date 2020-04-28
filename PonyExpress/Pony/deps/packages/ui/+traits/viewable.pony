@@ -1,5 +1,6 @@
 use "linal"
 use "utility"
+use "laba"
 
 trait tag Viewable is Animatable
   var engine:(RenderEngine|None) = None
@@ -72,9 +73,6 @@ trait tag Viewable is Animatable
       engine.setNeedsLayout()
     end
   
-  
-  
-  
   fun ref invalidate(frameContext:FrameContext val) =>
     None
   
@@ -116,4 +114,22 @@ trait tag Viewable is Animatable
     RenderPrimitive.renderFinished(frameContext)
     performAnimation(frameContext)
   
-    
+  be labaCancel() =>
+    if engine as RenderEngine then
+        engine.getNodeByID(nodeID, { (node) =>
+          if node as YogaNode then
+            node.labaCancel()
+          end
+          LayoutNeeded
+        })
+    end
+
+  be laba(labaStr:String val, args:(Array[F32] val|None) = None, callback:(LabaCompleteCallback val|None) = None) =>
+    if engine as RenderEngine then
+        engine.getNodeByID(nodeID, { (node) =>
+          if node as YogaNode then
+            node.laba(labaStr, args, callback)
+          end
+          LayoutNeeded
+        })
+    end

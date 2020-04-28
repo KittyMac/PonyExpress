@@ -35,7 +35,10 @@ actor TextFieldTest is Controllerable
                               .>view( TextField.>placeholder("enter your password here").>font(font, 18).>secure().>renderInset(2,12,2,12).>eventInsetAll(-12).>action(this, PerformLogIn).>sync(this, passwordKey) )
                       
                       YogaNode.>height(50)
-                              .>view( ImageButton( "dialog_button", "dialog_button" ).>stretchAll(12).>pressedColor(RGBA.u32(0x6eb8e5ff)).>eventInsetAll(-12).>action(this, PerformLogIn) )
+                              .>view( ImageButton.>stretchAll(12)
+                                                 .>unpressedPath("dialog_button")
+                                                 .>pressedPath("dialog_button")
+                                                 .>pressedColor(RGBA.u32(0x6eb8e5ff)).>eventInsetAll(-12).>action(this, PerformLogIn) )
                               .>view( Label.>value("Continue").>font(font, 24).>center() )
                       
               ])

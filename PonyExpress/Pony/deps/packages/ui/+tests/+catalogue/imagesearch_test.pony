@@ -14,7 +14,7 @@ actor ImageSearchTest is Controllerable
   let font:Font = Font(TestFontJson())
   
   let resultsView:String = "results_view"
-  let searchKey:String = "search_key"
+  let searchKey:String = "search_key"    
     
 	fun ref mainNode():YogaNode iso^ =>
     
@@ -101,7 +101,9 @@ actor ImageSearchTest is Controllerable
                 let resultView = YogaNode.>height(200).>maxHeight(200).>widthAuto().>grow().>marginAll(2).>aspectRatio(item.thumb_width / item.thumb_height)
                                          .>laba("I0.005!f!s0.8")
                                          .>view( Color.>gray() )
-                                         .>view( Image.>path(mediaURL).>aspectFill() )
+                                         .>view( ImageButton.>path(mediaURL).>aspectFill()
+                                                            .>pressedLaba("e5d0.27s0.9")
+                                                            .>unpressedLaba("e29d0.27s1.0"))
                                          
                 resultsNode.addChild(resultView)
                 
