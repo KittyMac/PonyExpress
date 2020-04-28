@@ -168,6 +168,17 @@ class LabaTarget
     _r = target.getRotateZ()
     _p = target.getRotateX()
     _a = target.getRotateY()
+    x_sync = false
+    y_sync = false
+    w_sync = false
+    h_sync = false
+    s_sync = false
+    f_sync = false
+    r_sync = false
+    p_sync = false
+    a_sync = false
+    
+    
   
   fun ref syncToNode() =>
     if x_sync then target.left(_x); x_sync = false end

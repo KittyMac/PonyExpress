@@ -1,6 +1,8 @@
 use "utility"
 use "collections"
 use "yoga"
+use "laba"
+use "easings"
 
 primitive SwitchToColors is Action
 primitive SwitchToButtons is Action
@@ -31,10 +33,12 @@ actor Catalog is Controllerable
           // Panel
           YogaNode.>leftToRight().>safeTop().>flexGrow(1.0).>flexShrink(1.0)
                   .>name("Panel")
+                  .>laba("i1.6!f")
                   .>view( Clear )
           
           // Sidebar
           YogaNode.>leftToRight().>width(110).>safeTop()
+                  .>laba("i1.6!<")
                   .>view( Image.>path("sidebar").>stretchAll(10) )
                   .>addChildren([
               menuButton("Colors", font, SwitchToColors)
@@ -49,6 +53,14 @@ actor Catalog is Controllerable
               menuButton("Image Search", font, SwitchToImageSearch)
               menuButton("Laba", font, SwitchToLaba)
           ])
+          
+          // Logo
+          YogaNode.>absolute().>center()
+                  .>addChild(
+                      YogaNode.>size(200,200)
+                              .>laba("e0d1.2!<100|e5<f0s0.6", None, {(node:YogaNode, self:Laba) => node.removeParent()})
+                              .>view(Image.>path("pony_express"))
+                    )
           
         ]
       )

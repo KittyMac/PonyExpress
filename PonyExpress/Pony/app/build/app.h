@@ -139,9 +139,9 @@ functions on a Pointer[A] are private to maintain memory safety.
 */
 typedef struct format_FormatHexSmallBare format_FormatHexSmallBare;
 
-typedef struct ui_Viewable ui_Viewable;
-
 typedef struct u2_ui_YogaNode_ref_None_val u2_ui_YogaNode_ref_None_val;
+
+typedef struct ui_Viewable ui_Viewable;
 
 /*
 w100 is animate the high to 100 units wide
@@ -1833,6 +1833,23 @@ bool format_FormatHexSmallBare_box_eq_ob(format_FormatHexSmallBare* self, format
 
 bool format_FormatHexSmallBare_val_eq_ob(format_FormatHexSmallBare* self, format_FormatHexSmallBare* that);
 
+/* Allocate a u2_ui_YogaNode_ref_None_val without initialising it. */
+u2_ui_YogaNode_ref_None_val* u2_ui_YogaNode_ref_None_val_Alloc(void);
+
+None* u2_ui_YogaNode_ref_None_val_ref_invalidate_oo(void* self, ui_FrameContext* frameContext);
+
+ssize_t u2_ui_YogaNode_ref_None_val_val_getFocusIdx_z(void* self);
+
+ssize_t u2_ui_YogaNode_ref_None_val_box_getFocusIdx_z(void* self);
+
+ssize_t u2_ui_YogaNode_ref_None_val_ref_getFocusIdx_z(void* self);
+
+size_t u2_ui_YogaNode_ref_None_val_val_id_Z(void* self);
+
+size_t u2_ui_YogaNode_ref_None_val_box_id_Z(void* self);
+
+size_t u2_ui_YogaNode_ref_None_val_ref_id_Z(void* self);
+
 /* Allocate a ui_Viewable without initialising it. */
 ui_Viewable* ui_Viewable_Alloc(void);
 
@@ -1851,23 +1868,6 @@ None* ui_Viewable_ref_finish_o(ui_Viewable* self);
 None* ui_Viewable_tag_viewable_finish_o(ui_Viewable* self);
 
 None* ui_Viewable_ref_animate_fo(ui_Viewable* self, float delta);
-
-/* Allocate a u2_ui_YogaNode_ref_None_val without initialising it. */
-u2_ui_YogaNode_ref_None_val* u2_ui_YogaNode_ref_None_val_Alloc(void);
-
-None* u2_ui_YogaNode_ref_None_val_ref_invalidate_oo(void* self, ui_FrameContext* frameContext);
-
-ssize_t u2_ui_YogaNode_ref_None_val_val_getFocusIdx_z(void* self);
-
-ssize_t u2_ui_YogaNode_ref_None_val_box_getFocusIdx_z(void* self);
-
-ssize_t u2_ui_YogaNode_ref_None_val_ref_getFocusIdx_z(void* self);
-
-size_t u2_ui_YogaNode_ref_None_val_val_id_Z(void* self);
-
-size_t u2_ui_YogaNode_ref_None_val_box_id_Z(void* self);
-
-size_t u2_ui_YogaNode_ref_None_val_ref_id_Z(void* self);
 
 /* Allocate a laba_LabaActionHeight without initialising it. */
 laba_LabaActionHeight* laba_LabaActionHeight_Alloc(void);

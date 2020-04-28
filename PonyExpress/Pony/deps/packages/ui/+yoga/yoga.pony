@@ -9,6 +9,7 @@ use "laba"
 type YogaNodeID is USize
 
 class YogaNode
+  var parent:(YogaNode|None) = None
   var node:YGNodeRef tag
   var _name:String val
   var _views:Array[Viewable]
@@ -69,6 +70,16 @@ class YogaNode
       addChild(child)
     end
     updateSiblingCounts()
+  
+  fun ref removeParent() =>
+    if parent as YogaNode then
+      parent.removeFromParent()
+    end
+  
+  fun ref removeFromParent() =>
+    if parent as YogaNode then
+      parent.removeChild(this)
+    end
   
   fun ref removeChild(child:YogaNode) =>
     child.finish()
@@ -164,6 +175,7 @@ class YogaNode
     var idx:USize = 0
     let n:USize = children.size()
     for child in children.values() do
+      child.parent = this
       child.sibling_index = idx
       child.sibling_count = n
       idx = idx + 1
