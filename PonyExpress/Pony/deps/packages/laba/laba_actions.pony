@@ -94,12 +94,17 @@ class LabaActionMoveX is LabaAction
 """
   <100 is move the target 100 units to the left
   >100 is move the target 100 units to the right
+  x100 is move the target to x position 100
 """
   new create(operator':U8, target:LabaTarget, parser:StringParser, mod:F32, inverted':Bool, easing':U32) =>
     operator = operator'
     inverted = inverted'
     easing = easing'
-    simpleRelativeValue(parser, target.getX(), target.getWidth(), mod)
+    if mod == 0.0 then
+      simpleAbsoluteValue(parser, target.getX(), 0.0)
+    else
+      simpleRelativeValue(parser, target.getX(), target.getWidth(), mod)
+    end
     
   fun update(target:LabaTarget, animationValue:F32) =>
     target.setX( Easing.tween(easing,from,to,animationValue) )
@@ -109,12 +114,17 @@ class LabaActionMoveY is LabaAction
 """
   ^100 is move the target 100 units up
   v100 is move the target 100 units down
+  y100 is move the target to y position 100
 """
   new create(operator':U8, target:LabaTarget, parser:StringParser, mod:F32, inverted':Bool, easing':U32) =>
     operator = operator'
     inverted = inverted'
     easing = easing'
-    simpleRelativeValue(parser, target.getY(), target.getHeight(), mod)    
+    if mod == 0.0 then
+      simpleAbsoluteValue(parser, target.getY(), 0.0)
+    else
+      simpleRelativeValue(parser, target.getY(), target.getHeight(), mod)    
+    end
     
   fun update(target:LabaTarget, animationValue:F32) =>
     target.setY( Easing.tween(easing,from,to,animationValue) )

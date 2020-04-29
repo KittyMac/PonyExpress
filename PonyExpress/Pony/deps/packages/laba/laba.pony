@@ -29,10 +29,6 @@
  * D staggered duration for current pipe. Inverting meand reverse child order.
  * d duration for current pipe
  *
- * L loop (absolute) this segment (value is number of times to loop, -1 means loop infinitely)
- *
- * l loop (relative) this segment (value is number of times to loop, -1 means loop infinitely)
- *
  * e easing (we allow e# for shorthand or full easeInOutQuad)
  *
  * | pipe animations (chain)
@@ -177,8 +173,6 @@ class LabaTarget
     r_sync = false
     p_sync = false
     a_sync = false
-    
-    
   
   fun ref syncToNode() =>
     if x_sync then target.left(_x); x_sync = false end
@@ -265,6 +259,9 @@ class Laba
         | '^' => action = LabaActionMoveY(c, target, parser, -1, inverted, group.easing)
         | 'v' => action = LabaActionMoveY(c, target, parser, 1, inverted, group.easing)
         | 'f' => action = LabaActionFade(c, target, parser, inverted, group.easing)
+        
+        | 'x' => action = LabaActionMoveX(c, target, parser, 0, inverted, group.easing)
+        | 'y' => action = LabaActionMoveY(c, target, parser, 0, inverted, group.easing)
         
         | 'r' => action = LabaActionRoll(c, target, parser, inverted, group.easing)
         | 'p' => action = LabaActionPitch(c, target, parser, inverted, group.easing)
