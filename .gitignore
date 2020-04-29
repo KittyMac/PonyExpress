@@ -6,6 +6,8 @@ xcuserdata
 
 *.o
 *.d
+*.benchmarks
+*.tests
 
 build/*
 TAGS
