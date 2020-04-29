@@ -542,8 +542,9 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             renderEncoder.setVertexBytes(&globalUniforms, length: MemoryLayout<GlobalUniforms>.stride, index: 2)
         }
         
-        if unit.bytes_vertices <= 4096 {
-            renderEncoder.setVertexBytes(unit.vertices, length: Int(unit.bytes_vertices), index: 0)
+        let actual_bytes = unit.bytes_per_vertex * Int(unit.num_vertices)
+        if actual_bytes <= 4096 {
+            renderEncoder.setVertexBytes(unit.vertices, length: actual_bytes, index: 0)
             renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: Int(unit.num_vertices))
             RenderEngine_release(unit.vertices, unit.size_vertices_array)
         }else{
