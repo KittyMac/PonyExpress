@@ -519,7 +519,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd ./Pony/app\necho \"note: Building Pony\"\ntime make framework osx\n";
+			shellScript = "cd ./Pony/app\ntime make framework osx\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

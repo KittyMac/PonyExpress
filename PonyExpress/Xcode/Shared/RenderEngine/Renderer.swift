@@ -309,6 +309,7 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
     
     private var lastFramesTime: CFAbsoluteTime = 0.0
     var numFrames:Int = 0
+    var firstRender:Bool = true
     
     var renderAheadCount:Int = 0
 
@@ -355,6 +356,13 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
     public func render(to metalLayer: CAMetalLayer) {
         if let drawable = metalLayer.nextDrawable() {
             
+            var waitForFullFrame:Bool = false
+            
+            if firstRender {
+                waitForFullFrame = true
+                firstRender = false
+            }
+            
             #if !RENDER_ON_MAIN_THREAD
             pony_register_thread()
             pony_become(pony_ctx(), platformActor)
@@ -370,19 +378,28 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             
             renderAheadCount += 1
             
-            RenderEngineInternal_renderAll(nil)
-            
-            // ensure that our depth texture size is correct!
-            if depthTexture.width != drawable.texture.width || depthTexture.height != drawable.texture.height {
-                let drawableSize = CGSize(width:drawable.texture.width, height:drawable.texture.height)
-                depthTexture = getDepthTexture(size:drawableSize)
+            // If we are the first render, we want to block here until we actually get something to draw.
+            while true {
+                RenderEngineInternal_renderAll(nil)
+                
+                // ensure that our depth texture size is correct!
+                if depthTexture.width != drawable.texture.width || depthTexture.height != drawable.texture.height {
+                    let drawableSize = CGSize(width:drawable.texture.width, height:drawable.texture.height)
+                    depthTexture = getDepthTexture(size:drawableSize)
+                }
+                
+                if RenderEngineInternal_gatherAllRenderUnitsForNextFrame(nil) {
+                    break
+                } else {
+                    if waitForFullFrame {
+                        print("didn't get full frame but full frame is required, trying again")
+                    } else {
+                        renderAheadCount -= 1
+                        return
+                    }
+                }
             }
-            
-            if RenderEngineInternal_gatherAllRenderUnitsForNextFrame(nil) == false {
-                renderAheadCount -= 1
-                return
-            }
-            
+                        
             let renderPassDescriptor = MTLRenderPassDescriptor()
             if let depthAttachment = renderPassDescriptor.depthAttachment {
                 depthAttachment.texture = depthTexture

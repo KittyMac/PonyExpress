@@ -27,6 +27,8 @@ typedef struct URLDownload URLDownload;
 
 typedef struct ui_RGBA ui_RGBA;
 
+typedef struct StringEncoding StringEncoding;
+
 /*
 Contiguous, resizable memory to store elements of type A.
 
@@ -186,6 +188,7 @@ typedef struct format_PrefixSign format_PrefixSign;
 /*
 ^100 is move the target 100 units up
 v100 is move the target 100 units down
+y100 is move the target to y position 100
 */
 typedef struct laba_LabaActionMoveY laba_LabaActionMoveY;
 
@@ -907,6 +910,7 @@ typedef struct PlatformIOS PlatformIOS;
 /*
 <100 is move the target 100 units to the left
 >100 is move the target 100 units to the right
+x100 is move the target to x position 100
 */
 typedef struct laba_LabaActionMoveX laba_LabaActionMoveX;
 
@@ -1571,6 +1575,15 @@ String* ui_RGBA_box_string_o(ui_RGBA* self);
 
 ui_RGBA* ui_RGBA_val_white_o(ui_RGBA* self);
 
+/* Allocate a StringEncoding without initialising it. */
+StringEncoding* StringEncoding_Alloc(void);
+
+StringEncoding* StringEncoding_val_create_o(StringEncoding* self);
+
+uint32_t StringEncoding_val_utf8_I(StringEncoding* self);
+
+uint32_t StringEncoding_box_utf8_I(StringEncoding* self);
+
 /* Allocate a Array_String_val without initialising it. */
 Array_String_val* Array_String_val_Alloc(void);
 
@@ -2036,6 +2049,8 @@ laba_LabaActionMoveY* laba_LabaActionMoveY_Alloc(void);
 laba_LabaActionMoveY* laba_LabaActionMoveY_ref_create_CoofbIo(laba_LabaActionMoveY* self, char operator_, laba_LabaTarget* target, stringext_StringParser* parser, float mod, bool inverted_, uint32_t easing_);
 
 None* laba_LabaActionMoveY_ref_simpleRelativeValue_offfo(laba_LabaActionMoveY* self, stringext_StringParser* parser, float target, float defaultValue, float mod);
+
+None* laba_LabaActionMoveY_ref_simpleAbsoluteValue_offo(laba_LabaActionMoveY* self, stringext_StringParser* parser, float target, float defaultValue);
 
 None* laba_LabaActionMoveY_box_update_ofo(laba_LabaActionMoveY* self, laba_LabaTarget* target, float animationValue);
 
@@ -3071,11 +3086,11 @@ ssize_t U8_box_isize_z(char self);
 
 ssize_t U8_val_isize_z(char self);
 
+char U8_val_create_CC(char self, char value);
+
 char U8_val_op_or_CC(char self, char y);
 
 char U8_box_op_or_CC(char self, char y);
-
-char U8_val_create_CC(char self, char value);
 
 bool U8_val_lt_Cb(char self, char y);
 
@@ -3729,6 +3744,8 @@ laba_LabaActionMoveX* laba_LabaActionMoveX_Alloc(void);
 laba_LabaActionMoveX* laba_LabaActionMoveX_ref_create_CoofbIo(laba_LabaActionMoveX* self, char operator_, laba_LabaTarget* target, stringext_StringParser* parser, float mod, bool inverted_, uint32_t easing_);
 
 None* laba_LabaActionMoveX_ref_simpleRelativeValue_offfo(laba_LabaActionMoveX* self, stringext_StringParser* parser, float target, float defaultValue, float mod);
+
+None* laba_LabaActionMoveX_ref_simpleAbsoluteValue_offo(laba_LabaActionMoveX* self, stringext_StringParser* parser, float target, float defaultValue);
 
 None* laba_LabaActionMoveX_box_update_ofo(laba_LabaActionMoveX* self, laba_LabaTarget* target, float animationValue);
 

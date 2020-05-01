@@ -1,3 +1,17 @@
+
+# if this file exists (at the directory where this repo is checked out), then we will
+# load whatever specific configuration this app has for us.  At the time of this writing
+# this is the following values:
+# ponyapp_src - the path to the application's PonyApp package to be compiled by ponyc
+include ../../../../ponyexpress.mk
+
+ifndef ponyapp_src
+ponyapp_src=../../../PonyExpressDemo/
+endif
+
+
+
+
 builddir=./build
 
 HOSTNAME=$(shell hostname)
@@ -44,7 +58,7 @@ endef
 all: framework ios osx
 
 lldb: framework confirm
-	lldb ../ponyc/build/debug/ponyc -- -o $(builddir) --extfun -b "$(product_name)_x86_64"  -p $(deps_packagesdir) -p ../../../PonyExpressDemo/ -p ../../../  --pic --debug -robj
+	lldb ../ponyc/build/debug/ponyc -- -o $(builddir) --extfun -b "$(product_name)_x86_64"  -p $(deps_packagesdir) -p $(ponyapp_src) -p ../../../  --pic --debug -robj
 
 clean:
 	rm -rf $(builddir)
@@ -52,7 +66,7 @@ clean:
 ios: confirm build_ios build_library_ios
 
 build_ios:
-	$(ponyc) --print-code -o $(builddir) --extfun -b "$(product_name)_arm64" -p $(deps_packagesdir) -p ../../../PonyExpressDemo/ -p ../../../ --triple aarch64-apple-ios --pic --features +neon $(debug) -robj
+	$(ponyc) -o $(builddir) --extfun -b "$(product_name)_arm64" -p $(deps_packagesdir) -p $(ponyapp_src) -p ../../../ --triple aarch64-apple-ios --pic --features +neon $(debug) -robj
 
 build_library_ios:
 	@$(iphonesdk_libtool) -static $(builddir)/*.o -o $(deps_libdir_ios)/lib$(product_name)-ios.a
@@ -62,13 +76,13 @@ build_library_ios:
 osx: confirm build_osx build_library_osx
 
 build_osx:
-	$(ponyc) -o $(builddir) --extfun -b "$(product_name)_x86_64"  -p $(deps_packagesdir) -p ../../../PonyExpressDemo/ -p ../../../  --pic $(debug) -robj
+	$(ponyc) -o $(builddir) --extfun -b "$(product_name)_x86_64"  -p $(deps_packagesdir) -p $(ponyapp_src) -p ../../../  --pic $(debug) -robj
 
 build_library_osx:
 	@$(iphonesdk_libtool) -static $(builddir)/*.o -o $(deps_libdir_osx)/lib$(product_name)-osx.a
 	cp -p $(builddir)/$(product_name).h $(deps_includedir_osx)/$(product_name).h
 
-confirm:
+confirm:	
 	@mkdir -p $(builddir)
 	
 	@mkdir -p $(ponycdir)
