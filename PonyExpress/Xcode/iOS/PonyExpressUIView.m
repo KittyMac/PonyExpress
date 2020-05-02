@@ -97,6 +97,8 @@ extern uint64_t ponyint_cpu_tick(void);
     defaultDrawableSize.height *= self.layer.contentsScale;
     [self.delegate drawableResize:defaultDrawableSize withScale:self.layer.contentsScale];
 #endif
+    
+    [self render];
 }
 
 //////////////////////////////////

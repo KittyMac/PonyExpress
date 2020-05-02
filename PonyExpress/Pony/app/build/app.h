@@ -17,15 +17,22 @@ typedef struct __uint128_t { uint64_t low; uint64_t high; } __uint128_t;
 
 typedef struct t3_t2_F32_val_F32_val_F32_val_F32_val t3_t2_F32_val_F32_val_F32_val_F32_val;
 
+/*
+y100 is move the target to z position 100
+*/
+typedef struct laba_LabaActionMoveZ laba_LabaActionMoveZ;
+
 typedef struct ArrayPairs_U8_val_Array_U8_val_val ArrayPairs_U8_val_Array_U8_val_val;
 
-typedef struct ui_NullEvent ui_NullEvent;
+typedef struct ui_$2$0 ui_$2$0;
 
-typedef struct ui_$2$40 ui_$2$40;
+typedef struct ui_NullEvent ui_NullEvent;
 
 typedef struct URLDownload URLDownload;
 
 typedef struct ui_RGBA ui_RGBA;
+
+typedef struct StringEncoding StringEncoding;
 
 /*
 Contiguous, resizable memory to store elements of type A.
@@ -156,9 +163,9 @@ typedef struct u3_format_AlignLeft_val_format_AlignRight_val_format_AlignCenter_
 
 typedef struct $0$16_laba_Laba_ref $0$16_laba_Laba_ref;
 
-typedef struct ui_$2$39 ui_$2$39;
-
 typedef struct format_FormatBinary format_FormatBinary;
+
+typedef struct ui_$2$42 ui_$2$42;
 
 /*
 This type represents the root capability. When a Pony program starts, the
@@ -569,6 +576,8 @@ typedef struct Env Env;
 tuple based Vector 3 functions - see VectorFun for details*/
 typedef struct linal_V3fun linal_V3fun;
 
+typedef struct u2_ui_$2$0_val_None_val u2_ui_$2$0_val_None_val;
+
 /*
 A UnsafePointer[A] is a raw memory pointer. It has no descriptor and thus can't be
 included in a union or intersection, or be a subtype of any interface. UnsafePointer[A]
@@ -670,6 +679,8 @@ Call the `compact()` method to ask the GC to reclaim unused space. There are
 no guarantees that the GC will actually reclaim any space.
 */
 typedef struct Array_ui_Viewable_tag Array_ui_Viewable_tag;
+
+typedef struct ui_$2$41 ui_$2$41;
 
 typedef struct ArrayPairs_U8_val_Array_U8_val_ref ArrayPairs_U8_val_Array_U8_val_ref;
 
@@ -1524,6 +1535,21 @@ typedef struct _SignedCheckedArithmetic _SignedCheckedArithmetic;
 /* Allocate a t3_t2_F32_val_F32_val_F32_val_F32_val without initialising it. */
 t3_t2_F32_val_F32_val_F32_val_F32_val* t3_t2_F32_val_F32_val_F32_val_F32_val_Alloc(void);
 
+/* Allocate a laba_LabaActionMoveZ without initialising it. */
+laba_LabaActionMoveZ* laba_LabaActionMoveZ_Alloc(void);
+
+laba_LabaActionMoveZ* laba_LabaActionMoveZ_ref_create_CoofbIo(laba_LabaActionMoveZ* self, char operator_, laba_LabaTarget* target, stringext_StringParser* parser, float mod, bool inverted_, uint32_t easing_);
+
+None* laba_LabaActionMoveZ_ref_simpleRelativeValue_offfo(laba_LabaActionMoveZ* self, stringext_StringParser* parser, float target, float defaultValue, float mod);
+
+None* laba_LabaActionMoveZ_ref_simpleAbsoluteValue_offo(laba_LabaActionMoveZ* self, stringext_StringParser* parser, float target, float defaultValue);
+
+None* laba_LabaActionMoveZ_box_update_ofo(laba_LabaActionMoveZ* self, laba_LabaTarget* target, float animationValue);
+
+None* laba_LabaActionMoveZ_ref_update_ofo(laba_LabaActionMoveZ* self, laba_LabaTarget* target, float animationValue);
+
+None* laba_LabaActionMoveZ_val_update_ofo(laba_LabaActionMoveZ* self, laba_LabaTarget* target, float animationValue);
+
 /* Allocate a ArrayPairs_U8_val_Array_U8_val_val without initialising it. */
 ArrayPairs_U8_val_Array_U8_val_val* ArrayPairs_U8_val_Array_U8_val_val_Alloc(void);
 
@@ -1535,17 +1561,11 @@ bool ArrayPairs_U8_val_Array_U8_val_val_ref_has_next_b(ArrayPairs_U8_val_Array_U
 
 bool ArrayPairs_U8_val_Array_U8_val_val_val_has_next_b(ArrayPairs_U8_val_Array_U8_val_val* self);
 
+/* Allocate a ui_$2$0 without initialising it. */
+ui_$2$0* ui_$2$0_Alloc(void);
+
 /* Allocate a ui_NullEvent without initialising it. */
 ui_NullEvent* ui_NullEvent_Alloc(void);
-
-/* Allocate a ui_$2$40 without initialising it. */
-ui_$2$40* ui_$2$40_Alloc(void);
-
-None* ui_$2$40_val_apply_oo(ui_$2$40* self, ui_RenderEngine* p1);
-
-None* ui_$2$40_box_apply_oo(ui_$2$40* self, ui_RenderEngine* p1);
-
-None* ui_$2$40_ref_apply_oo(ui_$2$40* self, ui_RenderEngine* p1);
 
 /* Allocate a URLDownload without initialising it. */
 URLDownload* URLDownload_Alloc(void);
@@ -1572,6 +1592,15 @@ string format a vector*/
 String* ui_RGBA_box_string_o(ui_RGBA* self);
 
 ui_RGBA* ui_RGBA_val_white_o(ui_RGBA* self);
+
+/* Allocate a StringEncoding without initialising it. */
+StringEncoding* StringEncoding_Alloc(void);
+
+StringEncoding* StringEncoding_val_create_o(StringEncoding* self);
+
+uint32_t StringEncoding_val_utf8_I(StringEncoding* self);
+
+uint32_t StringEncoding_box_utf8_I(StringEncoding* self);
 
 /* Allocate a Array_String_val without initialising it. */
 Array_String_val* Array_String_val_Alloc(void);
@@ -1980,15 +2009,6 @@ bool $0$16_laba_Laba_ref_box_apply_oob($0$16_laba_Laba_ref* self, laba_Laba* l, 
 
 $0$16_laba_Laba_ref* $0$16_laba_Laba_ref_val_create_o($0$16_laba_Laba_ref* self);
 
-/* Allocate a ui_$2$39 without initialising it. */
-ui_$2$39* ui_$2$39_Alloc(void);
-
-void* ui_$2$39_val_apply_oo(ui_$2$39* self, void* p1);
-
-void* ui_$2$39_box_apply_oo(ui_$2$39* self, void* p1);
-
-void* ui_$2$39_ref_apply_oo(ui_$2$39* self, void* p1);
-
 /* Allocate a format_FormatBinary without initialising it. */
 format_FormatBinary* format_FormatBinary_Alloc(void);
 
@@ -1997,6 +2017,15 @@ format_FormatBinary* format_FormatBinary_val_create_o(format_FormatBinary* self)
 bool format_FormatBinary_box_eq_ob(format_FormatBinary* self, format_FormatBinary* that);
 
 bool format_FormatBinary_val_eq_ob(format_FormatBinary* self, format_FormatBinary* that);
+
+/* Allocate a ui_$2$42 without initialising it. */
+ui_$2$42* ui_$2$42_Alloc(void);
+
+None* ui_$2$42_val_apply_oo(ui_$2$42* self, ui_RenderEngine* p1);
+
+None* ui_$2$42_box_apply_oo(ui_$2$42* self, ui_RenderEngine* p1);
+
+None* ui_$2$42_ref_apply_oo(ui_$2$42* self, ui_RenderEngine* p1);
 
 /* Allocate a AmbientAuth without initialising it. */
 AmbientAuth* AmbientAuth_Alloc(void);
@@ -2722,6 +2751,8 @@ float laba_LabaTarget_ref_getScale_f(laba_LabaTarget* self);
 
 None* laba_LabaTarget_ref_setAlpha_fo(laba_LabaTarget* self, float f);
 
+float laba_LabaTarget_ref_getZ_f(laba_LabaTarget* self);
+
 size_t laba_LabaTarget_ref_getSiblingIdx_bZ(laba_LabaTarget* self, bool inverted);
 
 None* laba_LabaTarget_ref_setPitch_fo(laba_LabaTarget* self, float p);
@@ -2729,6 +2760,8 @@ None* laba_LabaTarget_ref_setPitch_fo(laba_LabaTarget* self, float p);
 None* laba_LabaTarget_ref_setScale_fo(laba_LabaTarget* self, float s);
 
 None* laba_LabaTarget_ref_setX_fo(laba_LabaTarget* self, float x);
+
+None* laba_LabaTarget_ref_setZ_fo(laba_LabaTarget* self, float z);
 
 None* laba_LabaTarget_ref_setRoll_fo(laba_LabaTarget* self, float r);
 
@@ -2957,6 +2990,15 @@ linal_V3fun* linal_V3fun_Alloc(void);
 
 linal_V3fun* linal_V3fun_val_create_o(linal_V3fun* self);
 
+/* Allocate a u2_ui_$2$0_val_None_val without initialising it. */
+u2_ui_$2$0_val_None_val* u2_ui_$2$0_val_None_val_Alloc(void);
+
+None* u2_ui_$2$0_val_None_val_box_apply_ooo(void* self, ui_YogaNode* p1, Stringable* p2);
+
+None* u2_ui_$2$0_val_None_val_ref_apply_ooo(void* self, ui_YogaNode* p1, Stringable* p2);
+
+None* u2_ui_$2$0_val_None_val_val_apply_ooo(void* self, ui_YogaNode* p1, Stringable* p2);
+
 /*
 Set index i and return the previous value.
 */
@@ -3075,11 +3117,11 @@ ssize_t U8_box_isize_z(char self);
 
 ssize_t U8_val_isize_z(char self);
 
+char U8_val_create_CC(char self, char value);
+
 char U8_val_op_or_CC(char self, char y);
 
 char U8_box_op_or_CC(char self, char y);
-
-char U8_val_create_CC(char self, char value);
 
 bool U8_val_lt_Cb(char self, char y);
 
@@ -3137,6 +3179,15 @@ size_t Array_ui_Viewable_tag_tag_next_growth_size_ZZ(Array_ui_Viewable_tag* self
 Create an array with zero elements, but space for len elements.
 */
 Array_ui_Viewable_tag* Array_ui_Viewable_tag_ref_create_Zo(Array_ui_Viewable_tag* self, size_t len);
+
+/* Allocate a ui_$2$41 without initialising it. */
+ui_$2$41* ui_$2$41_Alloc(void);
+
+void* ui_$2$41_val_apply_oo(ui_$2$41* self, void* p1);
+
+void* ui_$2$41_box_apply_oo(ui_$2$41* self, void* p1);
+
+void* ui_$2$41_ref_apply_oo(ui_$2$41* self, void* p1);
 
 /* Allocate a ArrayPairs_U8_val_Array_U8_val_ref without initialising it. */
 ArrayPairs_U8_val_Array_U8_val_ref* ArrayPairs_U8_val_Array_U8_val_ref_Alloc(void);
@@ -3593,7 +3644,7 @@ None* Array_laba_LabaActionGroup_ref_ref_push_oo(Array_laba_LabaActionGroup_ref*
 /* Allocate a ui_RenderEngine without initialising it. */
 ui_RenderEngine* ui_RenderEngine_Alloc(void);
 
-None* ui_RenderEngine_tag_getNodeByName_ooo__send(ui_RenderEngine* self, String* nodeName, ui_$2$39* callback);
+None* ui_RenderEngine_tag_getNodeByName_ooo__send(ui_RenderEngine* self, String* nodeName, ui_$2$41* callback);
 
 float ui_RenderEngine_ref_nanoToSec_Wf(ui_RenderEngine* self, uint64_t nano);
 
@@ -3603,7 +3654,7 @@ float ui_RenderEngine_val_nanoToSec_Wf(ui_RenderEngine* self, uint64_t nano);
 
 uint64_t ui_RenderEngine_box__priority_W(ui_RenderEngine* self);
 
-None* ui_RenderEngine_tag_getNodeByID_Zoo__send(ui_RenderEngine* self, size_t id, ui_$2$39* callback);
+None* ui_RenderEngine_tag_getNodeByID_Zoo__send(ui_RenderEngine* self, size_t id, ui_$2$41* callback);
 
 None* ui_RenderEngine_ref_invalidateNodeByID_Zo(ui_RenderEngine* self, size_t id);
 
@@ -3637,7 +3688,7 @@ None* ui_RenderEngine_tag_createTextureFromUrl_oo__send(ui_RenderEngine* self, S
 
 None* ui_RenderEngine_tag_setNeedsRendered_o__send(ui_RenderEngine* self);
 
-None* ui_RenderEngine_tag_run_oo__send(ui_RenderEngine* self, ui_$2$40* callback);
+None* ui_RenderEngine_tag_run_oo__send(ui_RenderEngine* self, ui_$2$42* callback);
 
 None* ui_RenderEngine_ref_markRenderFinished_o(ui_RenderEngine* self);
 
@@ -4524,6 +4575,10 @@ uint64_t ui_YogaNode_ref_event_ooW(ui_YogaNode* self, ui_FrameContext* frameCont
 
 uint64_t ui_YogaNode_ref_start_oW(ui_YogaNode* self, ui_FrameContext* frameContext);
 
+None* ui_YogaNode_ref_y_fo(ui_YogaNode* self, float v);
+
+None* ui_YogaNode_ref_z_fo(ui_YogaNode* self, float v);
+
 None* ui_YogaNode_ref_top_fo(ui_YogaNode* self, float p);
 
 float ui_YogaNode_ref_getRotateZ_f(ui_YogaNode* self);
@@ -4536,13 +4591,9 @@ None* ui_YogaNode_ref_left_fo(ui_YogaNode* self, float p);
 
 None* ui_YogaNode_ref_labaAnimate_fo(ui_YogaNode* self, float delta);
 
-float ui_YogaNode_ref_getLeft_f(ui_YogaNode* self);
-
-float ui_YogaNode_val_getLeft_f(ui_YogaNode* self);
-
-float ui_YogaNode_box_getLeft_f(ui_YogaNode* self);
-
 None* ui_YogaNode_ref_rotateX_fo(ui_YogaNode* self, float v);
+
+bool ui_YogaNode_ref_postLayout_b(ui_YogaNode* self);
 
 None* ui_YogaNode_ref_rotateY_fo(ui_YogaNode* self, float v);
 
@@ -4576,19 +4627,23 @@ String* ui_YogaNode_box_string_o(ui_YogaNode* self);
 
 None* ui_YogaNode_ref_alpha_fo(ui_YogaNode* self, float a);
 
-float ui_YogaNode_ref_getTop_f(ui_YogaNode* self);
-
-float ui_YogaNode_box_getTop_f(ui_YogaNode* self);
-
-float ui_YogaNode_val_getTop_f(ui_YogaNode* self);
-
 void* ui_YogaNode_ref_getNodeByFocusIdx_zo(ui_YogaNode* self, ssize_t idx);
+
+float ui_YogaNode_val_getX_f(ui_YogaNode* self);
+
+float ui_YogaNode_ref_getX_f(ui_YogaNode* self);
+
+float ui_YogaNode_box_getX_f(ui_YogaNode* self);
+
+None* ui_YogaNode_ref_x_fo(ui_YogaNode* self, float v);
 
 ssize_t ui_YogaNode_val_getFocusIdx_z(ui_YogaNode* self);
 
 ssize_t ui_YogaNode_box_getFocusIdx_z(ui_YogaNode* self);
 
 ssize_t ui_YogaNode_ref_getFocusIdx_z(ui_YogaNode* self);
+
+float ui_YogaNode_ref_getZ_f(ui_YogaNode* self);
 
 None* ui_YogaNode_ref_height_fo(ui_YogaNode* self, float v);
 
@@ -4603,6 +4658,14 @@ float ui_YogaNode_val_getWidth_f(ui_YogaNode* self);
 None* ui_YogaNode_ref_name_oo(ui_YogaNode* self, String* name_);
 
 None* ui_YogaNode_ref_widthPercent_fo(ui_YogaNode* self, float v);
+
+None* ui_YogaNode_ref_bottom_fo(ui_YogaNode* self, float p);
+
+float ui_YogaNode_ref_getY_f(ui_YogaNode* self);
+
+float ui_YogaNode_val_getY_f(ui_YogaNode* self);
+
+float ui_YogaNode_box_getY_f(ui_YogaNode* self);
 
 None* ui_YogaNode_ref_rotateZ_fo(ui_YogaNode* self, float v);
 

@@ -130,6 +130,23 @@ class LabaActionMoveY is LabaAction
     target.setY( Easing.tween(easing,from,to,animationValue) )
     //Log.println("%s: from %s,  to %s,  v %s", target.getY(), from, to, animationValue)
 
+class LabaActionMoveZ is LabaAction
+"""
+  y100 is move the target to z position 100
+"""
+  new create(operator':U8, target:LabaTarget, parser:StringParser, mod:F32, inverted':Bool, easing':U32) =>
+    operator = operator'
+    inverted = inverted'
+    easing = easing'
+    if mod == 0.0 then
+      simpleAbsoluteValue(parser, target.getZ(), 0.0)
+    else
+      simpleRelativeValue(parser, target.getZ(), (target.getHeight() + target.getWidth()) / 2, mod)    
+    end
+
+  fun update(target:LabaTarget, animationValue:F32) =>
+    target.setZ( Easing.tween(easing,from,to,animationValue) )
+    //Log.println("%s: from %s,  to %s,  v %s", target.getY(), from, to, animationValue)
 
 class LabaActionFade is LabaAction
 """
@@ -211,7 +228,7 @@ class LabaActionRoll is LabaAction
     operator = operator'
     inverted = inverted'
     easing = easing'
-    simpleRelativeValue(parser, target.getRoll(), target.getRoll())
+    simpleRelativeValue(parser, target.getRoll(), 0.0)
 
   fun update(target:LabaTarget, animationValue:F32) =>
     target.setRoll( Easing.tween(easing,from,to,animationValue) )
@@ -227,7 +244,7 @@ class LabaActionPitch is LabaAction
     operator = operator'
     inverted = inverted'
     easing = easing'
-    simpleRelativeValue(parser, target.getPitch(), target.getPitch())
+    simpleRelativeValue(parser, target.getPitch(), 0.0)
 
   fun update(target:LabaTarget, animationValue:F32) =>
     target.setPitch( Easing.tween(easing,from,to,animationValue) )
@@ -243,7 +260,7 @@ class LabaActionYaw is LabaAction
     operator = operator'
     inverted = inverted'
     easing = easing'
-    simpleRelativeValue(parser, target.getYaw(), target.getYaw())
+    simpleRelativeValue(parser, target.getYaw(), 0.0)
 
   fun update(target:LabaTarget, animationValue:F32) =>
     target.setYaw( Easing.tween(easing,from,to,animationValue) )

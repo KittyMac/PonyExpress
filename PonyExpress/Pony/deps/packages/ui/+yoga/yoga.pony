@@ -6,6 +6,9 @@ use "promises"
 use "utility"
 use "laba"
 
+type YogaUserInfoType is Stringable
+type YogaCustomLayoutCallback is {(YogaNode ref, YogaUserInfoType val)} val
+
 type YogaNodeID is USize
 
 class YogaNode
@@ -21,13 +24,22 @@ class YogaNode
   var sibling_index:USize = 0
   var sibling_count:USize = 0
   
+  var _customLayoutInfo:YogaUserInfoType val = None
+  var _customLayoutCallback:(YogaCustomLayoutCallback|None) = None
+  
   var _content_offset:V2 = V2fun.zero()
   var _rotation:V3 = V3fun.zero()
   var _scale:V3 = V3fun(1.0, 1.0, 1.0)
   
+  var _pivot:V2 = V2fun(0.5,0.5)
+  var _anchor:V2 = V2fun(0.5,0.5)
+  
   var _clips:Bool = false
   var _clippingGeometry:BufferedGeometry = BufferedGeometry
   var _pushedClippingVertices:FloatAlignedArray = FloatAlignedArray
+  
+  var _usesLeft:Bool = true
+  var _usesTop:Bool = true
   
   var _safeTop:Bool = false
   var _safeLeft:Bool = false
@@ -39,6 +51,8 @@ class YogaNode
   var _focusIdx:ISize = -1
   
   var _alpha:F32 = 1.0
+  
+  var _z:F32 = 0.0
   
   fun _final() =>
     //@printf("_final called on yoga node [%d]\n".cstring(), node)
@@ -102,10 +116,16 @@ class YogaNode
     preLayout()
     
     @YGNodeCalculateLayout(node, @YGNodeStyleGetWidthFloat(node), @YGNodeStyleGetHeightFloat(node), YGDirection.ltr)
+    
+    // postLayout gives the opporunity to nodes to adjust themselves based on the layout which just happened. Specifically,
+    // if calls any custom() callbacks that exist on nodes
+    if postLayout() then
+      @YGNodeCalculateLayout(node, @YGNodeStyleGetWidthFloat(node), @YGNodeStyleGetHeightFloat(node), YGDirection.ltr)
+    end
   
   
-  fun ref setContentOffset(x:F32, y:F32) =>
-    _content_offset = V2fun(x, y)
+  fun ref setContentOffset(_x:F32, _y:F32) =>
+    _content_offset = V2fun(_x, _y)
   
   fun ref nodeSize():V2 =>
     // width/height of me
@@ -226,6 +246,20 @@ class YogaNode
       child.preLayout()
     end
   
+  fun ref postLayout():Bool =>
+    var didDoCallback:Bool = false
+    
+    if _customLayoutCallback as YogaCustomLayoutCallback then
+      _customLayoutCallback(this, _customLayoutInfo)
+      didDoCallback = true
+    end
+  
+    for child in children.values() do
+      didDoCallback = child.postLayout() or didDoCallback
+    end
+    
+    didDoCallback
+  
   // Called when distributing events to nodes
   fun ref event(frameContext:FrameContext, anyEvent:AnyEvent val):U64 =>
     var n:U64 = frameContext.renderNumber
@@ -284,14 +318,19 @@ class YogaNode
     
     if (local_width > 0) and (local_height > 0) then
     
+      let pivotX:F32 = _pivot._1 * local_width
+      let pivotY:F32 = _pivot._2 * local_height
+    
       var local_matrix:M4 = M4fun.mul_m4(
           parent_matrix,
-          M4fun.trans_v3(V3fun(local_left, local_top, 0))
+          M4fun.trans_v3(V3fun( (local_left + (_anchor._1 * local_width)) - (local_width / 2),
+                                (local_top + (_anchor._2 * local_height)) - (local_height / 2),
+                                _z))
         )
     
       local_matrix = M4fun.mul_m4(
               local_matrix,
-              M4fun.trans_v3(V3fun(local_width/2, local_height/2, 0))
+              M4fun.trans_v3(V3fun( pivotX, pivotY, 0))
             )
     
       if (_rotation._1 != 0) or (_rotation._2 != 0) or (_rotation._3 != 0) then
@@ -316,7 +355,7 @@ class YogaNode
       frameContext.parentContentOffset = parentContentOffset
       frameContext.alpha = frameContext.alpha * _alpha
     
-      last_bounds = R4fun( (-local_width/2)+parentContentOffset._1, (-local_height/2)-parentContentOffset._2, local_width, local_height)
+      last_bounds = R4fun( (-pivotX)+parentContentOffset._1, (-pivotY)-parentContentOffset._2, local_width, local_height)
       last_matrix = local_matrix
     
       let savedClipBounds = frameContext.clipBounds
@@ -337,7 +376,7 @@ class YogaNode
     
       local_matrix = M4fun.mul_m4(
               local_matrix,
-              M4fun.trans_v3(V3fun(-local_width/2, -local_height/2, 0))
+              M4fun.trans_v3(V3fun(-pivotX, -pivotY, 0))
             )
     
       if _clips then
@@ -444,6 +483,10 @@ class YogaNode
       animation.animate(0)
     end
   
+  fun ref custom(info:YogaUserInfoType val, c:YogaCustomLayoutCallback) =>
+    _customLayoutCallback = c
+    _customLayoutInfo = info
+  
   fun ref view(local_view:Viewable) =>
     _views.push(local_view)
   
@@ -487,9 +530,9 @@ class YogaNode
     @YGNodeStyleSetWidthPercent(node, w)
     @YGNodeStyleSetHeightPercent(node, h)
   
-  fun ref bounds(x:F32, y:F32, w:F32, h:F32) =>
-    @YGNodeStyleSetPosition(node, YGEdge.left, x)
-    @YGNodeStyleSetPosition(node, YGEdge.top, y)
+  fun ref bounds(_x:F32, _y:F32, w:F32, h:F32) =>
+    @YGNodeStyleSetPosition(node, YGEdge.left, _x)
+    @YGNodeStyleSetPosition(node, YGEdge.top, _y)
     @YGNodeStyleSetWidth(node, w)
     @YGNodeStyleSetHeight(node, h)
   
@@ -500,6 +543,9 @@ class YogaNode
   fun ref safeLeft(v:Bool=true) => _safeLeft = v
   fun ref safeBottom(v:Bool=true) => _safeBottom = v
   fun ref safeRight(v:Bool=true) => _safeRight = v
+  
+  fun ref pivot(_x:F32, _y:F32) => _pivot = V2fun(_x, _y)
+  fun ref anchor(_x:F32, _y:F32) => _anchor = V2fun(_x, _y)
   
   fun ref scaleX(v:F32) => _scale = V3fun(v, _scale._2, _scale._3)
   fun ref scaleY(v:F32) => _scale = V3fun(_scale._1, v, _scale._3)
@@ -552,18 +598,18 @@ class YogaNode
   fun ref absolute() => @YGNodeStyleSetPositionType(node, YGPositionType.absolute)
   fun ref relative() => @YGNodeStyleSetPositionType(node, YGPositionType.relative)
   
-  fun ref origin(x:F32, y:F32) => @YGNodeStyleSetPosition(node, YGEdge.left, x); @YGNodeStyleSetPosition(node, YGEdge.top, y)
-  fun ref originPercent(x:F32, y:F32) => @YGNodeStyleSetPositionPercent(node, YGEdge.left, x); @YGNodeStyleSetPositionPercent(node, YGEdge.top, y)
+  fun ref origin(_x:F32, _y:F32) => @YGNodeStyleSetPosition(node, YGEdge.left, _x); @YGNodeStyleSetPosition(node, YGEdge.top, _y); _usesLeft = true; _usesTop = true
+  fun ref originPercent(_x:F32, _y:F32) => @YGNodeStyleSetPositionPercent(node, YGEdge.left, _x); @YGNodeStyleSetPositionPercent(node, YGEdge.top, _y); _usesLeft = true; _usesTop = true
   
-  fun ref top(p:F32) => @YGNodeStyleSetPosition(node, YGEdge.top, p)
-  fun ref left(p:F32) => @YGNodeStyleSetPosition(node, YGEdge.left, p)
-  fun ref bottom(p:F32) => @YGNodeStyleSetPosition(node, YGEdge.bottom, p)
-  fun ref right(p:F32) => @YGNodeStyleSetPosition(node, YGEdge.right, p)
+  fun ref top(p:F32) => @YGNodeStyleSetPosition(node, YGEdge.top, p); _usesTop = true
+  fun ref left(p:F32) => @YGNodeStyleSetPosition(node, YGEdge.left, p); _usesLeft = true
+  fun ref bottom(p:F32) => @YGNodeStyleSetPosition(node, YGEdge.bottom, p); _usesTop = false
+  fun ref right(p:F32) => @YGNodeStyleSetPosition(node, YGEdge.right, p); _usesLeft = false
   
-  fun ref topPercent(p:F32) => @YGNodeStyleSetPositionPercent(node, YGEdge.top, p)
-  fun ref leftPercent(p:F32) => @YGNodeStyleSetPositionPercent(node, YGEdge.left, p)
-  fun ref bottomPercent(p:F32) => @YGNodeStyleSetPositionPercent(node, YGEdge.bottom, p)
-  fun ref rightPercent(p:F32) => @YGNodeStyleSetPositionPercent(node, YGEdge.right, p)
+  fun ref topPercent(p:F32) => @YGNodeStyleSetPositionPercent(node, YGEdge.top, p); _usesTop = true
+  fun ref leftPercent(p:F32) => @YGNodeStyleSetPositionPercent(node, YGEdge.left, p); _usesLeft = true
+  fun ref bottomPercent(p:F32) => @YGNodeStyleSetPositionPercent(node, YGEdge.bottom, p); _usesTop = false
+  fun ref rightPercent(p:F32) => @YGNodeStyleSetPositionPercent(node, YGEdge.right, p); _usesLeft = false
   
   fun ref paddingAll(v2:F32) => @YGNodeStyleSetPadding(node, YGEdge.all, v2)
   fun ref paddingTop(v2:F32) => @YGNodeStyleSetPadding(node, YGEdge.top, v2)
@@ -643,11 +689,24 @@ class YogaNode
   fun getRotateY():F32 => _rotation._2
   fun getRotateZ():F32 => _rotation._3
   
-  
+  fun getPivot():V2 => _pivot
+  fun getAnchor():V2 => _anchor
   fun getScale():V3 => _scale
   fun getWidth():F32 => _handleNAN(@YGNodeLayoutGetWidth(node))
   fun getHeight():F32 => _handleNAN(@YGNodeLayoutGetHeight(node))
-  fun getTop():F32 => _handleNAN( @YGNodeStyleGetPositionFloat(node, YGEdge.top) )
-  fun getLeft():F32 => _handleNAN( @YGNodeStyleGetPositionFloat(node, YGEdge.left) )
+  
+  
+  fun ref getZ():F32 => _z
+  fun ref z(v:F32) => _z = v
+  
+  // These overloaded methods try to determine in what aspect "X" and "Y" are meant in the node's style, and then gets or sets those
+  // in that manner. This is used by Laba when animating so that it doesn't need to worry about how the user set those in the style
+  fun getY():F32 => if _usesTop then _handleNAN(@YGNodeStyleGetPositionFloat(node, YGEdge.top)) else _handleNAN(@YGNodeStyleGetPositionFloat(node, YGEdge.bottom)) end
+  fun getX():F32 => if _usesLeft then _handleNAN(@YGNodeStyleGetPositionFloat(node, YGEdge.left)) else _handleNAN(@YGNodeStyleGetPositionFloat(node, YGEdge.right)) end
+  fun ref y(v:F32) => if _usesTop then top(v) else bottom(v) end
+  fun ref x(v:F32) => if _usesLeft then left(v) else @YGNodeStyleSetPosition(node, YGEdge.right, v) end
+  
+  
+  
   
   
