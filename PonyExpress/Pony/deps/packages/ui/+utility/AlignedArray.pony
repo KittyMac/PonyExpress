@@ -1,7 +1,4 @@
 
-//use @RenderEngine_malloc[UnsafePointer[None]](size:UnsafePointer[USize])
-//use @RenderEngine_free[None](ptr:UnsafePointer[None])
-
 class AlignedArray[A] is Seq[A]
   """
   An Array class which uses posix_memalign() to allocate its memory. Note that this currently doesn't support

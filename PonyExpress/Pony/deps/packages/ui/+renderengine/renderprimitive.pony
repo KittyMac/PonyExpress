@@ -3,35 +3,6 @@ use "yoga"
 use "linal"
 use "utility"
 
-use @RenderEngine_createTextureFromBytes[None](ctx:RenderContextRef tag, textureName:Pointer[U8] tag, widthPtr:Pointer[U8] tag, bytesCount:USize)
-use @RenderEngine_createTextureFromUrl[None](ctx:RenderContextRef tag, url:Pointer[U8] tag)
-
-use @RenderEngine_textureInfo[TextureInfo](ctx:RenderContextRef tag, textureName:Pointer[U8] tag, widthPtr:Pointer[F32], heightPtr:Pointer[F32])
-use @RenderEngine_render[None]( ctx:RenderContextRef tag, 
-                        frameNumber:U64, 
-                       renderNumber:U64, 
-                         shaderType:U32,
-                        numVertices:U32,
-                           vertices:UnsafePointer[F32] tag, 
-                size_vertices_array:U32, 
-                            globalR:F32, 
-                            globalG:F32, 
-                            globalB:F32, 
-                            globalA:F32, 
-                        textureName:Pointer[U8] tag)
-use @RenderEngine_pushClips[None](ctx:RenderContextRef tag,
-                          frameNumber:U64, 
-                         renderNumber:U64, 
-                          numVertices:U32,
-                             vertices:UnsafePointer[F32] tag, 
-                  size_vertices_array:U32)
-use @RenderEngine_popClips[None](ctx:RenderContextRef tag,
-                         frameNumber:U64, 
-                        renderNumber:U64,
-                         numVertices:U32,
-                            vertices:UnsafePointer[F32] tag, 
-                 size_vertices_array:U32)
-
 
 struct TextureInfo
   let image_width:U32 = 0
@@ -47,6 +18,12 @@ primitive ShaderType
   let sdf:U32 = 4
   let stencilBegin:U32 = 5
   let stencilEnd:U32 = 6
+
+primitive CullMode
+  let skip:U32 = 0
+  let none:U32 = 1
+  let back:U32 = 2
+  let front:U32 = 3
 
 primitive RenderPrimitive
   """
@@ -142,7 +119,7 @@ primitive RenderPrimitive
   fun tag createTextureFromBytes(frameContext:FrameContext val, name:Pointer[U8] tag, bytes:Pointer[U8] tag, bytesCount:USize) =>
     @RenderEngine_createTextureFromBytes(frameContext.renderContext, name, bytes, bytesCount)
   
-  fun tag renderCachedGeometry(frameContext:FrameContext val, partNum:U64, shaderType:U32, vertices:FloatAlignedArray, gc:RGBA val, t:(String|None)) =>
+  fun tag renderCachedGeometry(frameContext:FrameContext val, partNum:U64, shaderType:U32, vertices:FloatAlignedArray, gc:RGBA val, cullMode:U32 = CullMode.none, t:(String|None) = None) =>
     if vertices.size() == 0 then
       return
     end
@@ -154,6 +131,7 @@ primitive RenderPrimitive
                           vertices.cpointer(),
                           vertices.allocSize().u32(),
                           gc.r, gc.g, gc.b, gc.a * frameContext.alpha,
+                          cullMode,
                           if t as String then t.cpointer() else Pointer[U8] end)
     
   

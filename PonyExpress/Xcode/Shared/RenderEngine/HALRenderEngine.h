@@ -44,6 +44,11 @@ extern void stopRuntimeAnalysis(bool killed);
 #define ShaderType_Stencil_Begin 5
 #define ShaderType_Stencil_End 6
 
+#define CullMode_skip 0
+#define CullMode_none 1
+#define CullMode_back 2
+#define CullMode_front 3
+
 typedef struct
 {
     uint32_t image_width;
@@ -73,6 +78,8 @@ typedef struct
     float globalG;
     float globalB;
     float globalA;
+    
+    uint32_t cullMode;
     
     struct avl_tree_node node;
 } RenderUnit;
@@ -149,6 +156,7 @@ void RenderEngine_render(HALRenderContext * ctx,
                          float globalG,
                          float globalB,
                          float globalA,
+                         uint32_t cullMode,
                          const char * textureName);
 
 float RenderEngine_safeTop(void);

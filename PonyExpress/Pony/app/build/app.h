@@ -32,8 +32,6 @@ typedef struct URLDownload URLDownload;
 
 typedef struct ui_RGBA ui_RGBA;
 
-typedef struct StringEncoding StringEncoding;
-
 /*
 Contiguous, resizable memory to store elements of type A.
 
@@ -328,7 +326,7 @@ no guarantees that the GC will actually reclaim any space.
 typedef struct Array_laba_LabaAction_ref Array_laba_LabaAction_ref;
 
 /*
-Liek AlignedArray, but optimized for floating point geomtry submission
+Like AlignedArray, but optimized for floating point geomtry submission
 */
 typedef struct ui_FloatAlignedArray ui_FloatAlignedArray;
 
@@ -1592,15 +1590,6 @@ string format a vector*/
 String* ui_RGBA_box_string_o(ui_RGBA* self);
 
 ui_RGBA* ui_RGBA_val_white_o(ui_RGBA* self);
-
-/* Allocate a StringEncoding without initialising it. */
-StringEncoding* StringEncoding_Alloc(void);
-
-StringEncoding* StringEncoding_val_create_o(StringEncoding* self);
-
-uint32_t StringEncoding_val_utf8_I(StringEncoding* self);
-
-uint32_t StringEncoding_box_utf8_I(StringEncoding* self);
 
 /* Allocate a Array_String_val without initialising it. */
 Array_String_val* Array_String_val_Alloc(void);
@@ -3117,11 +3106,11 @@ ssize_t U8_box_isize_z(char self);
 
 ssize_t U8_val_isize_z(char self);
 
-char U8_val_create_CC(char self, char value);
-
 char U8_val_op_or_CC(char self, char y);
 
 char U8_box_op_or_CC(char self, char y);
+
+char U8_val_create_CC(char self, char value);
 
 bool U8_val_lt_Cb(char self, char y);
 

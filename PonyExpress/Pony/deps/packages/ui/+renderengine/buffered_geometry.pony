@@ -1,8 +1,6 @@
 use "collections"
 use "linal"
 
-use @RenderEngine_maxConcurrentFrames[USize]()
-
 class Geometry
   """
   One unit of geometry. Hash needs to uniquely represent the buffered content in order to allow for reuse of geometric

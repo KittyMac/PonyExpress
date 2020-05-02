@@ -1,12 +1,9 @@
 use "linal"
 use "utility"
 
-//use @RenderEngine_malloc[UnsafePointer[None]](size:UnsafePointer[USize])
-//use @RenderEngine_free[None](ptr:UnsafePointer[None])
-
 class FloatAlignedArray
   """
-  Liek AlignedArray, but optimized for floating point geomtry submission
+  Like AlignedArray, but optimized for floating point geomtry submission
   """  
   var _size: USize
   var _alloc_num_bytes: USize

@@ -29,4 +29,4 @@ actor Color is (Viewable & Colorable)
                              _color )
     end
     
-    RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.flat, vertices, RGBA.white(), None)
+    RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.flat, vertices, RGBA.white())

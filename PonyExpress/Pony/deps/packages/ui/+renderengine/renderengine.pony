@@ -4,17 +4,6 @@ use "linal"
 use "stringext"
 use "utility"
 
-use @RenderEngine_init[RenderContextRef](engine:RenderEngine tag)
-use @RenderEngine_destroy[None](ctx:RenderContextRef tag)
-
-use @RenderEngine_beginKeyboardInput[None](ctx:RenderContextRef tag)
-use @RenderEngine_endKeyboardInput[None](ctx:RenderContextRef tag)
-
-use @RenderEngine_safeTop[F32]()
-use @RenderEngine_safeLeft[F32]()
-use @RenderEngine_safeBottom[F32]()
-use @RenderEngine_safeRight[F32]()
-
 primitive RenderContext
 type RenderContextRef is Pointer[RenderContext]
 
@@ -250,7 +239,7 @@ actor@ RenderEngine
     //node.print()
   
   fun ref markRenderFinished() =>
-    @RenderEngine_render(renderContext, frameNumber, U64.max_value(), ShaderType.finished, 0, UnsafePointer[F32], 0, 1.0, 1.0, 1.0, 1.0, Pointer[U8])
+    @RenderEngine_render(renderContext, frameNumber, U64.max_value(), ShaderType.finished, 0, UnsafePointer[F32], 0, 1.0, 1.0, 1.0, 1.0, CullMode.skip, Pointer[U8])
   
   fun nanoToSec(nano:U64):F32 =>
     nano.f32() / 1_000_000_000.0
@@ -341,7 +330,7 @@ actor@ RenderEngine
   
   be renderAbort() =>
     // For some reason we want to skip rendering this frame!
-    @RenderEngine_render(renderContext, frameNumber, U64.max_value(), ShaderType.abort, 0, UnsafePointer[F32], 0, 1.0, 1.0, 1.0, 1.0, Pointer[U8])
+    @RenderEngine_render(renderContext, frameNumber, U64.max_value(), ShaderType.abort, 0, UnsafePointer[F32], 0, 1.0, 1.0, 1.0, 1.0, CullMode.skip, Pointer[U8])
   
   be touchEvent(id:USize, pressed:Bool, x:F32, y:F32) =>
     // Tapping outside of the focused item should result in it no longer having focus, but we can't really know

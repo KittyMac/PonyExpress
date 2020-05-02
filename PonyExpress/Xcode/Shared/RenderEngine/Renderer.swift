@@ -458,6 +458,7 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             while let unitPtr = RenderEngineInternal_nextRenderUnit(nil) {
                 let unit = unitPtr.pointee
                 let shaderType = unit.shaderType
+                let cullMode = unit.cullMode
                 
                 if unit.textureName != nil {
                     let texture = loadTextureNow(namePtr: unit.textureName)
@@ -471,6 +472,14 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
                     renderEncoder.setDepthStencilState(ignoreStencilState)
                 } else {
                     renderEncoder.setDepthStencilState(testStencilState)
+                }
+                
+                if cullMode == CullMode_back {
+                    renderEncoder.setCullMode(.back)
+                } else if cullMode == CullMode_front {
+                    renderEncoder.setCullMode(.front)
+                } else if cullMode == CullMode_none {
+                    renderEncoder.setCullMode(.none)
                 }
                 
                 if shaderType == ShaderType_Abort {

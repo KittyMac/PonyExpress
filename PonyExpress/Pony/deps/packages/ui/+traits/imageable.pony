@@ -166,9 +166,9 @@ trait Imageable is (Viewable & Colorable)
     end
     
     if hasFocus(frameContext) and (_focusTextureName as String) then
-      RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.textured, vertices, RGBA.white(), _focusTextureName)
+      RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.textured, vertices, RGBA.white(), CullMode.none, _focusTextureName)
     else
-      RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.textured, vertices, RGBA.white(), _textureName)
+      RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.textured, vertices, RGBA.white(), CullMode.none, _textureName)
     end
 
 
@@ -273,9 +273,9 @@ trait Imageable is (Viewable & Colorable)
     end
     
     if hasFocus(frameContext) and (_focusTextureName as String) then
-      RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.textured, vertices, RGBA.white(), _focusTextureName)
+      RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.textured, vertices, RGBA.white(), CullMode.none, _focusTextureName)
     else
-      RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.textured, vertices, RGBA.white(), _textureName)
+      RenderPrimitive.renderCachedGeometry(frameContext, 0, ShaderType.textured, vertices, RGBA.white(), CullMode.none, _textureName)
     end
     
     

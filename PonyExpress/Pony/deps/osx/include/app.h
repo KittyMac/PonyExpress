@@ -326,7 +326,7 @@ no guarantees that the GC will actually reclaim any space.
 typedef struct Array_laba_LabaAction_ref Array_laba_LabaAction_ref;
 
 /*
-Liek AlignedArray, but optimized for floating point geomtry submission
+Like AlignedArray, but optimized for floating point geomtry submission
 */
 typedef struct ui_FloatAlignedArray ui_FloatAlignedArray;
 

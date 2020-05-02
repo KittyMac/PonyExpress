@@ -166,6 +166,7 @@ void RenderEngine_pushClips(HALRenderContext * ctx,
                         1.0,
                         1.0,
                         1.0,
+                        CullMode_skip,
                         NULL);
 }
 
@@ -187,6 +188,7 @@ void RenderEngine_popClips(HALRenderContext * ctx,
                         1.0,
                         1.0,
                         1.0,
+                        CullMode_skip,
                         NULL);
 }
 
@@ -201,6 +203,7 @@ void RenderEngine_render(HALRenderContext * ctx,
                          float globalG,
                          float globalB,
                          float globalA,
+                         uint32_t cullMode,
                          const char * textureName) {
     // Note: this message can be called concurrently from any thread
     RenderUnit * unit = (RenderUnit*) pony_alloc_msg(ponyint_pool_index(sizeof(RenderUnit)), 0);
@@ -216,6 +219,8 @@ void RenderEngine_render(HALRenderContext * ctx,
     unit->globalG = globalG;
     unit->globalB = globalB;
     unit->globalA = globalA;
+    
+    unit->cullMode = cullMode;
     
     // Each shader expects specific geometry
     switch(shaderType){
