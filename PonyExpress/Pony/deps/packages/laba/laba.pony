@@ -80,7 +80,7 @@ class LabaActionGroup
     for action in actions.values() do
       action.update(target, normalizedValue)
     end
-    target.syncToNode()
+    target.syncToNode(false)
     (normalizedValue >= 1.0)
     
   fun ref toString(string:String ref) =>
@@ -182,7 +182,20 @@ class LabaTarget
     p_sync = false
     a_sync = false
   
-  fun ref syncToNode() =>
+  fun ref syncToNode(print:Bool) =>
+    if print then
+      if x_sync then Log.println("x: %s", _x) end
+      if y_sync then Log.println("y: %s", _y) end
+      if z_sync then Log.println("z: %s", _z) end
+      if w_sync then Log.println("w: %s", _w) end
+      if h_sync then Log.println("h: %s", _h) end
+      if s_sync then Log.println("s: %s", _s) end
+      if f_sync then Log.println("f: %s", _f) end
+      if r_sync then Log.println("r: %s", _r) end
+      if p_sync then Log.println("p: %s", _p) end
+      if a_sync then Log.println("a: %s", _a) end
+    end
+    
     if x_sync then target.x(_x); x_sync = false end
     if y_sync then target.y(_y); y_sync = false end
     if z_sync then target.z(_z); z_sync = false end
@@ -326,16 +339,18 @@ class Laba
       lazyInit = false
     end
     
-    animationValue = (animationValue + delta)
+    animationValue = (animationValue + delta) + 0.0001
     
     try
-      let group = groups(0)?
-      
-      if group.update(target, animationValue) then
-        animationValue = animationValue - group.totalDuration()
-        groups.delete(0)?
-      end
-      
+      while groups.size() > 0 do
+        let group = groups(0)?
+        if group.update(target, animationValue) then
+          animationValue = animationValue - group.totalDuration()
+          groups.delete(0)?
+        else
+          break
+        end
+      end      
     else
       Log.println("animate failed with %s", animationValue)
       return true

@@ -310,13 +310,7 @@ class YogaNode
     let local_width:F32 = @YGNodeLayoutGetWidth(node)
     let local_height:F32 = @YGNodeLayoutGetHeight(node)
     
-    labaAnimate(frameContext.animation_delta)
-    
-    if isAnimating() then
-      frameContext.engine.setNeedsLayout()
-    end
-    
-    if (local_width > 0) and (local_height > 0) then
+    if (local_width > 0) and (local_height > 0) and (_alpha > 0) then
     
       let pivotX:F32 = _pivot._1 * local_width
       let pivotY:F32 = _pivot._2 * local_height
@@ -414,6 +408,12 @@ class YogaNode
       frameContext.alpha = savedAlpha
     
     end
+    
+    if isAnimating() then
+      frameContext.engine.setNeedsLayout()
+    end
+    
+    labaAnimate(frameContext.animation_delta)
     
     n
   

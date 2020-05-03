@@ -32,6 +32,8 @@ typedef struct URLDownload URLDownload;
 
 typedef struct ui_RGBA ui_RGBA;
 
+typedef struct StringEncoding StringEncoding;
+
 /*
 Contiguous, resizable memory to store elements of type A.
 
@@ -144,6 +146,8 @@ typedef struct u2_ui_YogaNode_ref_None_val u2_ui_YogaNode_ref_None_val;
 
 typedef struct ui_Viewable ui_Viewable;
 
+typedef struct u2_laba_$26$0_box_None_val u2_laba_$26$0_box_None_val;
+
 /*
 w100 is animate the high to 100 units wide
 !w100 is animate the high from 100 units wide to the current high
@@ -208,8 +212,6 @@ typedef struct linal_V2fun linal_V2fun;
 typedef struct ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_val ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_val;
 
 typedef struct _SignedPartialArithmetic _SignedPartialArithmetic;
-
-typedef struct laba_$25$0 laba_$25$0;
 
 typedef struct format_AlignRight format_AlignRight;
 
@@ -426,6 +428,8 @@ A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
 included in a union or intersection, or be a subtype of any interface. Most
 functions on a Pointer[A] are private to maintain memory safety.
 */
+typedef struct laba_$26$0 laba_$26$0;
+
 /*
 Asnychronous access to some output stream.
 */
@@ -1210,8 +1214,6 @@ typedef struct laba_Laba laba_Laba;
 
 typedef struct collections__MapDeleted collections__MapDeleted;
 
-typedef struct u2_laba_$25$0_box_None_val u2_laba_$25$0_box_None_val;
-
 typedef struct u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val;
 
 /*
@@ -1591,6 +1593,15 @@ String* ui_RGBA_box_string_o(ui_RGBA* self);
 
 ui_RGBA* ui_RGBA_val_white_o(ui_RGBA* self);
 
+/* Allocate a StringEncoding without initialising it. */
+StringEncoding* StringEncoding_Alloc(void);
+
+StringEncoding* StringEncoding_val_create_o(StringEncoding* self);
+
+uint32_t StringEncoding_val_utf8_I(StringEncoding* self);
+
+uint32_t StringEncoding_box_utf8_I(StringEncoding* self);
+
 /* Allocate a Array_String_val without initialising it. */
 Array_String_val* Array_String_val_Alloc(void);
 
@@ -1868,6 +1879,15 @@ None* ui_Viewable_ref_finish_o(ui_Viewable* self);
 None* ui_Viewable_tag_viewable_finish_o(ui_Viewable* self);
 
 None* ui_Viewable_ref_animate_fo(ui_Viewable* self, float delta);
+
+/* Allocate a u2_laba_$26$0_box_None_val without initialising it. */
+u2_laba_$26$0_box_None_val* u2_laba_$26$0_box_None_val_Alloc(void);
+
+None* u2_laba_$26$0_box_None_val_box_apply_ooo(void* self, ui_YogaNode* p1, laba_Laba* p2);
+
+None* u2_laba_$26$0_box_None_val_ref_apply_ooo(void* self, ui_YogaNode* p1, laba_Laba* p2);
+
+None* u2_laba_$26$0_box_None_val_val_apply_ooo(void* self, ui_YogaNode* p1, laba_Laba* p2);
 
 /* Allocate a laba_LabaActionHeight without initialising it. */
 laba_LabaActionHeight* laba_LabaActionHeight_Alloc(void);
@@ -2212,9 +2232,6 @@ ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_val* ArrayValues_laba_
 _SignedPartialArithmetic* _SignedPartialArithmetic_Alloc(void);
 
 _SignedPartialArithmetic* _SignedPartialArithmetic_val_create_o(_SignedPartialArithmetic* self);
-
-/* Allocate a laba_$25$0 without initialising it. */
-laba_$25$0* laba_$25$0_Alloc(void);
 
 /* Allocate a format_AlignRight without initialising it. */
 format_AlignRight* format_AlignRight_Alloc(void);
@@ -2652,6 +2669,9 @@ A null pointer.
 */
 uint32_t* Pointer_U32_val_ref_create_o(uint32_t* self);
 
+/* Allocate a laba_$26$0 without initialising it. */
+laba_$26$0* laba_$26$0_Alloc(void);
+
 /* Allocate a OutStream without initialising it. */
 OutStream* OutStream_Alloc(void);
 
@@ -2772,7 +2792,7 @@ float laba_LabaTarget_ref_getRoll_f(laba_LabaTarget* self);
 
 float laba_LabaTarget_ref_getYaw_f(laba_LabaTarget* self);
 
-None* laba_LabaTarget_ref_syncToNode_o(laba_LabaTarget* self);
+None* laba_LabaTarget_ref_syncToNode_bo(laba_LabaTarget* self, bool print);
 
 None* laba_LabaTarget_ref_setYaw_fo(laba_LabaTarget* self, float a);
 
@@ -3106,11 +3126,11 @@ ssize_t U8_box_isize_z(char self);
 
 ssize_t U8_val_isize_z(char self);
 
+char U8_val_create_CC(char self, char value);
+
 char U8_val_op_or_CC(char self, char y);
 
 char U8_box_op_or_CC(char self, char y);
-
-char U8_val_create_CC(char self, char value);
 
 bool U8_val_lt_Cb(char self, char y);
 
@@ -4790,15 +4810,6 @@ collections__MapDeleted* collections__MapDeleted_val_create_o(collections__MapDe
 bool collections__MapDeleted_box_eq_ob(collections__MapDeleted* self, collections__MapDeleted* that);
 
 bool collections__MapDeleted_val_eq_ob(collections__MapDeleted* self, collections__MapDeleted* that);
-
-/* Allocate a u2_laba_$25$0_box_None_val without initialising it. */
-u2_laba_$25$0_box_None_val* u2_laba_$25$0_box_None_val_Alloc(void);
-
-None* u2_laba_$25$0_box_None_val_box_apply_ooo(void* self, ui_YogaNode* p1, laba_Laba* p2);
-
-None* u2_laba_$25$0_box_None_val_ref_apply_ooo(void* self, ui_YogaNode* p1, laba_Laba* p2);
-
-None* u2_laba_$25$0_box_None_val_val_apply_ooo(void* self, ui_YogaNode* p1, laba_Laba* p2);
 
 /* Allocate a u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val without initialising it. */
 u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val* u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_Alloc(void);
