@@ -734,7 +734,14 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             
             serialQueue.async {
                 if urlString.starts(with: "http") == false {
-                    _ = self.createTextureSync(namePtr: urlPtr)
+                    do {
+                        let texture = try self.textureLoader.newTexture(URL: URL(fileURLWithPath: resolvedName), options: textureLoaderOptions)
+                        objc_sync_enter(self.textureCacheLock)
+                        self.textureCache[resolvedName] = texture
+                        objc_sync_exit(self.textureCacheLock)
+                    } catch {
+                        print("Texture failed to load: \(error)")
+                    }
                     return
                 }
                 
