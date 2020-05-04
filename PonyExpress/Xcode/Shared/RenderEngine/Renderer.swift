@@ -75,8 +75,10 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
     private var aaplView: PonyExpressView
     
     private var textureCacheLock:NSObject = NSObject()
-    private var fileURLFromBundlePathLock:NSObject = NSObject()
+    private var urlStringFromBundlePathLock:NSObject = NSObject()
     private var renderAheadCountLock:NSObject = NSObject()
+    
+    private let serialQueue = DispatchQueue(label: "serial.queue", qos: .default)
         
     @objc public init(aaplView: PonyExpressView) {
         metalDevice = MTLCreateSystemDefaultDevice()
@@ -271,7 +273,7 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
                                                   // loadTextureNow
                                                   { (observer, namePtr, widthPtr, heightPtr) -> Void in
                                                         let mySelf = Unmanaged<Renderer>.fromOpaque(observer!).takeUnretainedValue()
-                                                    if let texture = mySelf.loadTextureNow(namePtr: namePtr) {
+                                                    if let texture = mySelf.createTextureSync(namePtr: namePtr) {
                                                             if let widthPtr = widthPtr {
                                                                 widthPtr.initialize(to: Float(texture.width))
                                                             }
@@ -290,7 +292,7 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
                                                   // createTextureFromUrl
                                                   { (observer, urlPtr) -> Void in
                                                     let mySelf = Unmanaged<Renderer>.fromOpaque(observer!).takeUnretainedValue()
-                                                    mySelf.createTextureFromUrl(urlPtr: urlPtr)
+                                                    mySelf.createTextureAsync(urlPtr: urlPtr)
                                                   },
                                                   
                                                   // beginKeyboard
@@ -461,7 +463,7 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
                 let cullMode = unit.cullMode
                 
                 if unit.textureName != nil {
-                    let texture = loadTextureNow(namePtr: unit.textureName)
+                    let texture = createTextureSync(namePtr: unit.textureName)
                     if texture == nil {
                         continue
                     }
@@ -612,14 +614,20 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
         return metalDevice.makeTexture(descriptor: desc)!
     }
     
-    func loadTextureNow(namePtr: UnsafePointer<Int8>?) -> MTLTexture? {
+    func createTextureSync(namePtr: UnsafePointer<Int8>?) -> MTLTexture? {
         // attempt to get it from cache first, if not load it then cache it
         if let namePtr = namePtr {
             let name = String(cString: namePtr)
             if name.count == 0 {
                 return nil
             }
-            let resolvedName = fileURLFromBundlePath(name)
+            
+            if name.starts(with: "http") {
+                createTextureAsync(urlPtr: namePtr)
+                return nil
+            }
+            
+            let resolvedName = urlStringFromBundlePath(name)
                         
             // This doesn't like being multi-threaded, because we use dictionary cache. So lock and then check again before loading
             objc_sync_enter(textureCacheLock)
@@ -630,10 +638,6 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             var texture = textureCache[resolvedName]
             if texture != nil {
                 return texture
-            }
-            
-            if resolvedName.starts(with: "http://") || resolvedName.starts(with: "https://") {
-                return nil
             }
             
             let textureLoaderOptions = [
@@ -684,61 +688,65 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
         }
     }
     
-    func createTextureFromUrl(urlPtr: UnsafePointer<Int8>?) {
+    func createTextureAsync(urlPtr: UnsafePointer<Int8>?) {
         if let urlPtr = urlPtr {
             let urlString = String(cString: urlPtr)
             if urlString.count == 0 {
                 return
             }
             
-            if let url = URL(string: urlString) {
-                // Make sure we don't already have it
-                objc_sync_enter(textureCacheLock)
-                defer {
-                    objc_sync_exit(textureCacheLock)
-                }
-                
-                if textureCache[urlString] != nil {
+            let textureLoaderOptions = [
+                MTKTextureLoader.Option.textureUsage: NSNumber(value: MTLTextureUsage.shaderRead.rawValue),
+                MTKTextureLoader.Option.textureStorageMode: NSNumber(value: MTLStorageMode.`private`.rawValue),
+                MTKTextureLoader.Option.SRGB: NSNumber(value: false),
+                MTKTextureLoader.Option.generateMipmaps: NSNumber(value: false)
+            ]
+            
+            let resolvedName = urlStringFromBundlePath(urlString)
+            
+            objc_sync_enter(textureCacheLock)
+            if textureCache[resolvedName] != nil {
+                return
+            }
+            objc_sync_exit(textureCacheLock)
+            
+            serialQueue.async {
+                if urlString.starts(with: "http") == false {
+                    _ = self.createTextureSync(namePtr: urlPtr)
                     return
                 }
                 
-                let textureLoaderOptions = [
-                    MTKTextureLoader.Option.textureUsage: NSNumber(value: MTLTextureUsage.shaderRead.rawValue),
-                    MTKTextureLoader.Option.textureStorageMode: NSNumber(value: MTLStorageMode.`private`.rawValue),
-                    MTKTextureLoader.Option.SRGB: NSNumber(value: false),
-                    MTKTextureLoader.Option.generateMipmaps: NSNumber(value: false)
-                ]
-                
-                URLSession.shared.dataTask(with: url) { (data, response, error) in
-                    if let data = data {
-                        self.textureLoader.newTexture(data: data, options: textureLoaderOptions, completionHandler: { (texture, error) in
-                            if let texture = texture {
-                                objc_sync_enter(self.textureCacheLock)
-                                self.textureCache[urlString] = texture
-                                objc_sync_exit(self.textureCacheLock)
-                                
-                                DispatchQueue.main.async {
-                                    RenderEngineInternal_setNeedsRendered(nil)
+                if let url = URL(string: resolvedName) {
+                    URLSession.shared.dataTask(with: url) { (data, response, error) in
+                        if let data = data {
+                            self.textureLoader.newTexture(data: data, options: textureLoaderOptions, completionHandler: { (texture, error) in
+                                if let texture = texture {
+                                    objc_sync_enter(self.textureCacheLock)
+                                    self.textureCache[urlString] = texture
+                                    objc_sync_exit(self.textureCacheLock)
+                                    
+                                    DispatchQueue.main.async {
+                                        RenderEngineInternal_setNeedsRendered(nil)
+                                    }
                                 }
-                            }
-                        })
-                    }
-                }.resume()
-                
+                            })
+                        }
+                    }.resume()
+                }
             }
         }
     }
     
-    func fileURLFromBundlePath(_ bundlePath:String) -> String {
+    func urlStringFromBundlePath(_ bundlePath:String) -> String {
         // name is a "url path" to a file.  These are like in planet:
         // "resources://landscape_desert.jpg"
         // "documents://landscape_desert.jpg"
         // "caches://landscape_desert.jpg"
         
         // This doesn't like being multi-threaded, because we use dictionary cache. So lock and then check again before loading
-        objc_sync_enter(fileURLFromBundlePathLock)
+        objc_sync_enter(urlStringFromBundlePathLock)
         defer {
-            objc_sync_exit(fileURLFromBundlePathLock)
+            objc_sync_exit(urlStringFromBundlePathLock)
         }
         
         let cachedPath = bundlePathCache[bundlePath]
