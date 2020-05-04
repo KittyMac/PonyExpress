@@ -586,6 +586,8 @@ included in a union or intersection, or be a subtype of any interface. UnsafePoi
 is exactly like Pointer[A] except none of the method are private, allowing the Pony developer
 the freedom to use unsafe pointer capabilities if they so choose.
 */
+typedef struct ui_$2$43 ui_$2$43;
+
 /*
 A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
 included in a union or intersection, or be a subtype of any interface. Most
@@ -681,8 +683,6 @@ Call the `compact()` method to ask the GC to reclaim unused space. There are
 no guarantees that the GC will actually reclaim any space.
 */
 typedef struct Array_ui_Viewable_tag Array_ui_Viewable_tag;
-
-typedef struct ui_$2$41 ui_$2$41;
 
 typedef struct ArrayPairs_U8_val_Array_U8_val_ref ArrayPairs_U8_val_Array_U8_val_ref;
 
@@ -2030,11 +2030,11 @@ bool format_FormatBinary_val_eq_ob(format_FormatBinary* self, format_FormatBinar
 /* Allocate a ui_$2$42 without initialising it. */
 ui_$2$42* ui_$2$42_Alloc(void);
 
-None* ui_$2$42_val_apply_oo(ui_$2$42* self, ui_RenderEngine* p1);
+void* ui_$2$42_val_apply_oo(ui_$2$42* self, void* p1);
 
-None* ui_$2$42_box_apply_oo(ui_$2$42* self, ui_RenderEngine* p1);
+void* ui_$2$42_box_apply_oo(ui_$2$42* self, void* p1);
 
-None* ui_$2$42_ref_apply_oo(ui_$2$42* self, ui_RenderEngine* p1);
+void* ui_$2$42_ref_apply_oo(ui_$2$42* self, void* p1);
 
 /* Allocate a AmbientAuth without initialising it. */
 AmbientAuth* AmbientAuth_Alloc(void);
@@ -3068,6 +3068,15 @@ Return a pointer to the n-th element.
 */
 float* UnsafePointer_F32_val_val_offset_Zo(float* self, size_t n);
 
+/* Allocate a ui_$2$43 without initialising it. */
+ui_$2$43* ui_$2$43_Alloc(void);
+
+None* ui_$2$43_val_apply_oo(ui_$2$43* self, ui_RenderEngine* p1);
+
+None* ui_$2$43_box_apply_oo(ui_$2$43* self, ui_RenderEngine* p1);
+
+None* ui_$2$43_ref_apply_oo(ui_$2$43* self, ui_RenderEngine* p1);
+
 /* Allocate a u10_format_FormatDefault_val_format_FormatUTF32_val_format_FormatBinary_val_format_FormatBinaryBare_val_format_FormatOctal_val_format_FormatOctalBare_val_format_FormatHex_val_format_FormatHexBare_val_format_FormatHexSmall_val_format_FormatHexSmallBare_val without initialising it. */
 u10_format_FormatDefault_val_format_FormatUTF32_val_format_FormatBinary_val_format_FormatBinaryBare_val_format_FormatOctal_val_format_FormatOctalBare_val_format_FormatHex_val_format_FormatHexBare_val_format_FormatHexSmall_val_format_FormatHexSmallBare_val* u10_format_FormatDefault_val_format_FormatUTF32_val_format_FormatBinary_val_format_FormatBinaryBare_val_format_FormatOctal_val_format_FormatOctalBare_val_format_FormatHex_val_format_FormatHexBare_val_format_FormatHexSmall_val_format_FormatHexSmallBare_val_Alloc(void);
 
@@ -3188,15 +3197,6 @@ size_t Array_ui_Viewable_tag_tag_next_growth_size_ZZ(Array_ui_Viewable_tag* self
 Create an array with zero elements, but space for len elements.
 */
 Array_ui_Viewable_tag* Array_ui_Viewable_tag_ref_create_Zo(Array_ui_Viewable_tag* self, size_t len);
-
-/* Allocate a ui_$2$41 without initialising it. */
-ui_$2$41* ui_$2$41_Alloc(void);
-
-void* ui_$2$41_val_apply_oo(ui_$2$41* self, void* p1);
-
-void* ui_$2$41_box_apply_oo(ui_$2$41* self, void* p1);
-
-void* ui_$2$41_ref_apply_oo(ui_$2$41* self, void* p1);
 
 /* Allocate a ArrayPairs_U8_val_Array_U8_val_ref without initialising it. */
 ArrayPairs_U8_val_Array_U8_val_ref* ArrayPairs_U8_val_Array_U8_val_ref_Alloc(void);
@@ -3653,7 +3653,7 @@ None* Array_laba_LabaActionGroup_ref_ref_push_oo(Array_laba_LabaActionGroup_ref*
 /* Allocate a ui_RenderEngine without initialising it. */
 ui_RenderEngine* ui_RenderEngine_Alloc(void);
 
-None* ui_RenderEngine_tag_getNodeByName_ooo__send(ui_RenderEngine* self, String* nodeName, ui_$2$41* callback);
+None* ui_RenderEngine_tag_getNodeByName_ooo__send(ui_RenderEngine* self, String* nodeName, ui_$2$42* callback);
 
 float ui_RenderEngine_ref_nanoToSec_Wf(ui_RenderEngine* self, uint64_t nano);
 
@@ -3663,15 +3663,13 @@ float ui_RenderEngine_val_nanoToSec_Wf(ui_RenderEngine* self, uint64_t nano);
 
 uint64_t ui_RenderEngine_box__priority_W(ui_RenderEngine* self);
 
-None* ui_RenderEngine_tag_getNodeByID_Zoo__send(ui_RenderEngine* self, size_t id, ui_$2$41* callback);
+None* ui_RenderEngine_tag_getNodeByID_Zoo__send(ui_RenderEngine* self, size_t id, ui_$2$42* callback);
 
 None* ui_RenderEngine_ref_invalidateNodeByID_Zo(ui_RenderEngine* self, size_t id);
 
 None* ui_RenderEngine_tag_addNode_oo__send(ui_RenderEngine* self, ui_YogaNode* yoga);
 
 None* ui_RenderEngine_tag_scrollEvent_Zffffo__send(ui_RenderEngine* self, size_t id, float dx, float dy, float px, float py);
-
-None* ui_RenderEngine_ref_handleNewNodeAdded_o(ui_RenderEngine* self);
 
 None* ui_RenderEngine_tag_addToNodeByName_ooo__send(ui_RenderEngine* self, String* nodeName, ui_YogaNode* yoga);
 
@@ -3697,7 +3695,7 @@ None* ui_RenderEngine_tag_createTextureFromUrl_oo__send(ui_RenderEngine* self, S
 
 None* ui_RenderEngine_tag_setNeedsRendered_o__send(ui_RenderEngine* self);
 
-None* ui_RenderEngine_tag_run_oo__send(ui_RenderEngine* self, ui_$2$42* callback);
+None* ui_RenderEngine_tag_run_oo__send(ui_RenderEngine* self, ui_$2$43* callback);
 
 None* ui_RenderEngine_ref_markRenderFinished_o(ui_RenderEngine* self);
 
@@ -4669,6 +4667,8 @@ None* ui_YogaNode_ref_name_oo(ui_YogaNode* self, String* name_);
 None* ui_YogaNode_ref_widthPercent_fo(ui_YogaNode* self, float v);
 
 None* ui_YogaNode_ref_bottom_fo(ui_YogaNode* self, float p);
+
+bool ui_YogaNode_ref_startNeeded_b(ui_YogaNode* self);
 
 float ui_YogaNode_ref_getY_f(ui_YogaNode* self);
 

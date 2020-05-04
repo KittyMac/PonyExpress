@@ -3,7 +3,7 @@
 # load whatever specific configuration this app has for us.  At the time of this writing
 # this is the following values:
 # ponyapp_src - the path to the application's PonyApp package to be compiled by ponyc
-include ../../../../ponyexpress.mk
+-include ../../../../ponyexpress.mk
 
 ifndef ponyapp_src
 ponyapp_src=../../../PonyExpressDemo/

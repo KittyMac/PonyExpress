@@ -55,6 +55,8 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
     private var mipmapSamplerState: MTLSamplerState!
     
     private var bundlePathCache:Dictionary<String, String>!
+    
+    private var isLoadingTextureCache:Dictionary<String, Bool>!
     private var textureCache:Dictionary<String, MTLTexture>!
     
     private var depthTexture:MTLTexture!
@@ -260,6 +262,8 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
         
         bundlePathCache = Dictionary<String, String>()
         textureCache = Dictionary<String, MTLTexture>()
+        isLoadingTextureCache = Dictionary<String, Bool>()
+
                 
         super.init()
         
@@ -622,23 +626,36 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
                 return nil
             }
             
+            let resolvedName = urlStringFromBundlePath(name)
+            
+            // images loaded from urls are only loaded asynchronously
             if name.starts(with: "http") {
+                objc_sync_enter(textureCacheLock)
+                let texture = textureCache[resolvedName]
+                objc_sync_exit(textureCacheLock)
+                if texture != nil {
+                    return texture
+                }
+                
                 createTextureAsync(urlPtr: namePtr)
                 return nil
             }
-            
-            let resolvedName = urlStringFromBundlePath(name)
                         
             // This doesn't like being multi-threaded, because we use dictionary cache. So lock and then check again before loading
             objc_sync_enter(textureCacheLock)
-            defer {
-                objc_sync_exit(textureCacheLock)
-            }
-            
             var texture = textureCache[resolvedName]
             if texture != nil {
+                objc_sync_exit(textureCacheLock)
                 return texture
             }
+            
+            let isLoading = isLoadingTextureCache[resolvedName]
+            if isLoading != nil {
+                objc_sync_exit(textureCacheLock)
+                return nil
+            }
+            isLoadingTextureCache[resolvedName] = true
+            objc_sync_exit(textureCacheLock)
             
             let textureLoaderOptions = [
                 MTKTextureLoader.Option.textureUsage: NSNumber(value: MTLTextureUsage.shaderRead.rawValue),
@@ -648,7 +665,9 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             ]
             do {
                 texture = try textureLoader.newTexture(URL: URL(fileURLWithPath: resolvedName), options: textureLoaderOptions)
+                objc_sync_enter(textureCacheLock)
                 textureCache[resolvedName] = texture
+                objc_sync_exit(textureCacheLock)
                 return texture
             } catch {
                 print("Texture failed to load: \(error)")
@@ -705,9 +724,12 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
             let resolvedName = urlStringFromBundlePath(urlString)
             
             objc_sync_enter(textureCacheLock)
-            if textureCache[resolvedName] != nil {
+            let isLoading = isLoadingTextureCache[resolvedName]
+            if isLoading != nil {
+                objc_sync_exit(textureCacheLock)
                 return
             }
+            isLoadingTextureCache[resolvedName] = true
             objc_sync_exit(textureCacheLock)
             
             serialQueue.async {
@@ -722,7 +744,7 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
                             self.textureLoader.newTexture(data: data, options: textureLoaderOptions, completionHandler: { (texture, error) in
                                 if let texture = texture {
                                     objc_sync_enter(self.textureCacheLock)
-                                    self.textureCache[urlString] = texture
+                                    self.textureCache[resolvedName] = texture
                                     objc_sync_exit(self.textureCacheLock)
                                     
                                     DispatchQueue.main.async {

@@ -112,7 +112,6 @@ actor@ RenderEngine
   
   var layoutNeeded:Bool = false
   var renderNeeded:Bool = false
-  var startNeeded:Bool = false
   
   var screenBounds:R4 = R4fun.zero()
   
@@ -142,10 +141,7 @@ actor@ RenderEngine
 	new create() =>
     node = YogaNode.>name(root())
     renderContext = @RenderEngine_init(this)
-  
-  fun ref handleNewNodeAdded() =>
-    startNeeded = true
-  
+    
   be addToNodeByName(nodeName:String val, yoga:YogaNode iso) =>
     let found_node = node.getNodeByName(nodeName)
     
@@ -161,12 +157,10 @@ actor@ RenderEngine
       found_node.addChild( consume yoga )
     end
     */
-    handleNewNodeAdded()
     
   
   be addNode(yoga:YogaNode iso) =>
     node.addChild( consume yoga )
-    handleNewNodeAdded()
   
   be run(callback:RunCallback) =>
     callback(this)
@@ -257,17 +251,17 @@ actor@ RenderEngine
     if (focusedNodeID != 0) and (last_focus_clear_time > last_focus_request_time) and (nanoToSec(last_animation_time - last_focus_clear_time) > 0.125) then
       releaseFocus(focusedNodeID)
     end
-        
-    if startNeeded then
+    
+    
+    if node.startNeeded() then
       if (waitingOnViewsToStart == 0) then
-        
+      
         // In order to provide *some* level of layout information to the views when they load, we call layout here fully expecting that
         // we will need to layout again once the starts are done
         node.layout()
-        
+      
         let frameContext = FrameContext(this, renderContext, node.id(), focusedNodeID, 0, 0, M4fun.id(), V2fun.zero(), node.nodeSize(), node.contentSize(), R4fun.big(), screenBounds, last_animation_delta, 1.0)
         waitingOnViewsToStart = node.start(frameContext)
-        startNeeded = false
         layoutNeeded = false
         renderNeeded = false
       else

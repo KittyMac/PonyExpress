@@ -24,6 +24,8 @@ class YogaNode
   var sibling_index:USize = 0
   var sibling_count:USize = 0
   
+  var _started:Bool = false
+  
   var _customLayoutInfo:YogaUserInfoType val = None
   var _customLayoutCallback:(YogaCustomLayoutCallback|None) = None
   
@@ -201,23 +203,34 @@ class YogaNode
       idx = idx + 1
     end
   
+  
+  // Returns true if there are any unstarted nodes in the hierarchy
+  fun ref startNeeded():Bool =>
+    var startIsNeeded:Bool = (_started == false)
+    for child in children.values() do
+      startIsNeeded = child.startNeeded() or startIsNeeded
+    end
+    startIsNeeded
+  
+  
   // Called when the node is first added to the render engine hierarchy
   fun ref start(frameContext:FrameContext):U64 =>
     var n:U64 = frameContext.renderNumber
     
-    for local_view in _views.values() do
-      
-      n = frameContext.renderNumber + 1
+    if _started == false then
+      for local_view in _views.values() do
+          n = frameContext.renderNumber + 1
     
-      frameContext.renderNumber = n
-      frameContext.nodeID = id()
-      frameContext.contentSize = contentSize()
-      frameContext.nodeSize = nodeSize()
+          frameContext.renderNumber = n
+          frameContext.nodeID = id()
+          frameContext.contentSize = contentSize()
+          frameContext.nodeSize = nodeSize()
       
-      local_view.viewable_start( frameContext.clone() )
+          local_view.viewable_start( frameContext.clone() )
       
-      labaStart()
-      
+          labaStart()
+      end
+      _started = true
     end
     
     for child in children.values() do
