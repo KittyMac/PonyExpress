@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		461127DE2452986900F7AF03 /* URLDownload.m in Sources */ = {isa = PBXBuildFile; fileRef = 461127DD2452986900F7AF03 /* URLDownload.m */; };
-		461127DF2452986900F7AF03 /* URLDownload.m in Sources */ = {isa = PBXBuildFile; fileRef = 461127DD2452986900F7AF03 /* URLDownload.m */; };
 		462036A9243EC492006F1FA2 /* libapp-ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 462036A8243EC492006F1FA2 /* libapp-ios.a */; };
 		462036B9243EC5B3006F1FA2 /* PonyExpressAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 46F3A69E243D01D50030287A /* PonyExpressAppDelegate.m */; };
 		462036BA243EC5B3006F1FA2 /* PonyExpressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 46F3A6A1243D01D50030287A /* PonyExpressView.m */; };
@@ -42,6 +40,8 @@
 		462036DE243EC8E9006F1FA2 /* PonyExpressOSX.h in Headers */ = {isa = PBXBuildFile; fileRef = 462036C6243EC625006F1FA2 /* PonyExpressOSX.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		462EE8CF244FF113003CAE87 /* libpcre2-8-osx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 462EE8CE244FF113003CAE87 /* libpcre2-8-osx.a */; };
 		462EE8D1244FF11A003CAE87 /* libpcre2-8-ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 462EE8D0244FF11A003CAE87 /* libpcre2-8-ios.a */; };
+		46404FF42460754600D810D2 /* libapple-osx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46404FF32460754600D810D2 /* libapple-osx.a */; };
+		46404FF62460755400D810D2 /* libapple-ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46404FF52460755400D810D2 /* libapple-ios.a */; };
 		46572F46244E7A8A0086B77A /* RSTimingFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = 46572F44244E7A8A0086B77A /* RSTimingFunction.m */; };
 		46572F47244E7A8A0086B77A /* RSTimingFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 46572F45244E7A8A0086B77A /* RSTimingFunction.h */; };
 		46F3A660243D00180030287A /* PonyExpressiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 46F3A65E243D00180030287A /* PonyExpressiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -76,7 +76,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		461127DD2452986900F7AF03 /* URLDownload.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = URLDownload.m; sourceTree = "<group>"; };
 		462036A8243EC492006F1FA2 /* libapp-ios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libapp-ios.a"; sourceTree = "<group>"; };
 		462036AA243EC4F9006F1FA2 /* app.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = app.h; sourceTree = "<group>"; };
 		462036B0243EC533006F1FA2 /* PonyExpressOSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PonyExpressOSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -90,6 +89,8 @@
 		462EE8CE244FF113003CAE87 /* libpcre2-8-osx.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libpcre2-8-osx.a"; sourceTree = "<group>"; };
 		462EE8D0244FF11A003CAE87 /* libpcre2-8-ios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libpcre2-8-ios.a"; sourceTree = "<group>"; };
 		463CC7EB243D95270055B22A /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; name = module.modulemap; path = Xcode/module.modulemap; sourceTree = "<group>"; };
+		46404FF32460754600D810D2 /* libapple-osx.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libapple-osx.a"; sourceTree = "<group>"; };
+		46404FF52460755400D810D2 /* libapple-ios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libapple-ios.a"; sourceTree = "<group>"; };
 		46572F44244E7A8A0086B77A /* RSTimingFunction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSTimingFunction.m; sourceTree = "<group>"; };
 		46572F45244E7A8A0086B77A /* RSTimingFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSTimingFunction.h; sourceTree = "<group>"; };
 		46F3A65B243D00180030287A /* PonyExpressiOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PonyExpressiOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -139,6 +140,7 @@
 				462EE8CF244FF113003CAE87 /* libpcre2-8-osx.a in Frameworks */,
 				462036D7243EC6B5006F1FA2 /* libc++.tbd in Frameworks */,
 				462036D1243EC69B006F1FA2 /* libyoga-osx.a in Frameworks */,
+				46404FF42460754600D810D2 /* libapple-osx.a in Frameworks */,
 				462036D2243EC69D006F1FA2 /* libponyrt-osx.a in Frameworks */,
 				462036D5243EC6AC006F1FA2 /* libapp-osx.a in Frameworks */,
 				462036D3243EC6A3006F1FA2 /* libponybitmap-osx.a in Frameworks */,
@@ -152,6 +154,7 @@
 				46F3A703243D5C040030287A /* libyoga-ios.a in Frameworks */,
 				462EE8D1244FF11A003CAE87 /* libpcre2-8-ios.a in Frameworks */,
 				462036A9243EC492006F1FA2 /* libapp-ios.a in Frameworks */,
+				46404FF62460755400D810D2 /* libapple-ios.a in Frameworks */,
 				46F3A70A243D5E160030287A /* libc++.tbd in Frameworks */,
 				46F3A701243D5C040030287A /* libponybitmap-ios.a in Frameworks */,
 				46F3A702243D5C040030287A /* libponyrt-ios.a in Frameworks */,
@@ -161,14 +164,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		461127B62452967A00F7AF03 /* URLDownload */ = {
-			isa = PBXGroup;
-			children = (
-				461127DD2452986900F7AF03 /* URLDownload.m */,
-			);
-			path = URLDownload;
-			sourceTree = "<group>";
-		};
 		46F3A651243D00180030287A = {
 			isa = PBXGroup;
 			children = (
@@ -205,7 +200,6 @@
 		46F3A666243D01440030287A /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				461127B62452967A00F7AF03 /* URLDownload */,
 				46F3A699243D01D50030287A /* PonyExpress */,
 				46F3A675243D01440030287A /* PonyPlatform */,
 				46F3A678243D01440030287A /* RenderEngine */,
@@ -293,6 +287,7 @@
 				46F3A6F3243D5BFB0030287A /* libponyrt-osx.a */,
 				462EE8CE244FF113003CAE87 /* libpcre2-8-osx.a */,
 				46F3A6F4243D5BFB0030287A /* libyoga-osx.a */,
+				46404FF32460754600D810D2 /* libapple-osx.a */,
 			);
 			name = libs;
 			path = Pony/deps/osx/libs;
@@ -328,6 +323,7 @@
 				46F3A6FD243D5C040030287A /* libponyrt-ios.a */,
 				462EE8D0244FF11A003CAE87 /* libpcre2-8-ios.a */,
 				46F3A6FE243D5C040030287A /* libyoga-ios.a */,
+				46404FF52460755400D810D2 /* libapple-ios.a */,
 			);
 			name = libs;
 			path = Pony/deps/ios/libs;
@@ -535,7 +531,6 @@
 				462036DC243EC874006F1FA2 /* PonyExpressNSView.m in Sources */,
 				462036BE243EC5B3006F1FA2 /* HALRenderEngine.c in Sources */,
 				462036BC243EC5B3006F1FA2 /* PonyPlatform.m in Sources */,
-				461127DF2452986900F7AF03 /* URLDownload.m in Sources */,
 				462036B9243EC5B3006F1FA2 /* PonyExpressAppDelegate.m in Sources */,
 				462036BB243EC5B3006F1FA2 /* PonyExpressViewController.m in Sources */,
 				462036BD243EC5B3006F1FA2 /* avl_tree.c in Sources */,
@@ -549,7 +544,6 @@
 			files = (
 				46F3A697243D01440030287A /* Textured.metal in Sources */,
 				46F3A6AD243D01D50030287A /* PonyExpressView.m in Sources */,
-				461127DE2452986900F7AF03 /* URLDownload.m in Sources */,
 				46F3A695243D01440030287A /* Flat.metal in Sources */,
 				46F3A696243D01440030287A /* SDF.metal in Sources */,
 				46572F46244E7A8A0086B77A /* RSTimingFunction.m in Sources */,

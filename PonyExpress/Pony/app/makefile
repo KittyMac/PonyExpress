@@ -55,7 +55,7 @@ endef
 all: framework ios osx
 
 lldb: framework confirm
-	lldb ../ponyc/build/debug/ponyc -- -o $(builddir) --extfun -b "$(product_name)_x86_64"  -p $(deps_packagesdir) -p $(ponyapp_src) -p ../../../  --pic --debug -robj
+	lldb ../ponyc/build/debug/ponyc -- -o $(builddir) $(ponyc_args) --extfun -b "$(product_name)_x86_64"  -p $(deps_packagesdir) -p $(ponyapp_src) -p ../../../  --pic --debug -robj
 
 clean:
 	rm -rf $(builddir)
@@ -107,6 +107,7 @@ framework_packages: confirm
 	$(call copy_framework_package,pony.utility,utility)
 	$(call copy_framework_package,pony.laba,laba)
 	$(call copy_framework_package,pony.yoga,yoga,libyoga-ios.a,libyoga-osx.a)
+	$(call copy_framework_package,pony.apple,apple,libapple-ios.a,libapple-osx.a)
 
 .PHONY: framework_packages
 .PHONY: confirm

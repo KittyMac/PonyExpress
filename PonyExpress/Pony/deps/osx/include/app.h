@@ -28,8 +28,6 @@ typedef struct ui_$2$0 ui_$2$0;
 
 typedef struct ui_NullEvent ui_NullEvent;
 
-typedef struct URLDownload URLDownload;
-
 typedef struct ui_RGBA ui_RGBA;
 
 /*
@@ -117,7 +115,12 @@ no guarantees that the GC will actually reclaim any space.
 */
 typedef struct Array_String_val Array_String_val;
 
-typedef struct t2_String_val_$1$0_val t2_String_val_$1$0_val;
+/*
+A quadratic probing hash map. Resize occurs at a load factor of 0.75. A
+resized map has 2 times the space. The hash function can be plugged in to the
+type to create different kinds of maps.
+*/
+typedef struct collections_HashMap_String_val_apple_$33$0_val_collections_HashEq_String_val_val collections_HashMap_String_val_apple_$33$0_val_collections_HashEq_String_val_val;
 
 typedef struct t2_USize_val_Bool_val t2_USize_val_Bool_val;
 
@@ -138,11 +141,11 @@ A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
 included in a union or intersection, or be a subtype of any interface. Most
 functions on a Pointer[A] are private to maintain memory safety.
 */
-typedef struct format_FormatHexSmallBare format_FormatHexSmallBare;
-
 typedef struct u2_ui_YogaNode_ref_None_val u2_ui_YogaNode_ref_None_val;
 
 typedef struct ui_Viewable ui_Viewable;
+
+typedef struct format_FormatHexSmallBare format_FormatHexSmallBare;
 
 typedef struct u2_laba_$26$0_box_None_val u2_laba_$26$0_box_None_val;
 
@@ -215,11 +218,15 @@ typedef struct format_AlignRight format_AlignRight;
 
 typedef struct stringext_StringParser stringext_StringParser;
 
+typedef struct u2_apple_$33$0_val_None_val u2_apple_$33$0_val_None_val;
+
 /*
 A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
 included in a union or intersection, or be a subtype of any interface. Most
 functions on a Pointer[A] are private to maintain memory safety.
 */
+typedef struct t2_String_val_apple_$33$0_val t2_String_val_apple_$33$0_val;
+
 /*
 Worker type providing simple to string conversions for numbers.
 */
@@ -437,6 +444,23 @@ typedef struct OutStream OutStream;
 functions for a 4x4 matrix*/
 typedef struct linal_M4fun linal_M4fun;
 
+typedef struct $0$12_U32_val $0$12_U32_val;
+
+typedef struct $0$6 $0$6;
+
+typedef struct u2_ui_Controllerable_tag_None_val u2_ui_Controllerable_tag_None_val;
+
+typedef struct ui_RenderNeeded ui_RenderNeeded;
+
+typedef struct _UnsignedPartialArithmetic _UnsignedPartialArithmetic;
+
+typedef struct format_PrefixDefault format_PrefixDefault;
+
+/*
+Stores and then simulates changes to target animatable properties over time
+*/
+typedef struct laba_LabaTarget laba_LabaTarget;
+
 /*
 Contiguous, resizable memory to store elements of type A.
 
@@ -520,24 +544,7 @@ various number of elements:
 Call the `compact()` method to ask the GC to reclaim unused space. There are
 no guarantees that the GC will actually reclaim any space.
 */
-typedef struct Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val;
-
-typedef struct $0$12_U32_val $0$12_U32_val;
-
-typedef struct $0$6 $0$6;
-
-typedef struct u2_ui_Controllerable_tag_None_val u2_ui_Controllerable_tag_None_val;
-
-typedef struct ui_RenderNeeded ui_RenderNeeded;
-
-typedef struct format_PrefixDefault format_PrefixDefault;
-
-typedef struct _UnsignedPartialArithmetic _UnsignedPartialArithmetic;
-
-/*
-Stores and then simulates changes to target animatable properties over time
-*/
-typedef struct laba_LabaTarget laba_LabaTarget;
+typedef struct Array_u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val Array_u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val;
 
 /*
 Things that can be turned into a String.
@@ -557,13 +564,6 @@ typedef struct _UTF32Encoder _UTF32Encoder;
 
 typedef struct ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_val ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_val;
 
-typedef struct $1$0 $1$0;
-
-/*
-A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
-included in a union or intersection, or be a subtype of any interface. Most
-functions on a Pointer[A] are private to maintain memory safety.
-*/
 typedef struct u2_ui_RenderEngine_tag_None_val u2_ui_RenderEngine_tag_None_val;
 
 /*
@@ -700,8 +700,6 @@ typedef struct laba_LabaActionWidth laba_LabaActionWidth;
 
 typedef struct ui_RenderContext ui_RenderContext;
 
-typedef struct u2_Array_U8_val_val_None_val u2_Array_U8_val_val_None_val;
-
 /*
 Memory allocations for large amounts of geometry can get expensive. So the ideal circumstance is we allocate it once and it can be
 used by the native renderer without any copying required. To do this and allow multiple frames to be rendered simultaneously (ie
@@ -709,6 +707,8 @@ the buffer is being used by the renderer for the previous frame while we are fil
 have a rotating system of buffers.  This class facilitates that.
 */
 typedef struct ui_BufferedGeometry ui_BufferedGeometry;
+
+typedef struct apple_URLDownload apple_URLDownload;
 
 typedef struct t3_F32_val_F32_val_F32_val t3_F32_val_F32_val_F32_val;
 
@@ -718,17 +718,17 @@ included in a union or intersection, or be a subtype of any interface. Most
 functions on a Pointer[A] are private to maintain memory safety.
 */
 /*
+One unit of geometry. Hash needs to uniquely represent the buffered content in order to allow for reuse of geometric
+data if nothing has changed
+*/
+typedef struct ui_Geometry ui_Geometry;
+
+/*
 A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
 included in a union or intersection, or be a subtype of any interface. Most
 functions on a Pointer[A] are private to maintain memory safety.
 */
 typedef struct u3_format_PrefixDefault_val_format_PrefixSpace_val_format_PrefixSign_val u3_format_PrefixDefault_val_format_PrefixSpace_val_format_PrefixSign_val;
-
-/*
-One unit of geometry. Hash needs to uniquely represent the buffered content in order to allow for reuse of geometric
-data if nothing has changed
-*/
-typedef struct ui_Geometry ui_Geometry;
 
 /*
 A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
@@ -769,13 +769,6 @@ typedef struct ArrayValues_laba_LabaAction_ref_Array_laba_LabaAction_ref_box Arr
 Worker type providing to string conversions for integers.
 */
 typedef struct format__FormatInt format__FormatInt;
-
-/*
-A quadratic probing hash map. Resize occurs at a load factor of 0.75. A
-resized map has 2 times the space. The hash function can be plugged in to the
-type to create different kinds of maps.
-*/
-typedef struct collections_HashMap_String_val_$1$0_val_collections_HashEq_String_val_val collections_HashMap_String_val_$1$0_val_collections_HashEq_String_val_val;
 
 /*
 Contiguous, resizable memory to store elements of type A.
@@ -863,6 +856,11 @@ no guarantees that the GC will actually reclaim any space.
 typedef struct Array_laba_LabaActionGroup_ref Array_laba_LabaActionGroup_ref;
 
 /*
+A Pointer[A] is a raw memory pointer. It has no descriptor and thus can't be
+included in a union or intersection, or be a subtype of any interface. Most
+functions on a Pointer[A] are private to maintain memory safety.
+*/
+/*
 The render engine is responsible for sending "renderable chunks" across the FFI to the 3D engine
 one whatever platform we are on. A renderable chunk consists of
 1. all geometric data, already transformed and ready to render
@@ -911,8 +909,6 @@ included in a union or intersection, or be a subtype of any interface. Most
 functions on a Pointer[A] are private to maintain memory safety.
 */
 typedef struct t5_USize_val_U8_val_U8_val_U8_val_U8_val t5_USize_val_U8_val_U8_val_U8_val_U8_val;
-
-typedef struct u2_$1$0_val_None_val u2_$1$0_val_None_val;
 
 typedef struct PlatformIOS PlatformIOS;
 
@@ -1067,6 +1063,10 @@ r0.8 is rotate to 0.8 scale
 */
 typedef struct laba_LabaActionRoll laba_LabaActionRoll;
 
+typedef struct u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val;
+
+typedef struct u2_Array_U8_val_val_String_val u2_Array_U8_val_val_String_val;
+
 typedef struct linal_Q4fun linal_Q4fun;
 
 /*
@@ -1076,9 +1076,11 @@ typedef struct linal_Linear linal_Linear;
 
 typedef struct t2_U32_val_U8_val t2_U32_val_U8_val;
 
-typedef struct format_FormatDefault format_FormatDefault;
+typedef struct apple_$33$0 apple_$33$0;
 
 typedef struct u3_None_val_ui_LayoutNeeded_val_ui_RenderNeeded_val u3_None_val_ui_LayoutNeeded_val_ui_RenderNeeded_val;
+
+typedef struct format_FormatDefault format_FormatDefault;
 
 typedef struct collections_HashEq_String_val collections_HashEq_String_val;
 
@@ -1212,8 +1214,6 @@ typedef struct laba_Laba laba_Laba;
 
 typedef struct collections__MapDeleted collections__MapDeleted;
 
-typedef struct u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val;
-
 /*
 Contiguous, resizable memory to store elements of type A.
 
@@ -1301,12 +1301,12 @@ typedef struct Array_laba_Laba_ref Array_laba_Laba_ref;
 
 typedef struct ArrayPairs_U8_val_Array_U8_val_box ArrayPairs_U8_val_Array_U8_val_box;
 
-typedef struct t3_U32_val_String_val_String_val t3_U32_val_String_val_String_val;
-
 /*
 Rendering actors can call this concurrently safely to submit geometry to the platform rendering engine
 */
 typedef struct ui_RenderPrimitive ui_RenderPrimitive;
+
+typedef struct t3_U32_val_String_val_String_val t3_U32_val_String_val_String_val;
 
 typedef struct ui_KeyEvent ui_KeyEvent;
 
@@ -1434,6 +1434,8 @@ actions are animatable commands. All of them store their from and to values, and
 interpolated animation value using the easing function provided
 */
 typedef struct laba_LabaAction laba_LabaAction;
+
+typedef struct apple_Memory apple_Memory;
 
 /*
 Contiguous, resizable memory to store elements of type A.
@@ -1565,15 +1567,6 @@ ui_$2$0* ui_$2$0_Alloc(void);
 /* Allocate a ui_NullEvent without initialising it. */
 ui_NullEvent* ui_NullEvent_Alloc(void);
 
-/* Allocate a URLDownload without initialising it. */
-URLDownload* URLDownload_Alloc(void);
-
-URLDownload* URLDownload_tag_create_o__send(URLDownload* self);
-
-None* URLDownload_tag_response_ooZo__send(URLDownload* self, String* uuid, char* data, size_t size);
-
-None* URLDownload_tag_get_ooo__send(URLDownload* self, String* url, $1$0* callback);
-
 /* Allocate a ui_RGBA without initialising it. */
 ui_RGBA* ui_RGBA_Alloc(void);
 
@@ -1654,8 +1647,25 @@ double F64_box_f64_d(double self);
 
 double F64_val_create_dd(double self, double value);
 
-/* Allocate a t2_String_val_$1$0_val without initialising it. */
-t2_String_val_$1$0_val* t2_String_val_$1$0_val_Alloc(void);
+/* Allocate a collections_HashMap_String_val_apple_$33$0_val_collections_HashEq_String_val_val without initialising it. */
+collections_HashMap_String_val_apple_$33$0_val_collections_HashEq_String_val_val* collections_HashMap_String_val_apple_$33$0_val_collections_HashEq_String_val_val_Alloc(void);
+
+/*
+Sets a value in the map. Returns the old value if there was one, otherwise
+returns None. If there was no previous value, this may trigger a resize.
+*/
+void* collections_HashMap_String_val_apple_$33$0_val_collections_HashEq_String_val_val_ref_update_ooo(collections_HashMap_String_val_apple_$33$0_val_collections_HashEq_String_val_val* self, String* key, apple_$33$0* value);
+
+/*
+Change the available space.
+*/
+None* collections_HashMap_String_val_apple_$33$0_val_collections_HashEq_String_val_val_ref__resize_Zo(collections_HashMap_String_val_apple_$33$0_val_collections_HashEq_String_val_val* self, size_t len);
+
+/*
+Create an array with space for prealloc elements without triggering a
+resize. Defaults to 6.
+*/
+collections_HashMap_String_val_apple_$33$0_val_collections_HashEq_String_val_val* collections_HashMap_String_val_apple_$33$0_val_collections_HashEq_String_val_val_ref_create_Zo(collections_HashMap_String_val_apple_$33$0_val_collections_HashEq_String_val_val* self, size_t prealloc);
 
 /* Allocate a t2_USize_val_Bool_val without initialising it. */
 t2_USize_val_Bool_val* t2_USize_val_Bool_val_Alloc(void);
@@ -1824,15 +1834,6 @@ Copy n elements from this to that.
 */
 char* Pointer_U8_val_box__copy_to_oZo(char* self, char* that, size_t n);
 
-/* Allocate a format_FormatHexSmallBare without initialising it. */
-format_FormatHexSmallBare* format_FormatHexSmallBare_Alloc(void);
-
-format_FormatHexSmallBare* format_FormatHexSmallBare_val_create_o(format_FormatHexSmallBare* self);
-
-bool format_FormatHexSmallBare_box_eq_ob(format_FormatHexSmallBare* self, format_FormatHexSmallBare* that);
-
-bool format_FormatHexSmallBare_val_eq_ob(format_FormatHexSmallBare* self, format_FormatHexSmallBare* that);
-
 /* Allocate a u2_ui_YogaNode_ref_None_val without initialising it. */
 u2_ui_YogaNode_ref_None_val* u2_ui_YogaNode_ref_None_val_Alloc(void);
 
@@ -1868,6 +1869,15 @@ None* ui_Viewable_ref_finish_o(ui_Viewable* self);
 None* ui_Viewable_tag_viewable_finish_o(ui_Viewable* self);
 
 None* ui_Viewable_ref_animate_fo(ui_Viewable* self, float delta);
+
+/* Allocate a format_FormatHexSmallBare without initialising it. */
+format_FormatHexSmallBare* format_FormatHexSmallBare_Alloc(void);
+
+format_FormatHexSmallBare* format_FormatHexSmallBare_val_create_o(format_FormatHexSmallBare* self);
+
+bool format_FormatHexSmallBare_box_eq_ob(format_FormatHexSmallBare* self, format_FormatHexSmallBare* that);
+
+bool format_FormatHexSmallBare_val_eq_ob(format_FormatHexSmallBare* self, format_FormatHexSmallBare* that);
 
 /* Allocate a u2_laba_$26$0_box_None_val without initialising it. */
 u2_laba_$26$0_box_None_val* u2_laba_$26$0_box_None_val_Alloc(void);
@@ -1935,13 +1945,13 @@ char U32_val_u8_C(uint32_t self);
 
 uint32_t U32_val_create_II(uint32_t self, uint32_t value);
 
-bool U32_val_lt_Ib(uint32_t self, uint32_t y);
-
-bool U32_box_lt_Ib(uint32_t self, uint32_t y);
-
 uint32_t U32_box_op_or_II(uint32_t self, uint32_t y);
 
 uint32_t U32_val_op_or_II(uint32_t self, uint32_t y);
+
+bool U32_val_lt_Ib(uint32_t self, uint32_t y);
+
+bool U32_box_lt_Ib(uint32_t self, uint32_t y);
 
 __uint128_t U32_box_u128_Q(uint32_t self);
 
@@ -2238,6 +2248,9 @@ size_t stringext_StringParser_ref_advance_oZ(stringext_StringParser* self, Array
 
 stringext_StringParser* stringext_StringParser_ref_create_oo(stringext_StringParser* self, String* string_);
 
+/* Allocate a u2_apple_$33$0_val_None_val without initialising it. */
+u2_apple_$33$0_val_None_val* u2_apple_$33$0_val_None_val_Alloc(void);
+
 /*
 Convert the pointer into an integer.
 */
@@ -2258,6 +2271,9 @@ Convert the pointer into an integer.
 */
 size_t Pointer_yoga_YGNode_val_tag_usize_Z(yoga_YGNode** self);
 
+/* Allocate a t2_String_val_apple_$33$0_val without initialising it. */
+t2_String_val_apple_$33$0_val* t2_String_val_apple_$33$0_val_Alloc(void);
+
 /* Allocate a _ToString without initialising it. */
 _ToString* _ToString_Alloc(void);
 
@@ -2267,13 +2283,13 @@ String* _ToString_val__u64_Wbo(_ToString* self, uint64_t x, bool neg);
 
 _ToString* _ToString_val_create_o(_ToString* self);
 
-String* _ToString_val__u128_Qbo(_ToString* self, __uint128_t x, bool neg);
-
-String* _ToString_box__u128_Qbo(_ToString* self, __uint128_t x, bool neg);
-
 String* _ToString_val__f64_do(_ToString* self, double x);
 
 String* _ToString_box__f64_do(_ToString* self, double x);
+
+String* _ToString_val__u128_Qbo(_ToString* self, __uint128_t x, bool neg);
+
+String* _ToString_box__u128_Qbo(_ToString* self, __uint128_t x, bool neg);
 
 /*
 Space for len instances of A.
@@ -2538,12 +2554,6 @@ Return an iterator over the (index, value) pairs in the array.
 ArrayPairs_U8_val_Array_U8_val_box* Array_U8_val_box_pairs_o(Array_U8_val* self);
 
 /*
-Create an array from a C-style pointer and length. The contents are not
-copied.
-*/
-Array_U8_val* Array_U8_val_ref_from_cpointer_oZZo(Array_U8_val* self, char* ptr, size_t len, size_t alloc);
-
-/*
 The number of elements in the array.
 */
 size_t Array_U8_val_ref_size_Z(Array_U8_val* self);
@@ -2557,6 +2567,12 @@ size_t Array_U8_val_val_size_Z(Array_U8_val* self);
 The number of elements in the array.
 */
 size_t Array_U8_val_box_size_Z(Array_U8_val* self);
+
+/*
+Create an array from a C-style pointer and length. The contents are not
+copied.
+*/
+Array_U8_val* Array_U8_val_ref_from_cpointer_oZZo(Array_U8_val* self, char* ptr, size_t len, size_t alloc);
 
 /*
 Reserve space for len elements, including whatever elements are already in
@@ -2669,37 +2685,6 @@ linal_M4fun* linal_M4fun_Alloc(void);
 
 linal_M4fun* linal_M4fun_val_create_o(linal_M4fun* self);
 
-/* Allocate a Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val without initialising it. */
-Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val* Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_Alloc(void);
-
-/*
-Create an array of len elements, all initialised to the given value.
-*/
-Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val* Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_ref_init_oZo(Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val* self, void* from, size_t len);
-
-/*
-The number of elements in the array.
-*/
-size_t Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_ref_size_Z(Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val* self);
-
-/*
-The number of elements in the array.
-*/
-size_t Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_val_size_Z(Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val* self);
-
-/*
-The number of elements in the array.
-*/
-size_t Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_box_size_Z(Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val* self);
-
-size_t Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_ref_next_growth_size_ZZ(Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val* self, size_t s);
-
-size_t Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_val_next_growth_size_ZZ(Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val* self, size_t s);
-
-size_t Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_box_next_growth_size_ZZ(Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val* self, size_t s);
-
-size_t Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_tag_next_growth_size_ZZ(Array_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val* self, size_t s);
-
 /* Allocate a $0$12_U32_val without initialising it. */
 $0$12_U32_val* $0$12_U32_val_Alloc(void);
 
@@ -2726,15 +2711,15 @@ bool ui_RenderNeeded_box_eq_ob(ui_RenderNeeded* self, ui_RenderNeeded* that);
 
 bool ui_RenderNeeded_val_eq_ob(ui_RenderNeeded* self, ui_RenderNeeded* that);
 
-/* Allocate a format_PrefixDefault without initialising it. */
-format_PrefixDefault* format_PrefixDefault_Alloc(void);
-
-format_PrefixDefault* format_PrefixDefault_val_create_o(format_PrefixDefault* self);
-
 /* Allocate a _UnsignedPartialArithmetic without initialising it. */
 _UnsignedPartialArithmetic* _UnsignedPartialArithmetic_Alloc(void);
 
 _UnsignedPartialArithmetic* _UnsignedPartialArithmetic_val_create_o(_UnsignedPartialArithmetic* self);
+
+/* Allocate a format_PrefixDefault without initialising it. */
+format_PrefixDefault* format_PrefixDefault_Alloc(void);
+
+format_PrefixDefault* format_PrefixDefault_val_create_o(format_PrefixDefault* self);
 
 /* Allocate a laba_LabaTarget without initialising it. */
 laba_LabaTarget* laba_LabaTarget_Alloc(void);
@@ -2784,6 +2769,37 @@ float laba_LabaTarget_ref_getYaw_f(laba_LabaTarget* self);
 None* laba_LabaTarget_ref_syncToNode_bo(laba_LabaTarget* self, bool print);
 
 None* laba_LabaTarget_ref_setYaw_fo(laba_LabaTarget* self, float a);
+
+/* Allocate a Array_u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val without initialising it. */
+Array_u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val* Array_u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val_Alloc(void);
+
+/*
+Create an array of len elements, all initialised to the given value.
+*/
+Array_u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val* Array_u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val_ref_init_oZo(Array_u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val* self, void* from, size_t len);
+
+/*
+The number of elements in the array.
+*/
+size_t Array_u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val_ref_size_Z(Array_u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val* self);
+
+/*
+The number of elements in the array.
+*/
+size_t Array_u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val_val_size_Z(Array_u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val* self);
+
+/*
+The number of elements in the array.
+*/
+size_t Array_u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val_box_size_Z(Array_u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val* self);
+
+size_t Array_u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val_ref_next_growth_size_ZZ(Array_u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val* self, size_t s);
+
+size_t Array_u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val_val_next_growth_size_ZZ(Array_u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val* self, size_t s);
+
+size_t Array_u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val_box_next_growth_size_ZZ(Array_u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val* self, size_t s);
+
+size_t Array_u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val_tag_next_growth_size_ZZ(Array_u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val* self, size_t s);
 
 /* Allocate a Stringable without initialising it. */
 Stringable* Stringable_Alloc(void);
@@ -2862,15 +2878,6 @@ ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_val* ArrayValues_laba_Laba_ref_Arr
 
 ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_val* ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_val_ref_create_oZo(ArrayValues_laba_Laba_ref_Array_laba_Laba_ref_val* self, Array_laba_Laba_ref* array, size_t offset);
 
-/* Allocate a $1$0 without initialising it. */
-$1$0* $1$0_Alloc(void);
-
-None* $1$0_val_apply_oo($1$0* self, void* p1);
-
-None* $1$0_box_apply_oo($1$0* self, void* p1);
-
-None* $1$0_ref_apply_oo($1$0* self, void* p1);
-
 bool U64_box_le_Wb(uint64_t self, uint64_t y);
 
 bool U64_val_le_Wb(uint64_t self, uint64_t y);
@@ -2933,11 +2940,11 @@ uint64_t U64_box_neg_W(uint64_t self);
 
 uint64_t U64_val_neg_W(uint64_t self);
 
+uint64_t U64_val_create_WW(uint64_t self, uint64_t value);
+
 uint64_t U64_box_op_or_WW(uint64_t self, uint64_t y);
 
 uint64_t U64_val_op_or_WW(uint64_t self, uint64_t y);
-
-uint64_t U64_val_create_WW(uint64_t self, uint64_t value);
 
 bool U64_val_lt_Wb(uint64_t self, uint64_t y);
 
@@ -2946,36 +2953,6 @@ bool U64_box_lt_Wb(uint64_t self, uint64_t y);
 bool U64_box_gt_Wb(uint64_t self, uint64_t y);
 
 bool U64_val_gt_Wb(uint64_t self, uint64_t y);
-
-/*
-Space for len instances of A.
-*/
-void** Pointer_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_ref__alloc_Zo(void** self, size_t len);
-
-/*
-A null pointer.
-*/
-void** Pointer_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_ref_create_o(void** self);
-
-/*
-Set index i and return the previous value.
-*/
-void* Pointer_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_ref__update_Zoo(void** self, size_t i, void* value);
-
-/*
-Retrieve index i.
-*/
-void* Pointer_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_box__apply_Zo(void** self, size_t i);
-
-/*
-Retrieve index i.
-*/
-void* Pointer_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_val__apply_Zo(void** self, size_t i);
-
-/*
-Retrieve index i.
-*/
-void* Pointer_u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_ref__apply_Zo(void** self, size_t i);
 
 /* Allocate a u2_ui_RenderEngine_tag_None_val without initialising it. */
 u2_ui_RenderEngine_tag_None_val* u2_ui_RenderEngine_tag_None_val_Alloc(void);
@@ -3124,15 +3101,15 @@ ssize_t U8_box_isize_z(char self);
 
 ssize_t U8_val_isize_z(char self);
 
-char U8_val_op_or_CC(char self, char y);
-
-char U8_box_op_or_CC(char self, char y);
-
 char U8_val_create_CC(char self, char value);
 
 bool U8_val_lt_Cb(char self, char y);
 
 bool U8_box_lt_Cb(char self, char y);
+
+char U8_val_op_or_CC(char self, char y);
+
+char U8_box_op_or_CC(char self, char y);
 
 bool U8_val_gt_Cb(char self, char y);
 
@@ -3268,9 +3245,6 @@ None* laba_LabaActionWidth_val_update_ofo(laba_LabaActionWidth* self, laba_LabaT
 /* Allocate a ui_RenderContext without initialising it. */
 ui_RenderContext* ui_RenderContext_Alloc(void);
 
-/* Allocate a u2_Array_U8_val_val_None_val without initialising it. */
-u2_Array_U8_val_val_None_val* u2_Array_U8_val_val_None_val_Alloc(void);
-
 bool ISize_box_le_zb(ssize_t self, ssize_t y);
 
 bool ISize_val_le_zb(ssize_t self, ssize_t y);
@@ -3362,6 +3336,19 @@ ui_Geometry* ui_BufferedGeometry_ref_next_o(ui_BufferedGeometry* self);
 
 ui_BufferedGeometry* ui_BufferedGeometry_ref_create_o(ui_BufferedGeometry* self);
 
+/* Allocate a apple_URLDownload without initialising it. */
+apple_URLDownload* apple_URLDownload_Alloc(void);
+
+None* apple_URLDownload_tag_get_ooo__send(apple_URLDownload* self, String* url, apple_$33$0* callback);
+
+None* apple_URLDownload_tag_responseFail_ooo__send(apple_URLDownload* self, String* uuid, String* errorString);
+
+None* apple_URLDownload_tag_responseSuccess_ooo__send(apple_URLDownload* self, String* uuid, Array_U8_val* data);
+
+None* apple_URLDownload_ref_neverCalled_o(apple_URLDownload* self);
+
+apple_URLDownload* apple_URLDownload_tag_create_o__send(apple_URLDownload* self);
+
 String* I32_ref_string_o(int32_t self);
 
 String* I32_val_string_o(int32_t self);
@@ -3432,6 +3419,11 @@ A null pointer.
 */
 ui_YogaNode** Pointer_ui_YogaNode_ref_ref_create_o(ui_YogaNode** self);
 
+/* Allocate a ui_Geometry without initialising it. */
+ui_Geometry* ui_Geometry_Alloc(void);
+
+ui_Geometry* ui_Geometry_iso_create_o(ui_Geometry* self);
+
 /*
 A null pointer.
 */
@@ -3439,11 +3431,6 @@ None** Pointer_None_val_ref_create_o(None** self);
 
 /* Allocate a u3_format_PrefixDefault_val_format_PrefixSpace_val_format_PrefixSign_val without initialising it. */
 u3_format_PrefixDefault_val_format_PrefixSpace_val_format_PrefixSign_val* u3_format_PrefixDefault_val_format_PrefixSpace_val_format_PrefixSign_val_Alloc(void);
-
-/* Allocate a ui_Geometry without initialising it. */
-ui_Geometry* ui_Geometry_Alloc(void);
-
-ui_Geometry* ui_Geometry_iso_create_o(ui_Geometry* self);
 
 /*
 Space for len instances of A.
@@ -3582,26 +3569,6 @@ String* format__FormatInt_val__large_o(format__FormatInt* self);
 
 format__FormatInt* format__FormatInt_val_create_o(format__FormatInt* self);
 
-/* Allocate a collections_HashMap_String_val_$1$0_val_collections_HashEq_String_val_val without initialising it. */
-collections_HashMap_String_val_$1$0_val_collections_HashEq_String_val_val* collections_HashMap_String_val_$1$0_val_collections_HashEq_String_val_val_Alloc(void);
-
-/*
-Sets a value in the map. Returns the old value if there was one, otherwise
-returns None. If there was no previous value, this may trigger a resize.
-*/
-void* collections_HashMap_String_val_$1$0_val_collections_HashEq_String_val_val_ref_update_ooo(collections_HashMap_String_val_$1$0_val_collections_HashEq_String_val_val* self, String* key, $1$0* value);
-
-/*
-Change the available space.
-*/
-None* collections_HashMap_String_val_$1$0_val_collections_HashEq_String_val_val_ref__resize_Zo(collections_HashMap_String_val_$1$0_val_collections_HashEq_String_val_val* self, size_t len);
-
-/*
-Create an array with space for prealloc elements without triggering a
-resize. Defaults to 6.
-*/
-collections_HashMap_String_val_$1$0_val_collections_HashEq_String_val_val* collections_HashMap_String_val_$1$0_val_collections_HashEq_String_val_val_ref_create_Zo(collections_HashMap_String_val_$1$0_val_collections_HashEq_String_val_val* self, size_t prealloc);
-
 /* Allocate a Array_laba_LabaActionGroup_ref without initialising it. */
 Array_laba_LabaActionGroup_ref* Array_laba_LabaActionGroup_ref_Alloc(void);
 
@@ -3638,6 +3605,36 @@ size_t Array_laba_LabaActionGroup_ref_tag_next_growth_size_ZZ(Array_laba_LabaAct
 Add an element to the end of the array.
 */
 None* Array_laba_LabaActionGroup_ref_ref_push_oo(Array_laba_LabaActionGroup_ref* self, laba_LabaActionGroup* value);
+
+/*
+Space for len instances of A.
+*/
+void** Pointer_u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val_ref__alloc_Zo(void** self, size_t len);
+
+/*
+A null pointer.
+*/
+void** Pointer_u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val_ref_create_o(void** self);
+
+/*
+Set index i and return the previous value.
+*/
+void* Pointer_u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val_ref__update_Zoo(void** self, size_t i, void* value);
+
+/*
+Retrieve index i.
+*/
+void* Pointer_u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val_box__apply_Zo(void** self, size_t i);
+
+/*
+Retrieve index i.
+*/
+void* Pointer_u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val_val__apply_Zo(void** self, size_t i);
+
+/*
+Retrieve index i.
+*/
+void* Pointer_u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val_ref__apply_Zo(void** self, size_t i);
 
 /* Allocate a ui_RenderEngine without initialising it. */
 ui_RenderEngine* ui_RenderEngine_Alloc(void);
@@ -3759,9 +3756,6 @@ String** Pointer_String_val_ref_create_o(String** self);
 
 /* Allocate a t5_USize_val_U8_val_U8_val_U8_val_U8_val without initialising it. */
 t5_USize_val_U8_val_U8_val_U8_val_U8_val* t5_USize_val_U8_val_U8_val_U8_val_U8_val_Alloc(void);
-
-/* Allocate a u2_$1$0_val_None_val without initialising it. */
-u2_$1$0_val_None_val* u2_$1$0_val_None_val_Alloc(void);
 
 /* Allocate a PlatformIOS without initialising it. */
 PlatformIOS* PlatformIOS_Alloc(void);
@@ -4198,6 +4192,11 @@ size_t String_val_offset_to_index_zZ(String* self, ssize_t i);
 
 size_t String_ref_offset_to_index_zZ(String* self, ssize_t i);
 
+/*
+Create a string by copying a fixed number of bytes from a pointer.
+*/
+String* String_ref_copy_cpointer_oZo(String* self, char* str, size_t len);
+
 /* Allocate a t2_F32_val_F32_val without initialising it. */
 t2_F32_val_F32_val* t2_F32_val_F32_val_Alloc(void);
 
@@ -4419,6 +4418,12 @@ None* laba_LabaActionRoll_ref_update_ofo(laba_LabaActionRoll* self, laba_LabaTar
 
 None* laba_LabaActionRoll_val_update_ofo(laba_LabaActionRoll* self, laba_LabaTarget* target, float animationValue);
 
+/* Allocate a u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val without initialising it. */
+u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val* u3_t2_String_val_apple_$33$0_val_collections__MapEmpty_val_collections__MapDeleted_val_Alloc(void);
+
+/* Allocate a u2_Array_U8_val_val_String_val without initialising it. */
+u2_Array_U8_val_val_String_val* u2_Array_U8_val_val_String_val_Alloc(void);
+
 /* Allocate a linal_Q4fun without initialising it. */
 linal_Q4fun* linal_Q4fun_Alloc(void);
 
@@ -4440,11 +4445,20 @@ bool linal_Linear_val_eq_fffb(linal_Linear* self, float a, float b, float eps);
 /* Allocate a t2_U32_val_U8_val without initialising it. */
 t2_U32_val_U8_val* t2_U32_val_U8_val_Alloc(void);
 
-/* Allocate a format_FormatDefault without initialising it. */
-format_FormatDefault* format_FormatDefault_Alloc(void);
+/* Allocate a apple_$33$0 without initialising it. */
+apple_$33$0* apple_$33$0_Alloc(void);
+
+None* apple_$33$0_val_apply_oo(apple_$33$0* self, void* p1);
+
+None* apple_$33$0_box_apply_oo(apple_$33$0* self, void* p1);
+
+None* apple_$33$0_ref_apply_oo(apple_$33$0* self, void* p1);
 
 /* Allocate a u3_None_val_ui_LayoutNeeded_val_ui_RenderNeeded_val without initialising it. */
 u3_None_val_ui_LayoutNeeded_val_ui_RenderNeeded_val* u3_None_val_ui_LayoutNeeded_val_ui_RenderNeeded_val_Alloc(void);
+
+/* Allocate a format_FormatDefault without initialising it. */
+format_FormatDefault* format_FormatDefault_Alloc(void);
 
 /* Allocate a collections_HashEq_String_val without initialising it. */
 collections_HashEq_String_val* collections_HashEq_String_val_Alloc(void);
@@ -4701,7 +4715,7 @@ utility_UUID* utility_UUID_Alloc(void);
 /*
 Returns a string representation of the UUID.
 */
-String* utility_UUID_ref_string_o(utility_UUID* self);
+String* utility_UUID_box_string_o(utility_UUID* self);
 
 /*
 Returns a string representation of the UUID.
@@ -4711,7 +4725,7 @@ String* utility_UUID_val_string_o(utility_UUID* self);
 /*
 Returns a string representation of the UUID.
 */
-String* utility_UUID_box_string_o(utility_UUID* self);
+String* utility_UUID_ref_string_o(utility_UUID* self);
 
 /*
 Creates a random UUID. This is an alias for the `v4` constructor.
@@ -4800,9 +4814,6 @@ bool collections__MapDeleted_box_eq_ob(collections__MapDeleted* self, collection
 
 bool collections__MapDeleted_val_eq_ob(collections__MapDeleted* self, collections__MapDeleted* that);
 
-/* Allocate a u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val without initialising it. */
-u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val* u3_t2_String_val_$1$0_val_collections__MapEmpty_val_collections__MapDeleted_val_Alloc(void);
-
 /* Allocate a Array_laba_Laba_ref without initialising it. */
 Array_laba_Laba_ref* Array_laba_Laba_ref_Alloc(void);
 
@@ -4874,11 +4885,11 @@ bool U128_box_ne_Qb(__uint128_t self, __uint128_t y);
 
 bool U128_val_ne_Qb(__uint128_t self, __uint128_t y);
 
-String* U128_ref_string_o(__uint128_t self);
+String* U128_box_string_o(__uint128_t self);
 
 String* U128_val_string_o(__uint128_t self);
 
-String* U128_box_string_o(__uint128_t self);
+String* U128_ref_string_o(__uint128_t self);
 
 __uint128_t U128_box_mul_QQ(__uint128_t self, __uint128_t y);
 
@@ -4911,9 +4922,6 @@ ArrayPairs_U8_val_Array_U8_val_box* ArrayPairs_U8_val_Array_U8_val_box_Alloc(voi
 
 ArrayPairs_U8_val_Array_U8_val_box* ArrayPairs_U8_val_Array_U8_val_box_ref_create_oo(ArrayPairs_U8_val_Array_U8_val_box* self, Array_U8_val* array);
 
-/* Allocate a t3_U32_val_String_val_String_val without initialising it. */
-t3_U32_val_String_val_String_val* t3_U32_val_String_val_String_val_Alloc(void);
-
 /* Allocate a ui_RenderPrimitive without initialising it. */
 ui_RenderPrimitive* ui_RenderPrimitive_Alloc(void);
 
@@ -4930,6 +4938,9 @@ None* ui_RenderPrimitive_val_startFinished_oo(ui_RenderPrimitive* self, ui_Frame
 None* ui_RenderPrimitive_tag_startFinished_oo(ui_RenderPrimitive* self, ui_FrameContext* frameContext);
 
 None* ui_RenderPrimitive_box_startFinished_oo(ui_RenderPrimitive* self, ui_FrameContext* frameContext);
+
+/* Allocate a t3_U32_val_String_val_String_val without initialising it. */
+t3_U32_val_String_val_String_val* t3_U32_val_String_val_String_val_Alloc(void);
 
 /* Allocate a ui_KeyEvent without initialising it. */
 ui_KeyEvent* ui_KeyEvent_Alloc(void);
@@ -5402,6 +5413,27 @@ None* laba_LabaAction_box_update_ofo(laba_LabaAction* self, laba_LabaTarget* tar
 None* laba_LabaAction_ref_update_ofo(laba_LabaAction* self, laba_LabaTarget* target, float animationValue);
 
 None* laba_LabaAction_val_update_ofo(laba_LabaAction* self, laba_LabaTarget* target, float animationValue);
+
+/* Allocate a apple_Memory without initialising it. */
+apple_Memory* apple_Memory_Alloc(void);
+
+Array_U8_val* apple_Memory_val_arrayFromCPointer_oZo(apple_Memory* self, char* data, size_t size);
+
+Array_U8_val* apple_Memory_tag_arrayFromCPointer_oZo(apple_Memory* self, char* data, size_t size);
+
+Array_U8_val* apple_Memory_ref_arrayFromCPointer_oZo(apple_Memory* self, char* data, size_t size);
+
+Array_U8_val* apple_Memory_box_arrayFromCPointer_oZo(apple_Memory* self, char* data, size_t size);
+
+apple_Memory* apple_Memory_tag_create_o__send(apple_Memory* self);
+
+String* apple_Memory_ref_stringFromCPointer_oZo(apple_Memory* self, char* data, size_t size);
+
+String* apple_Memory_tag_stringFromCPointer_oZo(apple_Memory* self, char* data, size_t size);
+
+String* apple_Memory_box_stringFromCPointer_oZo(apple_Memory* self, char* data, size_t size);
+
+String* apple_Memory_val_stringFromCPointer_oZo(apple_Memory* self, char* data, size_t size);
 
 /* Allocate a Array_ui_Geometry_ref without initialising it. */
 Array_ui_Geometry_ref* Array_ui_Geometry_ref_Alloc(void);
