@@ -1,7 +1,7 @@
 use "collections"
 use "utility"
 
-use @Apple_URLDownload[None](uuid:String val, url:String val, sender:URLDownload tag)
+use @Apple_URLDownload[None](sender:URLDownload tag, uuid:String, method:String, body:String, url:String)
 
 type URLDownloadError is String
 type URLDownloadResult is (Array[U8] | URLDownloadError)
@@ -31,8 +31,27 @@ actor@ URLDownload
       callback(data)
     end
 
-  be get(url:String, callback:URLDownloadCallback val) =>
+  be get(url:String, body:(String|None), callback:URLDownloadCallback val) =>
     let uuid:String val = UUID.string()
     mapResponses(uuid) = callback
-    @Apple_URLDownload[None](uuid, url, this)
+    match body
+    | let bodyAsString:String => @Apple_URLDownload(this, uuid, "GET", bodyAsString, url)
+    | None => @Apple_URLDownload(this, uuid, "GET", "", url)
+    end
+  
+  be put(url:String, body:(String|None), callback:URLDownloadCallback val) =>
+    let uuid:String val = UUID.string()
+    mapResponses(uuid) = callback
+    match body
+    | let bodyAsString:String => @Apple_URLDownload(this, uuid, "PUT", bodyAsString, url)
+    | None => @Apple_URLDownload(this, uuid, "PUT", "", url)
+    end
+  
+  be post(url:String, body:(String|None), callback:URLDownloadCallback val) =>
+    let uuid:String val = UUID.string()
+    mapResponses(uuid) = callback
+    match body
+    | let bodyAsString:String => @Apple_URLDownload(this, uuid, "POST", bodyAsString, url)
+    | None => @Apple_URLDownload(this, uuid, "POST", "", url)
+    end
     

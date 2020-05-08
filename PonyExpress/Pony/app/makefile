@@ -35,6 +35,9 @@ else
 ponyc=../ponyc/build/release/ponyc
 endif
 
+#ponyc_checks=--checktree --verify
+
+
 ifeq ($(CONFIGURATION),Debug)
 libponyrt_ios_library="/build/debug/lib/ios/libponyrt.a"
 libponyrt_osx_library="/build/debug/lib/native/libponyrt.a"
@@ -55,7 +58,7 @@ endef
 all: framework ios osx
 
 lldb: framework confirm
-	lldb ../ponyc/build/debug/ponyc -- -o $(builddir) $(ponyc_args) --extfun -b "$(product_name)_x86_64"  -p $(deps_packagesdir) -p $(ponyapp_src) -p ../../../  --pic --debug -robj
+	lldb ../ponyc/build/debug/ponyc -- -o $(builddir) $(ponyc_args) $(ponyc_checks) --extfun -b "$(product_name)_x86_64"  -p $(deps_packagesdir) -p $(ponyapp_src) -p ../../../  --pic --debug -robj
 
 clean:
 	rm -rf $(builddir)
@@ -63,7 +66,7 @@ clean:
 ios: confirm build_ios build_library_ios
 
 build_ios:
-	$(ponyc) -o $(builddir) $(ponyc_args) --extfun -b "$(product_name)_arm64" -p $(deps_packagesdir) -p $(ponyapp_src) -p ../../../ --triple aarch64-apple-ios --pic --features +neon $(debug) -robj
+	$(ponyc) -o $(builddir) $(ponyc_args) $(ponyc_checks) --extfun -b "$(product_name)_arm64" -p $(deps_packagesdir) -p $(ponyapp_src) -p ../../../ --triple aarch64-apple-ios --pic --features +neon $(debug) -robj
 
 build_library_ios:
 	@$(iphonesdk_libtool) -static $(builddir)/*.o -o $(deps_libdir_ios)/lib$(product_name)-ios.a
@@ -73,7 +76,7 @@ build_library_ios:
 osx: confirm build_osx build_library_osx
 
 build_osx:
-	$(ponyc) -o $(builddir) $(ponyc_args) --extfun -b "$(product_name)_x86_64"  -p $(deps_packagesdir) -p $(ponyapp_src) -p ../../../  --pic $(debug) -robj
+	$(ponyc) -o $(builddir) $(ponyc_args) $(ponyc_checks) --extfun -b "$(product_name)_x86_64"  -p $(deps_packagesdir) -p $(ponyapp_src) -p ../../../  --pic $(debug) -robj
 
 build_library_osx:
 	@$(iphonesdk_libtool) -static $(builddir)/*.o -o $(deps_libdir_osx)/lib$(product_name)-osx.a

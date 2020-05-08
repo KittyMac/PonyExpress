@@ -63,7 +63,7 @@ class val UUID is Equatable[UUID]
       Reserved
     end
 
-  fun version(): Version =>
+  fun version(): UUIDVersion =>
     """
     Returns the version of the UUID.
     """
@@ -207,7 +207,7 @@ primitive _FromArray
       Nil()
     end
 
-type Version is U8
+type UUIDVersion is U8
 
 type Variant is (RFC4122 | Reserved | Microsoft | Future)
   """
