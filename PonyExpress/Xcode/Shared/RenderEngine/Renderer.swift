@@ -65,7 +65,7 @@ public class Renderer: NSObject, PonyExpressViewDelegate {
     
     private var globalUniforms = GlobalUniforms()
     
-    private var sdfUniforms = SDFUniforms(edgeDistance:0.4, edgeWidth:1.0)
+    private var sdfUniforms = SDFUniforms(edgeDistance:0.5, edgeWidth:1.0)
     private var sdfUniformsBuffer: MTLBuffer!
     
     private var projectedSize:CGSize = CGSize(width:128, height:128)

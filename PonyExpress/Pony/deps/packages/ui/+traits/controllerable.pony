@@ -51,6 +51,10 @@ trait Controllerable
       let observers = syncObservers(key)?
       observers.push(observer)
     end
+    // If we have data for this observer, push it now...
+    try
+      observer.sync_update(key, syncData(key)?)
+    end
   
   be sync_unregister(key:String val, observer:Syncable tag) =>
     try

@@ -14,7 +14,7 @@ actor ImageSearchTest is Controllerable
   let font:Font = Font(TestFontJson())
   
   let resultsView:String = "results_view"
-  let searchKey:String = "search_key"    
+  let searchKey:String = "search_key"
     
 	fun ref mainNode():YogaNode iso^ =>
     

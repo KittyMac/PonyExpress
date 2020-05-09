@@ -1,4 +1,5 @@
 use "linal"
+use "utility"
 
 type SyncType is (None|String|I32|U32|F32|I64|U64|F64)
 
@@ -18,6 +19,7 @@ trait Syncable
     registerSync()
   
   be sync_update(controllerKey':String val, value:SyncType val) =>
+    Log.println("sync_update: %s == %s", controllerKey, controllerKey')
     if controllerKey == controllerKey' then
       syncDidUpdate(value)
     end
